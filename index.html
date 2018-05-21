@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<link href="codemirror/lib/codemirror.css" rel="stylesheet" type="text/css">
+<link href="codemirror/theme/monokai.css" rel="stylesheet" type="text/css">
+<link href="codemirror/addon/display/fullscreen.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="codemirror/lib/codemirror.js"></script>
+
+<script type="text/javascript" src="codemirror/mode/properties/properties.js"></script>
+<script type="text/javascript" src="codemirror/mode/lua/lua.js"></script>
+
+<script type="text/javascript" src="codemirror/addon/selection/active-line.js"></script>
+<script type="text/javascript" src="codemirror/addon/edit/matchbrackets.js"></script>
+<script type="text/javascript" src="codemirror/addon/display/fullscreen.js"></script>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+Model Editor:
+<p>
+<form action="" method="post">
+  <textarea id="model" name="model">
+[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = r.sub == p.sub && r.obj == p.obj && r.act == p.act</textarea>
+</form>
+</p>
+
+Policy Editor:
+<p>
+<form action="" method="post">
+  <textarea id="policy" name="policy">
+p, alice, data1, read
+p, bob, data2, write</textarea>
+</form>
+</p>
+
+</body>
+</html>
+
+<script>
+  var editor = CodeMirror.fromTextArea(document.getElementById("model"), {
+    lineNumbers: true,
+    indentUnit: 4,
+    styleActiveLine: true,
+    matchBrackets: true,
+    mode: 'properties',
+    lineWrapping: true,
+    theme: 'monokai',
+  });
+</script>
+
+<script>
+  var editor = CodeMirror.fromTextArea(document.getElementById("policy"), {
+    lineNumbers: true,
+    indentUnit: 4,
+    styleActiveLine: true,
+    matchBrackets: true,
+    mode: 'lua',
+    lineWrapping: true,
+    theme: 'monokai',
+  });
+</script>
