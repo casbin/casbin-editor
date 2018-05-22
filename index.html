@@ -85,12 +85,6 @@ p, bob, data2, write</textarea>
     theme: 'monokai',
   });
 
-  document.getElementById("example-switch").addEventListener("change",function() {
-    editor_model.setValue(model_data[this.value]);
-  });
-</script>
-
-<script>
   var editor_policy = CodeMirror.fromTextArea(document.getElementById("policy"), {
     lineNumbers: true,
     indentUnit: 4,
@@ -99,5 +93,10 @@ p, bob, data2, write</textarea>
     mode: 'lua',
     lineWrapping: true,
     theme: 'monokai',
+  });
+
+  document.getElementById("example-switch").addEventListener("change",function() {
+    editor_model.setValue(model_data[this.value]);
+    editor_policy.setValue(policy_data[this.value]);
   });
 </script>
