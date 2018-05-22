@@ -17,15 +17,18 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>Casbin Online Editor</title>
 </head>
 <body>
+
+
+<div style="text-align: center;">
+  <h2><img src="casbin-logo.png" width="15%" />Online Editor</h2>
+</div>
 
 <style type="text/css">
   body {font-family: Arial,Helvetica;}
 </style>
-
-<h3>Model Editor:</h3>
 
 See other examples:
 <select id="example-switch">
@@ -44,6 +47,8 @@ See other examples:
   <option value="priority">Priority</option>
 </select>
 
+<h3>Model:</h3>
+
 <p>
 <form action="" method="post">
   <textarea id="model" name="model">
@@ -61,7 +66,7 @@ m = r.sub == p.sub && r.obj == p.obj && r.act == p.act</textarea>
 </form>
 </p>
 
-<h3>Policy Editor:</h3>
+<h3>Policy:</h3>
 
 <p>
 <form action="" method="post">
