@@ -19,7 +19,35 @@
 </head>
 <body>
 
-Model Editor:
+<style type="text/css">
+  body {font-family: Arial,Helvetica;}
+</style>
+
+<h3>Model Editor:</h3>
+
+Current example:
+<select id="example-switch">
+  <option value="Basic">Basic</option>
+  <option value="RBAC">RBAC</option>
+  <option value="ABAC">ABAC</option>
+</select>
+
+<script>
+  var data = {
+    'Basic': '111',
+    'RBAC': '222',
+    'ABAC': '333'
+  };
+  //js
+
+  //jquery
+  /*
+  $("#class").change(function(){
+      $("#classStudent").html(data[this.value])
+  })
+  */
+</script>
+
 <p>
 <form action="" method="post">
   <textarea id="model" name="model">
@@ -37,7 +65,8 @@ m = r.sub == p.sub && r.obj == p.obj && r.act == p.act</textarea>
 </form>
 </p>
 
-Policy Editor:
+<h3>Policy Editor:</h3>
+
 <p>
 <form action="" method="post">
   <textarea id="policy" name="policy">
@@ -50,7 +79,7 @@ p, bob, data2, write</textarea>
 </html>
 
 <script>
-  var editor = CodeMirror.fromTextArea(document.getElementById("model"), {
+  var editor_model = CodeMirror.fromTextArea(document.getElementById("model"), {
     lineNumbers: true,
     indentUnit: 4,
     styleActiveLine: true,
@@ -59,10 +88,14 @@ p, bob, data2, write</textarea>
     lineWrapping: true,
     theme: 'monokai',
   });
+
+  document.getElementById("example-switch").addEventListener("change",function() {
+    editor_model.setValue(data[this.value]);
+  });
 </script>
 
 <script>
-  var editor = CodeMirror.fromTextArea(document.getElementById("policy"), {
+  var editor_policy = CodeMirror.fromTextArea(document.getElementById("policy"), {
     lineNumbers: true,
     indentUnit: 4,
     styleActiveLine: true,
