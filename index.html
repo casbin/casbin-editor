@@ -13,6 +13,8 @@
 <script type="text/javascript" src="codemirror/addon/edit/matchbrackets.js"></script>
 <script type="text/javascript" src="codemirror/addon/display/fullscreen.js"></script>
 
+<script type="text/javascript" src="example.js"></script>
+
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
@@ -25,28 +27,22 @@
 
 <h3>Model Editor:</h3>
 
-Current example:
+See other examples:
 <select id="example-switch">
-  <option value="Basic">Basic</option>
-  <option value="RBAC">RBAC</option>
-  <option value="ABAC">ABAC</option>
+  <option value="basic">Basic</option>
+  <option value="basic_with_root">Basic with root</option>
+  <option value="basic_without_resources">Basic without resources</option>
+  <option value="basic_without_users">Basic without users</option>
+  <option value="rbac">RBAC</option>
+  <option value="rbac_with_resource_roles">RBAC with resource roles</option>
+  <option value="rbac_with_domains">RBAC with domains</option>
+  <option value="rbac_with_deny">RBAC with deny</option>
+  <option value="abac">ABAC</option>
+  <option value="keymatch">Key match</option>
+  <option value="keymatch2">Key match 2</option>
+  <option value="ipmatch">IP match</option>
+  <option value="priority">Priority</option>
 </select>
-
-<script>
-  var data = {
-    'Basic': '111',
-    'RBAC': '222',
-    'ABAC': '333'
-  };
-  //js
-
-  //jquery
-  /*
-  $("#class").change(function(){
-      $("#classStudent").html(data[this.value])
-  })
-  */
-</script>
 
 <p>
 <form action="" method="post">
@@ -90,7 +86,7 @@ p, bob, data2, write</textarea>
   });
 
   document.getElementById("example-switch").addEventListener("change",function() {
-    editor_model.setValue(data[this.value]);
+    editor_model.setValue(model_data[this.value]);
   });
 </script>
 
