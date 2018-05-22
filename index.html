@@ -47,34 +47,26 @@ See other examples:
   <option value="priority">Priority</option>
 </select>
 
-<h3>Model:</h3>
-
-<p>
-<form action="" method="post">
-  <textarea id="model" name="model">
-[request_definition]
-r = sub, obj, act
-
-[policy_definition]
-p = sub, obj, act
-
-[policy_effect]
-e = some(where (p.eft == allow))
-
-[matchers]
-m = r.sub == p.sub && r.obj == p.obj && r.act == p.act</textarea>
-</form>
-</p>
-
-<h3>Policy:</h3>
-
-<p>
-<form action="" method="post">
-  <textarea id="policy" name="policy">
-p, alice, data1, read
-p, bob, data2, write</textarea>
-</form>
-</p>
+<table style="width:100%">
+  <tr>
+    <td style="width:50%">
+      <h3>Model:</h3>
+      <p>
+      <form action="" method="post">
+      <textarea id="model" name="model"></textarea>
+      </form>
+      </p>
+    </td>
+    <td style="width:50%">
+      <h3>Policy:</h3>
+      <p>
+      <form action="" method="post">
+      <textarea id="policy" name="policy"></textarea>
+      </form>
+      </p>
+    </td>
+  </tr>
+</table>
 
 </body>
 </html>
@@ -99,6 +91,9 @@ p, bob, data2, write</textarea>
     lineWrapping: true,
     theme: 'monokai',
   });
+
+  editor_model.setValue(model_data["basic"]);
+  editor_policy.setValue(policy_data["basic"]);
 
   document.getElementById("example-switch").addEventListener("change",function() {
     editor_model.setValue(model_data[this.value]);
