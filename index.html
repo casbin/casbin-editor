@@ -68,8 +68,11 @@ See other examples:
   </tr>
 </table>
 
-<button type="button">Syntax Validate</button>
-<button type="button">Run the Test!</button>
+<button type="button" id="btn_validate">Syntax Validate</button>
+<button type="button" id="btn_test">Run the Test!</button>
+
+<p></p>
+<div id="output"></div>
 
 </body>
 </html>
@@ -101,5 +104,13 @@ See other examples:
   document.getElementById("example-switch").addEventListener("change",function() {
     editor_model.setValue(model_data[this.value]);
     editor_policy.setValue(policy_data[this.value]);
+  });
+
+  document.getElementById("btn_validate").addEventListener("click", function() {
+      document.getElementById("output").innerText = "No Error!"
+  });
+
+  document.getElementById("btn_test").addEventListener("click", function() {
+      document.getElementById("output").innerText = "Success!"
   });
 </script>
