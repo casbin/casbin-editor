@@ -24,6 +24,22 @@
         return "comment";
       }
 
+      if (stream.match("some") || stream.match("where") || stream.match("priority")) {
+        return "keyword"
+      }
+      if (stream.match("keyMatch2") || stream.match("keyMatch") || stream.match("regexMatch") || stream.match("ipMatch")) {
+        return "def"
+      }
+      if (stream.match("allow") || stream.match("deny")) {
+        return "builtin"
+      }
+      if (stream.match("sub") || stream.match("dom") || stream.match("obj") || stream.match("act") || stream.match("eft") || stream.match("Owner")) {
+        return "property"
+      }
+      if (stream.match("r") || stream.match("p") || stream.match("e") || stream.match("m") || stream.match("g2") || stream.match("g")) {
+        return "variable-2"
+      }
+
       stream.next();
     }
 
