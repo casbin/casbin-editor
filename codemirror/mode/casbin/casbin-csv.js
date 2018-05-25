@@ -18,6 +18,9 @@
       if (ch === "#") {
         stream.skipToEnd();
         return "comment";
+      } else if (ch === ",") {
+        stream.eat(",");
+        return "";
       }
 
       if (stream.sol() && stream.match("p")) {
@@ -27,7 +30,14 @@
         return "keyword";
       }
 
-      stream.next();
+      if (stream.skipTo(",")) {
+        return "string"
+      }
+
+      stream.skipToEnd();
+      return "property";
+
+      // stream.next();
     }
 
     return {
