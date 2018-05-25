@@ -22,6 +22,11 @@
       } else if (ch === "#") {
         stream.skipToEnd();
         return "comment";
+      } else if (ch === "\"") {
+        stream.skipToEnd();
+        stream.skipTo("\"");
+        stream.eat("\"");
+        return "string"
       }
 
       if (stream.match("some") || stream.match("where") || stream.match("priority")) {
