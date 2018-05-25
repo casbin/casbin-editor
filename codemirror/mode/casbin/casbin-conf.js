@@ -13,6 +13,14 @@
 
   CodeMirror.defineMode("casbin-conf", function() {
     function tokenBase (stream, state) {
+      var ch = stream.peek();
+
+      if (ch === "[") {
+        stream.skipTo("]");
+        stream.eat("]");
+        return "header"
+      }
+
       stream.next();
     }
 
