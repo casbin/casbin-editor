@@ -20,6 +20,13 @@
         return "comment";
       }
 
+      if (stream.sol() && stream.match("p")) {
+        return "def";
+      }
+      if (stream.sol() && (stream.match("g2") || stream.match("g"))) {
+        return "keyword";
+      }
+
       stream.next();
     }
 
