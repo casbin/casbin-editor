@@ -19,6 +19,9 @@
         stream.skipTo("]");
         stream.eat("]");
         return "header"
+      } else if (ch === "#") {
+        stream.skipToEnd();
+        return "comment";
       }
 
       stream.next();
