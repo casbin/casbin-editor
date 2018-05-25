@@ -16,6 +16,11 @@
       var ch = stream.peek();
 
       if (ch === "[") {
+        if (stream.match("[request_definition") || stream.match("[policy_definition")) {
+          state.sec = "rp"
+        } else {
+          state.sec = "others"
+        }
         stream.skipTo("]");
         stream.eat("]");
         return "header"
@@ -27,6 +32,19 @@
         stream.skipTo("\"");
         stream.eat("\"");
         return "string"
+      } else if (ch === "=") {
+        state.after_equal = true
+        stream.eat("=");
+      }
+
+      if (stream.sol()) {
+        state.after_equal = false
+      }
+
+      if (state.sec === "rp") {
+        if (state.after_equal && stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
+          return "property"
+        }
       }
 
       if (stream.match("some") || stream.match("where") || stream.match("priority")) {
