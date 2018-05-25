@@ -13,6 +13,13 @@
 
   CodeMirror.defineMode("casbin-csv", function() {
     function tokenBase (stream, state) {
+      var ch = stream.peek();
+
+      if (ch === "#") {
+        stream.skipToEnd();
+        return "comment";
+      }
+
       stream.next();
     }
 
