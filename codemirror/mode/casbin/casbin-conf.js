@@ -16,13 +16,18 @@
       var ch = stream.peek();
 
       if (ch === "[") {
-        if (stream.match("[request_definition") || stream.match("[policy_definition")) {
-          state.sec = "rp";
+        if (stream.match("[request_definition")) {
+          state.sec = "r";
+          stream.skipTo("]");
+          stream.eat("]");
+          return "header"
+        } else if (stream.match("[policy_definition")) {
+          state.sec = "p";
           stream.skipTo("]");
           stream.eat("]");
           return "header"
         } else if (stream.match("[role_definition")) {
-          state.sec = "ro";
+          state.sec = "g";
           stream.skipTo("]");
           stream.eat("]");
           return "header"
@@ -65,15 +70,18 @@
       }
 
       if (!state.after_equal) {
-        if (stream.match("r") || stream.match("p") || stream.match("e") || stream.match("m") || stream.match("g2") || stream.match("g")) {
-          return "variable-2"
+        if (state.sec === "r" && stream.match("r")) {
+          return "builtin"
+        }
+        if (stream.match("p") || stream.match("e") || stream.match("m") || stream.match("g2") || stream.match("g")) {
+          return "builtin"
         } else {
           stream.next();
           return
         }
       }
 
-      if (state.sec === "rp") {
+      if (state.sec === "r" || state.sec === "p") {
         if (state.after_equal && stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
           return "property"
         }
@@ -82,7 +90,7 @@
           return "keyword"
         }
         if (stream.match("allow") || stream.match("deny")) {
-          return "builtin"
+          return "string"
         }
         if (stream.match("sub") || stream.match("dom") || stream.match("obj") || stream.match("act") || stream.match("eft") || stream.match("Owner")) {
           return "property"
