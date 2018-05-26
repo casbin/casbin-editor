@@ -95,8 +95,17 @@
       }
 
       if (state.sec === "r" || state.sec === "p") {
-        if (stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
-          return "property"
+        // Match: r = [sub], [obj], [act]
+        //        p = [sub], [obj], [act]
+        if (state.comma) {
+          state.comma = false;
+          if (stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
+            return "property"
+          }
+        }
+        if (stream.eat(",") || stream.eat(" ")) {
+          state.comma = true;
+          return ""
         }
       } else if (state.sec === "e") {
         // Match: e = some(where (p.[eft] == allow))
@@ -116,9 +125,12 @@
           return "builtin"
         }
 
+        // Match: e = [some]([where] (p.eft == allow))
         if (stream.match("some") || stream.match("where") || stream.match("priority")) {
           return "keyword"
         }
+
+        // Match: e = some(where (p.eft == [allow]))
         if (stream.match("allow") || stream.match("deny")) {
           return "string"
         }
