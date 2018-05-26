@@ -113,10 +113,6 @@
           return "builtin"
         }
       } else if (state.sec === "m") {
-        if (stream.match("keyMatch2") || stream.match("keyMatch") || stream.match("regexMatch") || stream.match("ipMatch")) {
-          return "def"
-        }
-
         // Match: m = r.[sub] == p.[sub] && r.[obj] == p.[obj] && r.[act] == p.[act]
         if (stream.eat(".")) {
           state.dot = true;
@@ -130,6 +126,11 @@
         // Match: m = [r].sub == [p].sub && [r].obj == [p].obj && [r].act == [p].act
         if ((stream.match("r") || stream.match("p")) && stream.peek() === ".") {
           return "builtin"
+        }
+
+        // Match: m = [g](r.sub, p.sub) && r.obj == p.obj && r.act == p.act
+        if (stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*")) && stream.peek() === "(") {
+          return "def"
         }
       }
 
