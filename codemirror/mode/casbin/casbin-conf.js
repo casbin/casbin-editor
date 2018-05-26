@@ -69,11 +69,16 @@
         return ""
       }
 
-      if (!state.after_equal) {
+      if (!state.after_equal && stream.sol()) {
         if (state.sec === "r" && stream.match("r")) {
           return "builtin"
-        }
-        if (stream.match("p") || stream.match("e") || stream.match("m") || stream.match("g2") || stream.match("g")) {
+        } else if (state.sec === "p" && stream.match("p")) {
+          return "builtin"
+        } else if (state.sec === "e" && stream.match("e")) {
+          return "builtin"
+        } else if (state.sec === "m" && stream.match("m")) {
+          return "builtin"
+        } else if (state.sec === "g" && stream.match(new RegExp("^g[2-9]?"))) {
           return "builtin"
         } else {
           stream.next();
@@ -95,12 +100,18 @@
         if (stream.match("sub") || stream.match("dom") || stream.match("obj") || stream.match("act") || stream.match("eft") || stream.match("Owner")) {
           return "property"
         }
+        if (stream.match("p") && stream.peek() === ".") {
+          return "builtin"
+        }
       } else if (state.sec === "m") {
         if (stream.match("keyMatch2") || stream.match("keyMatch") || stream.match("regexMatch") || stream.match("ipMatch")) {
           return "def"
         }
         if (stream.match("sub") || stream.match("dom") || stream.match("obj") || stream.match("act") || stream.match("eft") || stream.match("Owner")) {
           return "property"
+        }
+        if ((stream.match("r") || stream.match("p")) && stream.peek() === ".") {
+          return "builtin"
         }
       }
 
