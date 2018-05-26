@@ -43,8 +43,7 @@
           return "header"
         } else {
           state.sec = "";
-          stream.skipTo("]");
-          stream.eat("]");
+          stream.skipToEnd();
           return ""
         }
       } else if (ch === "#") {
@@ -56,7 +55,7 @@
         stream.eat("\"");
         return "string"
       } else if (ch === "=") {
-        state.after_equal = true
+        state.after_equal = true;
         stream.eat("=");
       }
 
@@ -99,13 +98,15 @@
         }
 
         // Match: e = some(where (p.[eft] == allow))
+        if (state.dot) {
+          state.dot = false;
+          if (stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
+            return "property"
+          }
+        }
         if (stream.eat(".")) {
           state.dot = true;
           return ""
-        }
-        if (state.dot && stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
-          state.dot = false;
-          return "property"
         }
 
         // Match: e = some(where ([p].eft == allow))
@@ -114,13 +115,15 @@
         }
       } else if (state.sec === "m") {
         // Match: m = r.[sub] == p.[sub] && r.[obj] == p.[obj] && r.[act] == p.[act]
+        if (state.dot) {
+          state.dot = false;
+          if (stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
+            return "property"
+          }
+        }
         if (stream.eat(".")) {
           state.dot = true;
           return ""
-        }
-        if (state.dot && stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
-          state.dot = false;
-          return "property"
         }
 
         // Match: m = [r].sub == [p].sub && [r].obj == [p].obj && [r].act == [p].act
