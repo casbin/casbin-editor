@@ -17,13 +17,31 @@
 
       if (ch === "[") {
         if (stream.match("[request_definition") || stream.match("[policy_definition")) {
-          state.sec = "rp"
+          state.sec = "rp";
+          stream.skipTo("]");
+          stream.eat("]");
+          return "header"
+        } else if (stream.match("[role_definition")) {
+          state.sec = "ro";
+          stream.skipTo("]");
+          stream.eat("]");
+          return "header"
+        } else if (stream.match("[policy_effect")) {
+          state.sec = "e";
+          stream.skipTo("]");
+          stream.eat("]");
+          return "header"
+        } else if (stream.match("[matchers")) {
+          state.sec = "m";
+          stream.skipTo("]");
+          stream.eat("]");
+          return "header"
         } else {
-          state.sec = "others"
+          state.sec = "";
+          stream.skipTo("]");
+          stream.eat("]");
+          return ""
         }
-        stream.skipTo("]");
-        stream.eat("]");
-        return "header"
       } else if (ch === "#") {
         stream.skipToEnd();
         return "comment";
@@ -41,26 +59,41 @@
         state.after_equal = false
       }
 
+      if (state.sec === "") {
+        stream.skipToEnd();
+        return ""
+      }
+
+      if (!state.after_equal) {
+        if (stream.match("r") || stream.match("p") || stream.match("e") || stream.match("m") || stream.match("g2") || stream.match("g")) {
+          return "variable-2"
+        } else {
+          stream.next();
+          return
+        }
+      }
+
       if (state.sec === "rp") {
         if (state.after_equal && stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
           return "property"
         }
-      }
-
-      if (stream.match("some") || stream.match("where") || stream.match("priority")) {
-        return "keyword"
-      }
-      if (stream.match("keyMatch2") || stream.match("keyMatch") || stream.match("regexMatch") || stream.match("ipMatch")) {
-        return "def"
-      }
-      if (stream.match("allow") || stream.match("deny")) {
-        return "builtin"
-      }
-      if (stream.match("sub") || stream.match("dom") || stream.match("obj") || stream.match("act") || stream.match("eft") || stream.match("Owner")) {
-        return "property"
-      }
-      if (stream.match("r") || stream.match("p") || stream.match("e") || stream.match("m") || stream.match("g2") || stream.match("g")) {
-        return "variable-2"
+      } else if (state.sec === "e") {
+        if (stream.match("some") || stream.match("where") || stream.match("priority")) {
+          return "keyword"
+        }
+        if (stream.match("allow") || stream.match("deny")) {
+          return "builtin"
+        }
+        if (stream.match("sub") || stream.match("dom") || stream.match("obj") || stream.match("act") || stream.match("eft") || stream.match("Owner")) {
+          return "property"
+        }
+      } else if (state.sec === "m") {
+        if (stream.match("keyMatch2") || stream.match("keyMatch") || stream.match("regexMatch") || stream.match("ipMatch")) {
+          return "def"
+        }
+        if (stream.match("sub") || stream.match("dom") || stream.match("obj") || stream.match("act") || stream.match("eft") || stream.match("Owner")) {
+          return "property"
+        }
       }
 
       stream.next();
