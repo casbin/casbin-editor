@@ -90,13 +90,6 @@
           return "property"
         }
       } else if (state.sec === "e") {
-        if (stream.match("some") || stream.match("where") || stream.match("priority")) {
-          return "keyword"
-        }
-        if (stream.match("allow") || stream.match("deny")) {
-          return "string"
-        }
-
         // Match: e = some(where (p.[eft] == allow))
         if (state.dot) {
           state.dot = false;
@@ -112,6 +105,13 @@
         // Match: e = some(where ([p].eft == allow))
         if (stream.match("p") && stream.peek() === ".") {
           return "builtin"
+        }
+
+        if (stream.match("some") || stream.match("where") || stream.match("priority")) {
+          return "keyword"
+        }
+        if (stream.match("allow") || stream.match("deny")) {
+          return "string"
         }
       } else if (state.sec === "m") {
         // Match: m = r.[sub] == p.[sub] && r.[obj] == p.[obj] && r.[act] == p.[act]
