@@ -68,25 +68,34 @@
         return ""
       }
 
-      if (!state.after_equal && stream.sol()) {
-        if (state.sec === "r" && stream.match("r")) {
-          return "builtin"
-        } else if (state.sec === "p" && stream.match("p")) {
-          return "builtin"
-        } else if (state.sec === "e" && stream.match("e")) {
-          return "builtin"
-        } else if (state.sec === "m" && stream.match("m")) {
-          return "builtin"
-        } else if (state.sec === "g" && stream.match(new RegExp("^g[2-9]?"))) {
-          return "builtin"
+      if (stream.sol()) {
+        if (state.sec !== "") {
+          if ((state.sec === "g" && stream.match(new RegExp("^g[2-9]?"))) || stream.match(state.sec)) {
+            if (stream.peek() === " " || stream.peek() === "=") {
+              return "builtin"
+            } else {
+              state.sec = "";
+              stream.next();
+              return
+            }
+          } else {
+            state.sec = "";
+            stream.next();
+            return
+          }
         } else {
           stream.next();
           return
         }
       }
 
+      if (!state.after_equal) {
+        stream.next();
+        return
+      }
+
       if (state.sec === "r" || state.sec === "p") {
-        if (state.after_equal && stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
+        if (stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
           return "property"
         }
       } else if (state.sec === "e") {
