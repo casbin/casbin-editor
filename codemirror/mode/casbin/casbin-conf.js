@@ -97,9 +97,18 @@
         if (stream.match("allow") || stream.match("deny")) {
           return "string"
         }
-        if (stream.match("sub") || stream.match("dom") || stream.match("obj") || stream.match("act") || stream.match("eft") || stream.match("Owner")) {
+
+        // Match: e = some(where (p.[eft] == allow))
+        if (stream.eat(".")) {
+          state.dot = true;
+          return ""
+        }
+        if (state.dot && stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
+          state.dot = false;
           return "property"
         }
+
+        // Match: e = some(where ([p].eft == allow))
         if (stream.match("p") && stream.peek() === ".") {
           return "builtin"
         }
@@ -107,9 +116,18 @@
         if (stream.match("keyMatch2") || stream.match("keyMatch") || stream.match("regexMatch") || stream.match("ipMatch")) {
           return "def"
         }
-        if (stream.match("sub") || stream.match("dom") || stream.match("obj") || stream.match("act") || stream.match("eft") || stream.match("Owner")) {
+
+        // Match: m = r.[sub] == p.[sub] && r.[obj] == p.[obj] && r.[act] == p.[act]
+        if (stream.eat(".")) {
+          state.dot = true;
+          return ""
+        }
+        if (state.dot && stream.match(new RegExp("^[_a-zA-Z][_a-zA-Z0-9]*"))) {
+          state.dot = false;
           return "property"
         }
+
+        // Match: m = [r].sub == [p].sub && [r].obj == [p].obj && [r].act == [p].act
         if ((stream.match("r") || stream.match("p")) && stream.peek() === ".") {
           return "builtin"
         }
