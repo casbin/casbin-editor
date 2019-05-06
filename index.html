@@ -17,7 +17,7 @@
 
 <script>
   var _hmt = _hmt || [];
-  (function() {
+  (function () {
     var hm = document.createElement("script");
     hm.src = "https://hm.baidu.com/hm.js?0fea0af1c91bdc686dd1d011c4f8e107";
     var s = document.getElementsByTagName("script")[0];
@@ -30,62 +30,71 @@
   <meta charset="UTF-8">
   <title>Casbin Online Editor</title>
 </head>
+
 <body>
 
 
-<div style="text-align: center;">
-  <h2><img src="casbin-logo.png" width="15%" />Online Editor<a href="https://github.com/casbin/editor"><img src="img/github_logo.png" width="4%" /></a></h2>
-</div>
+  <div style="text-align: center;">
+    <h2><img src="casbin-logo.png" width="15%" />Online Editor<a href="https://github.com/casbin/editor"><img
+          src="img/github_logo.png" width="4%" /></a></h2>
+  </div>
 
-<style type="text/css">
-  body {font-family: Arial,Helvetica;}
-</style>
+  <style type="text/css">
+    body {
+      font-family: Arial, Helvetica;
+    }
 
-See other examples:
-<select id="example-switch">
-  <option value="basic">ACL</option>
-  <option value="basic_with_root">ACL with superuser</option>
-  <option value="basic_without_resources">ACL without resources</option>
-  <option value="basic_without_users">ACL without users</option>
-  <option value="rbac">RBAC</option>
-  <option value="rbac_with_resource_roles">RBAC with resource roles</option>
-  <option value="rbac_with_domains">RBAC with domains/tenants</option>
-  <option value="rbac_with_deny">RBAC with deny-override</option>
-  <option value="abac">ABAC</option>
-  <option value="keymatch">RESTful (KeyMatch)</option>
-  <option value="keymatch2">RESTful (KeyMatch2)</option>
-  <option value="ipmatch">IP match</option>
-  <option value="priority">Priority</option>
-</select>
+    .line-error {
+      background: #ff0000;
+    }
+  </style>
 
-<table style="width:100%">
-  <tr>
-    <td style="width:50%">
-      <h3>Model:</h3>
-      <p>
-      <form action="" method="post">
-      <textarea id="model" name="model"></textarea>
-      </form>
-      </p>
-    </td>
-    <td style="width:50%">
-      <h3>Policy:</h3>
-      <p>
-      <form action="" method="post">
-      <textarea id="policy" name="policy"></textarea>
-      </form>
-      </p>
-    </td>
-  </tr>
-</table>
+  See other examples:
+  <select id="example-switch">
+    <option value="basic">ACL</option>
+    <option value="basic_with_root">ACL with superuser</option>
+    <option value="basic_without_resources">ACL without resources</option>
+    <option value="basic_without_users">ACL without users</option>
+    <option value="rbac">RBAC</option>
+    <option value="rbac_with_resource_roles">RBAC with resource roles</option>
+    <option value="rbac_with_domains">RBAC with domains/tenants</option>
+    <option value="rbac_with_deny">RBAC with deny-override</option>
+    <option value="abac">ABAC</option>
+    <option value="keymatch">RESTful (KeyMatch)</option>
+    <option value="keymatch2">RESTful (KeyMatch2)</option>
+    <option value="ipmatch">IP match</option>
+    <option value="priority">Priority</option>
+  </select>
 
-<button type="button" id="btn_validate">Syntax Validate</button>
-<button type="button" id="btn_test">Run the Test!</button>
+  <table style="width:100%">
+    <tr>
+      <td style="width:50%">
+        <h3>Model:</h3>
+        <p>
+          <form action="" method="post">
+            <textarea id="model" name="model"></textarea>
+          </form>
+        </p>
+      </td>
+      <td style="width:50%">
+        <h3>Policy:</h3>
+        <p>
+          <form action="" method="post">
+            <textarea id="policy" name="policy"></textarea>
+          </form>
+        </p>
+      </td>
+    </tr>
+  </table>
 
-<p></p>
-<div id="output"></div>
+  <button type="button" id="btn_validate">Syntax Validate</button>
+  <button type="button" id="btn_test">Run the Test!</button>
+
+  <p></p>
+  <div id="output"></div>
 
 </body>
+
 </html>
 
 <script>
@@ -112,16 +121,86 @@ See other examples:
   editor_model.setValue(model_data["basic"]);
   editor_policy.setValue(policy_data["basic"]);
 
-  document.getElementById("example-switch").addEventListener("change",function() {
+  document.getElementById("example-switch").addEventListener("change", function () {
     editor_model.setValue(model_data[this.value]);
     editor_policy.setValue(policy_data[this.value]);
   });
 
-  document.getElementById("btn_validate").addEventListener("click", function() {
-      document.getElementById("output").innerText = "No Error!"
+  let errorLine = 0;
+  function highlightErrorLine(editor, lineNumber) {
+    errorLine = lineNumber;
+    const actualLineNumber = lineNumber - 1;
+    editor.addLineClass(actualLineNumber, 'background', 'line-error');
+  }
+
+  function validateModel(data) {
+    const DEFAULT_SECTION = 'default';
+    const DEFAULT_COMMENT = '#';
+    const DEFAULT_COMMENT_SEM = ';';
+    const DEFAULT_MULTI_LINE_SEPARATOR = '\\';
+
+    const lines = data.split('\n');
+    const linesCount = lines.length;
+    let section = '';
+    let currentLine = '';
+
+    lines.forEach((n, index) => {
+      const line = n.trim();
+      const lineNumber = index + 1;
+      if (!line) {
+        return;
+      }
+
+      if (line.startsWith(DEFAULT_COMMENT) || line.startsWith(DEFAULT_COMMENT_SEM)) {
+        return;
+      } else if (line.startsWith('[') && line.endsWith(']')) {
+        if (currentLine.length !== 0) {
+          write(section, lineNumber - 1, currentLine);
+          currentLine = '';
+        }
+        section = line.substring(1, line.length - 1);
+      } else {
+        let shouldWrite = false;
+        if (line.includes(DEFAULT_MULTI_LINE_SEPARATOR)) {
+          currentLine += line.substring(0, line.length - 1).trim();
+          // when the last line has a "\" string
+          if (lineNumber + 1 === linesCount) {
+            shouldWrite = true;
+          }
+        } else {
+          currentLine += line;
+          shouldWrite = true;
+        }
+        if (shouldWrite) {
+          write(section, lineNumber, currentLine);
+          currentLine = '';
+        }
+      }
+    });
+  }
+
+  function write(section, lineNum, line) {
+    const equalIndex = line.indexOf('=');
+    if (equalIndex === -1) {
+      highlightErrorLine(editor_model, lineNum)
+      throw `parse the content error : line ${lineNum}`;
+    }
+  }
+
+  document.getElementById("btn_validate").addEventListener("click", function () {
+    const output = document.getElementById("output")
+    editor_model.removeLineClass(errorLine - 1, 'background')
+    try {
+      validateModel(editor_model.getValue())
+      output.innerText = "No Error!"
+      output.style = ''
+    } catch (e) {
+      output.innerText = e
+      output.style = 'color: #ff0000'
+    }
   });
 
-  document.getElementById("btn_test").addEventListener("click", function() {
-      document.getElementById("output").innerText = "Success!"
+  document.getElementById("btn_test").addEventListener("click", function () {
+    document.getElementById("output").innerText = "Success!"
   });
 </script>
