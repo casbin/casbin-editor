@@ -32,14 +32,11 @@ export function get(persist: Persist, modelName = DEFAULT_MODEL) {
   }
   switch (persist) {
     case Persist.MODEL:
-      // @ts-ignore
-      return exampleModel[modelName];
+      return (exampleModel as any)[modelName];
     case Persist.POLICY:
-      // @ts-ignore
-      return examplePolicy[modelName];
+      return (examplePolicy as any)[modelName];
     case Persist.REQUEST:
-      // @ts-ignore
-      return exampleRequest[modelName];
+      return (exampleRequest as any)[modelName];
     case Persist.CUSTOM_FUNCTION:
       return `var fns = {}`;
   }
