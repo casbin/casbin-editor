@@ -13,7 +13,7 @@ const App = () => (
 
     <Footer>
       <a
-        style={{ color: '#FFFFFF', textDecoration: 'none' }}
+        style={{ color: '#FFFFFF', fontSize: 14, textDecoration: 'none' }}
         title="casbin-editor on GitHub"
         rel="noopener noreferrer"
         target="_blank"
@@ -21,7 +21,7 @@ const App = () => (
       >
         Github
       </a>
-      <span style={{ color: '#FFFFFF', float: 'right' }}>Copyright © {new Date().getFullYear()} Casbin contributors.</span>
+      <span style={{ color: '#FFFFFF', float: 'right', fontSize: 14 }}>Copyright © {new Date().getFullYear()} Casbin contributors.</span>
     </Footer>
   </>
 );
