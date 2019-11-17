@@ -1,0 +1,52 @@
+{
+  "name": "casbin-editor",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "main": "src/index.js",
+  "dependencies": {
+    "@reach/router": "1.2.1",
+    "@types/react": "^16.9.11",
+    "@types/react-dom": "^16.9.4",
+    "casbin": "^3.0.6",
+    "codemirror": "5.48.4",
+    "normalize.css": "^8.0.1",
+    "react": "16.8.6",
+    "react-codemirror2": "6.0.0",
+    "react-dom": "16.8.6",
+    "styled-components": "4.3.2"
+  },
+  "devDependencies": {
+    "@types/codemirror": "^0.0.80",
+    "@types/reach__router": "^1.2.6",
+    "@types/styled-components": "^4.4.0",
+    "@typescript-eslint/eslint-plugin": "^2.7.0",
+    "@typescript-eslint/parser": "^2.7.0",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.5.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
+    "react-scripts": "^3.2.0",
+    "typescript": "^3.7.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "lint": "eslint . --ext .js,.ts,.tsx"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint && pretty-quick --staged"
+    }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
