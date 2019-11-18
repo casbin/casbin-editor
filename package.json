@@ -8,7 +8,7 @@
     "@reach/router": "1.2.1",
     "@types/react": "^16.9.11",
     "@types/react-dom": "^16.9.4",
-    "casbin": "^3.0.6",
+    "casbin": "^3.0.7",
     "codemirror": "5.48.4",
     "normalize.css": "^8.0.1",
     "react": "16.8.6",

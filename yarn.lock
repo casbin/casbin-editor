@@ -2521,10 +2521,10 @@ capture-exit@^2.0.0:
   dependencies:
     rsvp "^4.8.4"
 
-casbin@^3.0.6:
-  version "3.0.6"
-  resolved "https://registry.npm.taobao.org/casbin/download/casbin-3.0.6.tgz#fabaad77f4ba3d35d0e7f64b77db35afc62a708a"
-  integrity sha1-+rqtd/S6PTXQ5/ZLd9s1r8YqcIo=
+casbin@^3.0.7:
+  version "3.0.7"
+  resolved "https://registry.npm.taobao.org/casbin/download/casbin-3.0.7.tgz#8bd156a7c6461e5a4dad9f4eb6d56473bc55d56c"
+  integrity sha1-i9FWp8ZGHlpNrZ9OttVkc7xV1Ww=
   dependencies:
     expression-eval "^2.0.0"
     ip "^1.1.5"
