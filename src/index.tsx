@@ -1,5 +1,4 @@
 import React from 'react';
-import { Router } from '@reach/router';
 import ReactDOM from 'react-dom';
 import { EditorScreen } from './editor';
 import { Footer } from './ui';
@@ -7,9 +6,7 @@ import 'normalize.css/normalize.css';
 
 const App = () => (
   <>
-    <Router>
-      <EditorScreen path="/" />
-    </Router>
+    <EditorScreen />
 
     <Footer>
       <a target="_blank" href="https://github.com/casbin/casbin-editor">

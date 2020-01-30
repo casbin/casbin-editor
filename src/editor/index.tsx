@@ -3,13 +3,10 @@ import SelectModel from './select-model';
 import { Button, EditorContainer, FlexRow, HeaderTitle } from '../ui';
 import { getSelectedModel, reset } from './persist';
 import { CustomFunctionEditor, ModelEditor, PolicyEditor, RequestEditor, RequestResultEditor } from './editor';
-import { RouteComponentProps } from '@reach/router';
 import Syntax from './syntax';
 import RunTest from './run-test';
 
-interface Props extends RouteComponentProps {}
-
-export const EditorScreen = (props: Props) => {
+export const EditorScreen = () => {
   const [model, setModel] = useState(getSelectedModel());
   const [modelText, setModelText] = useState('');
   const [policy, setPolicy] = useState('');
