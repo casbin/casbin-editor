@@ -12,14 +12,8 @@ const App = () => (
     </Router>
 
     <Footer>
-      <a
-        style={{ color: '#FFFFFF', fontSize: 14, textDecoration: 'none' }}
-        title="casbin-editor on GitHub"
-        rel="noopener noreferrer"
-        target="_blank"
-        href="https://github.com/nodece/casbin-editor"
-      >
-        Github
+      <a target="_blank" href="https://github.com/casbin/editor">
+        <img alt="GitHub stars" src="https://img.shields.io/github/stars/casbin/editor?style=social" />
       </a>
       <span style={{ color: '#FFFFFF', float: 'right', fontSize: 14 }}>Copyright © {new Date().getFullYear()} Casbin contributors.</span>
     </Footer>
