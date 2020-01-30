@@ -38,11 +38,6 @@
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .js,.ts,.tsx"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint && pretty-quick --staged"
-    }
-  },
   "browserslist": [
     ">0.2%",
     "not dead",
