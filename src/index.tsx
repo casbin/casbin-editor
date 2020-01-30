@@ -12,8 +12,8 @@ const App = () => (
     </Router>
 
     <Footer>
-      <a target="_blank" href="https://github.com/casbin/editor">
-        <img alt="GitHub stars" src="https://img.shields.io/github/stars/casbin/editor?style=social" />
+      <a target="_blank" href="https://github.com/casbin/casbin-editor">
+        <img alt="GitHub stars" src="https://img.shields.io/github/stars/casbin/casbin-editor?style=social" />
       </a>
       <span style={{ color: '#FFFFFF', float: 'right', fontSize: 14 }}>Copyright © {new Date().getFullYear()} Casbin contributors.</span>
     </Footer>
