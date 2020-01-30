@@ -6,14 +6,14 @@
   "main": "src/index.js",
   "dependencies": {
     "@reach/router": "1.2.1",
-    "@types/react": "^16.9.11",
-    "@types/react-dom": "^16.9.4",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
     "casbin": "^3.0.7",
     "codemirror": "5.48.4",
     "normalize.css": "^8.0.1",
-    "react": "16.8.6",
+    "react": "16.12.0",
     "react-codemirror2": "6.0.0",
-    "react-dom": "16.8.6",
+    "react-dom": "16.12.0",
     "styled-components": "4.3.2"
   },
   "devDependencies": {
