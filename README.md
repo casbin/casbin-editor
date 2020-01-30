@@ -10,6 +10,12 @@ Try it at either:
 1. Casbin official website: https://casbin.org/en/editor.
 2. Our standalone GitHub pages: https://casbin.org/casbin-editor/
 
+## How it works?
+
+Casbin-editor is a pure frontend Javascript project. It uses [node-casbin](https://github.com/casbin/node-casbin) to perform policy enforcement. It's notable that node-casbin can be used either in frontend Javascript or Node.js.
+
+This project can be viewed as an example for using node-casbin in the browser.
+
 ## Getting started
 
 ```shell
