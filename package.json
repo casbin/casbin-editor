@@ -6,11 +6,8 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "@types/react": "^16.9.19",
-    "@types/react-dom": "^16.9.5",
-    "casbin": "^3.0.7",
+    "casbin": "^4.2.1",
     "codemirror": "5.48.4",
-    "gh-pages": "^2.2.0",
     "normalize.css": "^8.0.1",
     "react": "16.12.0",
     "react-codemirror2": "6.0.0",
@@ -20,16 +17,19 @@
   "devDependencies": {
     "@types/codemirror": "^0.0.80",
     "@types/reach__router": "^1.2.6",
+    "@types/react": "^16.9.32",
+    "@types/react-dom": "^16.9.6",
     "@types/styled-components": "^4.4.0",
     "@typescript-eslint/eslint-plugin": "^2.7.0",
     "@typescript-eslint/parser": "^2.7.0",
     "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-prettier": "^3.1.1",
+    "gh-pages": "^2.2.0",
     "husky": "^3.0.9",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
-    "react-scripts": "^3.2.0",
+    "react-scripts": "^3.4.1",
     "typescript": "^3.7.2"
   },
   "scripts": {
