@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/casbin-editor/precache-manifest.9686376e175ee26ea29b5dd6435be5f1.js"
+  "/casbin-editor/precache-manifest.e4b324a343f6850260603c32c0548482.js"
 );
 
 self.addEventListener('message', (event) => {
