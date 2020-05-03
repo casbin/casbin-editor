@@ -1,13 +1,65 @@
 import React from 'react';
 import { Button, Echo } from '../ui';
-import { newEnforcer, newModel, StringAdapter } from 'casbin';
+import { Enforcer, newEnforcer, newModel, StringAdapter } from 'casbin';
 
 interface RunTestProps {
   model: string;
+  modelKind: string;
   policy: string;
   fn: string;
   request: string;
-  onResponse: (com: JSX.Element | boolean[]) => void;
+  onResponse: (com: JSX.Element | any[]) => void;
+}
+
+function parseABACRequest(line: string): any[] {
+  let value = '';
+  let objectToken = 0;
+  let parseToObject = false;
+  const request = [];
+
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] === ' ') {
+      continue;
+    }
+
+    if (objectToken === 0 && line[i] === ',') {
+      if (parseToObject) {
+        // eslint-disable-next-line
+        eval(`value = ${value}`);
+      }
+      request.push(value);
+
+      value = '';
+      parseToObject = false;
+      continue;
+    }
+
+    value += line[i];
+
+    if (line[i] === '{') {
+      parseToObject = true;
+      objectToken++;
+      continue;
+    }
+
+    if (line[i] === '}') {
+      objectToken--;
+    }
+  }
+
+  if (objectToken !== 0) {
+    throw new Error(`invalid request ${line}`);
+  }
+
+  if (value) {
+    if (parseToObject) {
+      // eslint-disable-next-line
+      eval(`value = ${value}`);
+    }
+    request.push(value);
+  }
+
+  return request;
 }
 
 const RunTest = (props: RunTestProps) => {
@@ -18,7 +70,12 @@ const RunTest = (props: RunTestProps) => {
         const startTime = performance.now();
         const result = [];
         try {
-          const e = await newEnforcer(newModel(props.model), new StringAdapter(props.policy));
+          let e: Enforcer;
+          if (props.modelKind === 'abac') {
+            e = await newEnforcer(newModel(props.model));
+          } else {
+            e = await newEnforcer(newModel(props.model), new StringAdapter(props.policy));
+          }
 
           const fnString = props.fn;
           if (fnString) {
@@ -35,17 +92,22 @@ const RunTest = (props: RunTestProps) => {
             }
           }
 
-          for (const n of props.request.split('\n')) {
-            const p = n
-              .split(',')
-              .map(n => n.trim())
-              .filter(n => n);
+          const requests = props.request.split('\n');
 
-            if (!p || p.length === 0) {
-              return;
+          for (const n of requests) {
+            const line = n.trim();
+            if (!line) {
+              result.push('# ignore');
+              continue;
             }
 
-            result.push(await e.enforce(...p));
+            if (line[0] === '#') {
+              result.push('# ignore');
+              continue;
+            }
+
+            const rvals = props.modelKind === 'abac' ? parseABACRequest(n) : n.split(',').map(n => n.trim());
+            result.push(await e.enforce(...rvals));
           }
 
           const stopTime = performance.now();

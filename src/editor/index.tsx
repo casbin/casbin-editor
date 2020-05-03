@@ -7,7 +7,7 @@ import Syntax from './syntax';
 import RunTest from './run-test';
 
 export const EditorScreen = () => {
-  const [model, setModel] = useState(getSelectedModel());
+  const [modelKind, setModelKind] = useState(getSelectedModel());
   const [modelText, setModelText] = useState('');
   const [policy, setPolicy] = useState('');
   const [fn, setFn] = useState('');
@@ -24,14 +24,14 @@ export const EditorScreen = () => {
             <HeaderTitle>Model</HeaderTitle>
             <SelectModel
               onChange={value => {
-                setModel(value);
+                setModelKind(value);
               }}
             />
             <Button
               onClick={() => {
                 const ok = window.confirm('Confirm Reset?');
                 if (ok) {
-                  reset(model);
+                  reset(modelKind);
                   window.location.reload();
                 }
               }}
@@ -40,18 +40,18 @@ export const EditorScreen = () => {
               Reset
             </Button>
           </FlexRow>
-          <ModelEditor model={model} onChange={setModelText} />
+          <ModelEditor modelKind={modelKind} onChange={setModelText} />
         </EditorContainer>
         <EditorContainer>
           <HeaderTitle>Policy</HeaderTitle>
-          <PolicyEditor model={model} onChange={setPolicy} />
+          <PolicyEditor modelKind={modelKind} onChange={setPolicy} />
         </EditorContainer>
       </FlexRow>
 
       <FlexRow>
         <EditorContainer>
           <HeaderTitle>Request</HeaderTitle>
-          <RequestEditor model={model} onChange={setRequest} />
+          <RequestEditor modelKind={modelKind} onChange={setRequest} />
         </EditorContainer>
         <EditorContainer>
           <HeaderTitle>Enforcement Result</HeaderTitle>
@@ -65,13 +65,14 @@ export const EditorScreen = () => {
             <HeaderTitle>Custom Function</HeaderTitle>
             <Button onClick={() => setVisible(!visible)}>TOGGLE</Button>
           </FlexRow>
-          {visible && <CustomFunctionEditor model={model} onChange={setFn} />}
+          {visible && <CustomFunctionEditor modelKind={modelKind} onChange={setFn} />}
         </EditorContainer>
       </FlexRow>
 
       <div style={{ padding: 8 }}>
         <Syntax model={modelText} onResponse={component => setEcho(component)} />
         <RunTest
+          modelKind={modelKind}
           model={modelText}
           policy={policy}
           fn={fn}

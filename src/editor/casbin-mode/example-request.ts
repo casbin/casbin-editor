@@ -8,7 +8,7 @@ const exampleRequest = {
   rbac_with_resource_roles: 'alice, data1, read\n' + 'alice, data1, write\n' + 'alice, data2, read\n' + 'alice, data2, write ',
   rbac_with_domains: 'alice, domain1, data1, read',
   rbac_with_deny: 'alice, data1, read\n' + 'alice, data2, write',
-  abac: 'Not support',
+  abac: `alice, { Owner: 'alice'}\n` + `alice, { Owner: 'bob'}`,
   keymatch: 'alice, /alice_data/hello, GET',
   keymatch2: 'alice, /alice_data/hello, GET\n' + 'alice, /alice_data/hello, POST',
   ipmatch: 'Not support',

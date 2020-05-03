@@ -13,7 +13,7 @@ import './casbin-mode/casbin-conf';
 import './casbin-mode/casbin-csv';
 
 interface CasbinCodeMirror {
-  model: string;
+  modelKind: string;
   options: codemirror.EditorConfiguration;
   style?: CSSProperties;
   onChange: (text: string) => void;
@@ -21,21 +21,21 @@ interface CasbinCodeMirror {
 }
 
 interface EditorProps {
-  model: string;
+  modelKind: string;
   onChange?: (text: string) => void;
   style?: CSSProperties;
 }
 
 const CasbinCodeMirror = (props: CasbinCodeMirror) => {
-  const [value, setValue] = useState(get(props.persist, props.model));
+  const [value, setValue] = useState(get(props.persist, props.modelKind));
 
-  const { model, onChange, persist } = props;
+  const { modelKind, onChange, persist } = props;
 
   useEffect(() => {
-    const modelText = get(persist, model);
+    const modelText = get(persist, modelKind);
     setValue(modelText);
     onChange(modelText);
-  }, [model, persist, onChange]);
+  }, [modelKind, persist, onChange]);
 
   return (
     <div style={props.style}>
@@ -137,7 +137,9 @@ export const RequestResultEditor = (props: RequestResultEditorProps) => {
   return (
     <div style={props.style}>
       <CodeMirror
-        onBeforeChange={() => {}}
+        onBeforeChange={() => {
+          return;
+        }}
         value={props.value}
         options={{
           readOnly: true,
