@@ -70,7 +70,7 @@ const RunTest = (props: RunTestProps) => {
         const startTime = performance.now();
         const result = [];
         try {
-          const e = await newEnforcer(newModel(props.model), new StringAdapter(props.policy));
+          const e = await newEnforcer(newModel(props.model), props.policy ? new StringAdapter(props.policy) : undefined);
 
           const fnString = props.fn;
           if (fnString) {
