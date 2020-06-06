@@ -132,6 +132,19 @@ const exampleModel = {
     '[matchers]\n' +
     'm = r.sub == r.obj.Owner',
   /////////////////////////////////////////////////////////////////////////
+  abac_with_policy_rule:
+    '[request_definition]\n'+
+    'r = sub, obj, act\n'+
+    '\n'+
+    '[policy_definition]\n'+
+    'p = sub_rule, obj, act\n'+
+    '\n'+
+    '[policy_effect]\n'+
+    'e = some(where (p.eft == allow))\n'+
+    '\n'+
+    '[matchers]\n'+
+    'm = eval(p.sub_rule) && r.obj == p.obj && r.act == p.act',
+  /////////////////////////////////////////////////////////////////////////
   keymatch:
     '[request_definition]\n' +
     'r = sub, obj, act\n' +

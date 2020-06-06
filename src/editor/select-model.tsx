@@ -27,6 +27,7 @@ const SelectModel = (props: SelectModelProps) => {
       <option value="rbac_with_domains">RBAC with domains/tenants</option>
       <option value="rbac_with_deny">RBAC with deny-override</option>
       <option value="abac">ABAC</option>
+      <option value="abac_with_policy_rule">ABAC with policy rule</option>
       <option value="keymatch">RESTful (KeyMatch)</option>
       <option value="keymatch2">RESTful (KeyMatch2)</option>
       <option value="ipmatch">IP match</option>

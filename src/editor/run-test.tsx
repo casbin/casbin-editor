@@ -11,6 +11,8 @@ interface RunTestProps {
   onResponse: (com: JSX.Element | any[]) => void;
 }
 
+const needsAbacParsing = new Set(['abac','abac_with_policy_rule']);
+
 function parseABACRequest(line: string): any[] {
   let value = '';
   let objectToken = 0;
@@ -101,7 +103,7 @@ const RunTest = (props: RunTestProps) => {
               continue;
             }
 
-            const rvals = props.modelKind === 'abac' ? parseABACRequest(n) : n.split(',').map(n => n.trim());
+            const rvals = needsAbacParsing.has( props.modelKind) ? parseABACRequest(n) : n.split(',').map(n => n.trim());
             result.push(await e.enforce(...rvals));
           }
 

@@ -9,6 +9,7 @@ const exampleRequest = {
   rbac_with_domains: 'alice, domain1, data1, read',
   rbac_with_deny: 'alice, data1, read\n' + 'alice, data2, write',
   abac: `alice, { Owner: 'alice'}\n` + `alice, { Owner: 'bob'}`,
+  abac_with_policy_rule: `{ Age: 30}, /data1, read`,
   keymatch: 'alice, /alice_data/hello, GET',
   keymatch2: 'alice, /alice_data/hello, GET\n' + 'alice, /alice_data/hello, POST',
   ipmatch: 'Not support',
