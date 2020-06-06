@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Echo } from '../ui';
-import { Enforcer, newEnforcer, newModel, StringAdapter } from 'casbin';
+import { newEnforcer, newModel, StringAdapter } from 'casbin';
 
 interface RunTestProps {
   model: string;
@@ -70,12 +70,7 @@ const RunTest = (props: RunTestProps) => {
         const startTime = performance.now();
         const result = [];
         try {
-          let e: Enforcer;
-          if (props.modelKind === 'abac') {
-            e = await newEnforcer(newModel(props.model));
-          } else {
-            e = await newEnforcer(newModel(props.model), new StringAdapter(props.policy));
-          }
+          const e = await newEnforcer(newModel(props.model), new StringAdapter(props.policy));
 
           const fnString = props.fn;
           if (fnString) {
