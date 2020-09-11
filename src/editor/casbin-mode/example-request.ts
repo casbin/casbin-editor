@@ -12,7 +12,7 @@ const exampleRequest = {
   abac_with_policy_rule: `{ Age: 30}, /data1, read`,
   keymatch: 'alice, /alice_data/hello, GET',
   keymatch2: 'alice, /alice_data/hello, GET\n' + 'alice, /alice_data/hello, POST',
-  ipmatch: 'Not support',
+  ipmatch: '192.168.2.1, data1, read\n' + '10.0.2.3, data2, write',
   priority: 'alice, data1, read'
 };
 
