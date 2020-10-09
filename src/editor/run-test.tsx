@@ -1,17 +1,17 @@
 import React from 'react';
 import { Button, Echo } from '../ui';
-import { newEnforcer, newModel, StringAdapter } from 'casbin';
+import { DefaultRoleManager, newEnforcer, newModel, StringAdapter, Util } from 'casbin';
 
 interface RunTestProps {
   model: string;
   modelKind: string;
   policy: string;
-  fn: string;
+  customConfig: string;
   request: string;
   onResponse: (com: JSX.Element | any[]) => void;
 }
 
-const needsAbacParsing = new Set(['abac','abac_with_policy_rule']);
+const needsAbacParsing = new Set(['abac', 'abac_with_policy_rule']);
 
 function parseABACRequest(line: string): any[] {
   let value = '';
@@ -27,7 +27,7 @@ function parseABACRequest(line: string): any[] {
     if (objectToken === 0 && line[i] === ',') {
       if (parseToObject) {
         // eslint-disable-next-line
-        eval(`value = ${value}`);
+        value = eval(`(${value})`);
       }
       request.push(value);
 
@@ -56,7 +56,7 @@ function parseABACRequest(line: string): any[] {
   if (value) {
     if (parseToObject) {
       // eslint-disable-next-line
-      eval(`value = ${value}`);
+      value = eval(`(${value})`);
     }
     request.push(value);
   }
@@ -64,59 +64,105 @@ function parseABACRequest(line: string): any[] {
   return request;
 }
 
+async function enforcer(props: RunTestProps) {
+  debugger;
+  const startTime = performance.now();
+  const result = [];
+  try {
+    const e = await newEnforcer(newModel(props.model), props.policy ? new StringAdapter(props.policy) : undefined);
+
+    const customConfigCode = props.customConfig;
+    if (customConfigCode) {
+      try {
+        const builtinFunc = {
+          keyMatch: Util.keyMatchFunc,
+          keyMatch2: Util.keyMatch2Func,
+          keyMatch3: Util.keyMatch3Func,
+          keyMatch4: Util.keyMatch4Func,
+          regexMatch: Util.regexMatchFunc,
+          ipMatch: Util.ipMatchFunc,
+          globMatch: Util.globMatch
+        };
+
+        // eslint-disable-next-line
+        let config = eval(customConfigCode);
+        if (config) {
+          config = { ...config, functions: { ...config.functions, ...builtinFunc } };
+          if (config?.functions) {
+            Object.keys(config.functions).forEach(key => e.addFunction(key, config.functions[key]));
+          }
+
+          const rm = e.getRoleManager() as DefaultRoleManager;
+          const matchingForGFunction = config.matchingForGFunction;
+          if (matchingForGFunction) {
+            if (typeof matchingForGFunction === 'function') {
+              await rm.addMatchingFunc(matchingForGFunction);
+            }
+            if (typeof matchingForGFunction === 'string') {
+              if (matchingForGFunction in config.functions) {
+                console.warn('add matchingForGFunction');
+                await rm.addMatchingFunc(config.functions[matchingForGFunction]);
+              } else {
+                props.onResponse(<Echo type={'error'}>Must sure the {matchingForGFunction}() in config.functions</Echo>);
+                return;
+              }
+            }
+          }
+
+          const matchingDomainForGFunction = config.matchingDomainForGFunction;
+          if (matchingDomainForGFunction) {
+            if (typeof matchingDomainForGFunction === 'function') {
+              console.warn('add addDomainMatchingFunc');
+              await rm.addDomainMatchingFunc(matchingDomainForGFunction);
+            }
+            if (typeof matchingDomainForGFunction === 'string') {
+              if (matchingDomainForGFunction in config.functions) {
+                console.warn('add addDomainMatchingFunc');
+                await rm.addDomainMatchingFunc(config.functions[matchingDomainForGFunction]);
+              } else {
+                props.onResponse(<Echo type={'error'}>Must sure the {matchingDomainForGFunction}() in config.functions</Echo>);
+                return;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        props.onResponse(<Echo type={'error'}>Please check syntax in Custom Function Editor: {e.message}</Echo>);
+        return;
+      }
+    }
+
+    const requests = props.request.split('\n');
+
+    for (const n of requests) {
+      const line = n.trim();
+      if (!line) {
+        result.push('// ignore');
+        continue;
+      }
+
+      if (line[0] === '#') {
+        result.push('// ignore');
+        continue;
+      }
+
+      const rvals = needsAbacParsing.has(props.modelKind) ? parseABACRequest(n) : n.split(',').map(n => n.trim());
+      result.push(await e.enforce(...rvals));
+    }
+
+    const stopTime = performance.now();
+
+    props.onResponse(<Echo>{'Done in ' + ((stopTime - startTime) / 1000.0).toFixed(2) + 's'}</Echo>);
+    props.onResponse(result);
+  } catch (e) {
+    props.onResponse(<Echo type={'error'}>{e.message}</Echo>);
+    props.onResponse([]);
+  }
+}
+
 const RunTest = (props: RunTestProps) => {
   return (
-    <Button
-      style={{ marginRight: 8 }}
-      onClick={async () => {
-        const startTime = performance.now();
-        const result = [];
-        try {
-          const e = await newEnforcer(newModel(props.model), props.policy ? new StringAdapter(props.policy) : undefined);
-
-          const fnString = props.fn;
-          if (fnString) {
-            try {
-              const fns: any = {};
-              // eslint-disable-next-line
-              eval(`${fnString}`);
-              if (fns) {
-                Object.keys(fns).forEach(key => e.addFunction(key, fns[key]));
-              }
-            } catch (e) {
-              props.onResponse(<Echo>Please check syntax in Custom Function Editor.</Echo>);
-              return;
-            }
-          }
-
-          const requests = props.request.split('\n');
-
-          for (const n of requests) {
-            const line = n.trim();
-            if (!line) {
-              result.push('# ignore');
-              continue;
-            }
-
-            if (line[0] === '#') {
-              result.push('# ignore');
-              continue;
-            }
-
-            const rvals = needsAbacParsing.has( props.modelKind) ? parseABACRequest(n) : n.split(',').map(n => n.trim());
-            result.push(await e.enforce(...rvals));
-          }
-
-          const stopTime = performance.now();
-
-          props.onResponse(<Echo>{'Done in ' + ((stopTime - startTime) / 1000.0).toFixed(2) + 's'}</Echo>);
-          props.onResponse(result);
-        } catch (e) {
-          props.onResponse(<Echo type={'error'}>{e.message}</Echo>);
-          props.onResponse([]);
-        }
-      }}
-    >
+    <Button style={{ marginRight: 8 }} onClick={() => enforcer(props)}>
       RUN THE TEST
     </Button>
   );

@@ -11,9 +11,10 @@ import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/display/placeholder';
 import './casbin-mode/casbin-conf';
 import './casbin-mode/casbin-csv';
+import { ModelKind } from './casbin-mode/example';
 
 interface CasbinCodeMirror {
-  modelKind: string;
+  modelKind: ModelKind;
   options: codemirror.EditorConfiguration;
   style?: CSSProperties;
   onChange: (text: string) => void;
@@ -21,7 +22,7 @@ interface CasbinCodeMirror {
 }
 
 interface EditorProps {
-  modelKind: string;
+  modelKind: ModelKind;
   onChange?: (text: string) => void;
   style?: CSSProperties;
 }

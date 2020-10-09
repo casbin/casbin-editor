@@ -1,5 +1,6 @@
 import React from 'react';
 import { getSelectedModel, setSelectedModel } from './persist';
+import { ModelKind, example } from './casbin-mode/example';
 
 interface SelectModelProps {
   onChange: (value: string) => void;
@@ -18,20 +19,11 @@ const SelectModel = (props: SelectModelProps) => {
       <option value="" disabled>
         Select your model
       </option>
-      <option value="basic">ACL</option>
-      <option value="basic_with_root">ACL with superuser</option>
-      <option value="basic_without_resources">ACL without resources</option>
-      <option value="basic_without_users">ACL without users</option>
-      <option value="rbac">RBAC</option>
-      <option value="rbac_with_resource_roles">RBAC with resource roles</option>
-      <option value="rbac_with_domains">RBAC with domains/tenants</option>
-      <option value="rbac_with_deny">RBAC with deny-override</option>
-      <option value="abac">ABAC</option>
-      <option value="abac_with_policy_rule">ABAC with policy rule</option>
-      <option value="keymatch">RESTful (KeyMatch)</option>
-      <option value="keymatch2">RESTful (KeyMatch2)</option>
-      <option value="ipmatch">IP match</option>
-      <option value="priority">Priority</option>
+      {Object.keys(example).map(n => (
+        <option key={n} value={n}>
+          {example[n as ModelKind].name}
+        </option>
+      ))}
     </select>
   );
 };

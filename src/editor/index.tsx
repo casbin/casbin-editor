@@ -1,21 +1,28 @@
-import React, { isValidElement, useState } from 'react';
+import React, { isValidElement, useEffect, useState } from 'react';
 import SelectModel from './select-model';
 import { Button, EditorContainer, FlexRow, HeaderTitle } from '../ui';
 import { getSelectedModel, reset } from './persist';
 import { CustomFunctionEditor, ModelEditor, PolicyEditor, RequestEditor, RequestResultEditor } from './editor';
 import Syntax from './syntax';
 import RunTest from './run-test';
+import { ModelKind } from './casbin-mode/example';
 
 export const EditorScreen = () => {
-  const [modelKind, setModelKind] = useState(getSelectedModel());
+  const [modelKind, setModelKind] = useState<ModelKind>(getSelectedModel());
   const [modelText, setModelText] = useState('');
   const [policy, setPolicy] = useState('');
-  const [fn, setFn] = useState('');
+  const [customConfig, setCustomConfig] = useState('');
   const [request, setRequest] = useState('');
   const [echo, setEcho] = useState<JSX.Element>(<></>);
   const [requestResult, setRequestResult] = useState('');
-  const [visible, setVisible] = useState(false);
+  const [customConfigVisible, setCustomConfigVisible] = useState(true);
 
+  useEffect(() => {
+    // Automatically hide the custom config container.
+    setTimeout(() => {
+      setCustomConfigVisible(false);
+    }, 2000);
+  });
   return (
     <>
       <FlexRow>
@@ -24,7 +31,7 @@ export const EditorScreen = () => {
             <HeaderTitle>Model</HeaderTitle>
             <SelectModel
               onChange={value => {
-                setModelKind(value);
+                setModelKind(value as ModelKind);
               }}
             />
             <Button
@@ -62,10 +69,10 @@ export const EditorScreen = () => {
       <FlexRow>
         <EditorContainer>
           <FlexRow>
-            <HeaderTitle>Custom Function</HeaderTitle>
-            <Button onClick={() => setVisible(!visible)}>TOGGLE</Button>
+            <HeaderTitle>Custom Config</HeaderTitle>
+            <Button onClick={() => setCustomConfigVisible(!customConfigVisible)}>TOGGLE</Button>
           </FlexRow>
-          {visible && <CustomFunctionEditor modelKind={modelKind} onChange={setFn} />}
+          {customConfigVisible && <CustomFunctionEditor modelKind={modelKind} onChange={setCustomConfig} />}
         </EditorContainer>
       </FlexRow>
 
@@ -75,7 +82,7 @@ export const EditorScreen = () => {
           modelKind={modelKind}
           model={modelText}
           policy={policy}
-          fn={fn}
+          customConfig={customConfig}
           request={request}
           onResponse={v => {
             if (isValidElement(v)) {
