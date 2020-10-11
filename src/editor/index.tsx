@@ -22,7 +22,7 @@ export const EditorScreen = () => {
     setTimeout(() => {
       setCustomConfigVisible(false);
     }, 2000);
-  });
+  }, []);
   return (
     <>
       <FlexRow>
