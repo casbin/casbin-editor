@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Echo } from '../ui';
-import { Config } from 'casbin/lib/config';
+import { Config } from 'casbin';
 
 interface SyntaxProps {
   model: string;
@@ -14,7 +14,7 @@ const Syntax = (props: SyntaxProps) => {
       onClick={() => {
         try {
           Config.newConfigFromText(props.model);
-          props.onResponse(<Echo>passed</Echo>);
+          props.onResponse(<Echo>Passed</Echo>);
         } catch (e) {
           props.onResponse(<Echo type={'error'}>{e.message}</Echo>);
         }

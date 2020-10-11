@@ -6,7 +6,7 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "casbin": "^5.0.5",
+    "casbin": "^5.1.6",
     "codemirror": "5.48.4",
     "normalize.css": "^8.0.1",
     "react": "16.12.0",

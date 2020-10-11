@@ -1,8 +1,6 @@
-import exampleModel from './casbin-mode/example-model';
-import examplePolicy from './casbin-mode/example-policy';
-import exampleRequest from './casbin-mode/example-request';
+import { defaultCustomConfig, example, ModelKind } from './casbin-mode/example';
 
-export const DEFAULT_MODEL = 'basic';
+export const DEFAULT_MODEL: ModelKind = 'basic';
 
 export enum Persist {
   MODEL,
@@ -15,30 +13,32 @@ function getKey(persist: Persist, modelName: string) {
   return `${modelName.toUpperCase()}_${Persist[persist]}`;
 }
 
-export function getSelectedModel() {
-  const v = window.localStorage.getItem(Persist.MODEL.toString());
-  return v ? v : DEFAULT_MODEL;
+export function getSelectedModel(): ModelKind {
+  const v = window.localStorage.getItem(Persist[Persist.MODEL].toString());
+  return (v ? v : DEFAULT_MODEL) as ModelKind;
 }
 
 export function setSelectedModel(value: string) {
   window.localStorage.setItem(Persist[Persist.MODEL], value);
 }
 
-export function get(persist: Persist, modelName = DEFAULT_MODEL) {
+export function get(persist: Persist, modelName: ModelKind = DEFAULT_MODEL) {
   const data = window.localStorage.getItem(getKey(persist, modelName));
 
   if (data) {
     return data;
   }
+
+  const m = example[modelName];
   switch (persist) {
     case Persist.MODEL:
-      return (exampleModel as any)[modelName];
+      return m.model;
     case Persist.POLICY:
-      return (examplePolicy as any)[modelName];
+      return m.policy;
     case Persist.REQUEST:
-      return (exampleRequest as any)[modelName];
+      return m.request;
     case Persist.CUSTOM_FUNCTION:
-      return `var fns = {}`;
+      return m.customConfig || defaultCustomConfig;
   }
 }
 
