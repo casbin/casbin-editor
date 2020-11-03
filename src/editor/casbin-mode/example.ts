@@ -169,22 +169,21 @@ e = some(where (p.eft == allow))
 
 [matchers]
 m = g(r.sub, p.sub) && regexMatch(r.act, p.act)`,
-    policy: `
-p, pen_admin, data1, GET
-
+    policy: `p, pen_admin, data1, GET
 g, /book/:id, book_admin
 `,
     request: `/book/1, data1, GET`,
-    customConfig: `
-(function() {
+    customConfig: `(function() {
   return {
     /**
      * Here is custom functions for Casbin.
      * Currently, there are built-in globMatch, keyMatch, keyMatch2, keyMatch3, keyMatch4, regexMatch, ipMatch.
+     * See https://casbin.org/docs/en/function#functions-in-matchers for more details.
      */
     functions: {},
     /**
      * The value comes from config.functions, Casbin will not use this configuration if the value is undefined.
+     * See https://casbin.org/docs/en/rbac#use-pattern-matching-in-rbac for more details.
      * example:
      * matchingForGFunction: 'globMatch'
      * matchingDomainForGFunction: 'keyMatch'
@@ -217,8 +216,7 @@ g, /book/:id, book_group, *`,
     request: `/book/1, domain1, data1, read
 /book/1, domain2, data2, write
 `,
-    customConfig: `
-(function() {
+    customConfig: `(function() {
   return {
     /**
      * Here is custom functions for Casbin.
@@ -409,6 +407,6 @@ export const defaultCustomConfig = `(function() {
     matchingForGFunction: undefined,
     matchingDomainForGFunction: undefined
   };
-})();`
+})();`;
 export type Example = typeof example;
 export type ModelKind = keyof Example;
