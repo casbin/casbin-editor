@@ -53,9 +53,6 @@ export function reset(modelName: string) {
       continue;
     }
     const index = parseInt(m, 10);
-    if (!isNaN(index)) {
-      continue;
-    }
     window.localStorage.removeItem(getKey(index, modelName));
   }
 }
