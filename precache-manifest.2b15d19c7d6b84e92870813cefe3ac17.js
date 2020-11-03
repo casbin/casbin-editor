@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "7467ecc30f3b9b4273258ac803f96b72",
+    "revision": "7b777a402452c87af9aa6a6e81131ec0",
     "url": "/casbin-editor/index.html"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/casbin-editor/static/js/2.6a7b38a4.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "72e9896cc106518e6463",
-    "url": "/casbin-editor/static/js/main.86d7b934.chunk.js"
+    "revision": "da8975a5687ccbed87a5",
+    "url": "/casbin-editor/static/js/main.cd5ea90b.chunk.js"
   },
   {
     "revision": "9b0f670aeb6c8b535801",
