@@ -18,11 +18,16 @@ export const EditorScreen = () => {
   const [customConfigVisible, setCustomConfigVisible] = useState(true);
 
   useEffect(() => {
+    if (modelKind === 'rbac_with_pattern' || modelKind === 'rbac_with_all_pattern') {
+      setCustomConfigVisible(true);
+      return;
+    }
     // Automatically hide the custom config container.
     setTimeout(() => {
       setCustomConfigVisible(false);
     }, 2000);
-  }, []);
+  }, [modelKind]);
+
   return (
     <>
       <FlexRow>
