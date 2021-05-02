@@ -399,7 +399,7 @@ export const defaultCustomConfig = `(function() {
      */
     functions: {},
     /**
-     * The value comes from config.functions, Casbin will not use this configuration if the value is undefined.
+     * If the value is undefined, the Casbin does not use it.
      * example:
      * matchingForGFunction: 'globMatch'
      * matchingDomainForGFunction: 'keyMatch'

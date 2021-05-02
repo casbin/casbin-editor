@@ -36,7 +36,7 @@ const CasbinCodeMirror = (props: CasbinCodeMirror) => {
     const modelText = get(persist, modelKind);
     setValue(modelText);
     onChange(modelText);
-  }, [modelKind, persist, onChange]);
+  }, [modelKind, persist]);
 
   return (
     <div style={props.style}>
