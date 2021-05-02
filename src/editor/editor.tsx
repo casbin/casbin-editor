@@ -36,6 +36,7 @@ const CasbinCodeMirror = (props: CasbinCodeMirror) => {
     const modelText = get(persist, modelKind);
     setValue(modelText);
     onChange(modelText);
+    // eslint-disable-next-line
   }, [modelKind, persist]);
 
   return (
