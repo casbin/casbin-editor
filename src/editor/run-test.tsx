@@ -9,6 +9,7 @@ interface RunTestProps {
   customConfig: string;
   request: string;
   onResponse: (com: JSX.Element | any[]) => void;
+  parseABAC: boolean
 }
 
 function parseABACRequest(line: string): any[] {
@@ -63,7 +64,6 @@ function parseABACRequest(line: string): any[] {
 }
 
 async function enforcer(props: RunTestProps) {
-  debugger;
   const startTime = performance.now();
   const result = [];
   try {
@@ -98,7 +98,6 @@ async function enforcer(props: RunTestProps) {
             }
             if (typeof matchingForGFunction === 'string') {
               if (matchingForGFunction in config.functions) {
-                console.warn('add matchingForGFunction');
                 await rm.addMatchingFunc(config.functions[matchingForGFunction]);
               } else {
                 props.onResponse(<Echo type={'error'}>Must sure the {matchingForGFunction}() in config.functions</Echo>);
@@ -110,12 +109,10 @@ async function enforcer(props: RunTestProps) {
           const matchingDomainForGFunction = config.matchingDomainForGFunction;
           if (matchingDomainForGFunction) {
             if (typeof matchingDomainForGFunction === 'function') {
-              console.warn('add addDomainMatchingFunc');
               await rm.addDomainMatchingFunc(matchingDomainForGFunction);
             }
             if (typeof matchingDomainForGFunction === 'string') {
               if (matchingDomainForGFunction in config.functions) {
-                console.warn('add addDomainMatchingFunc');
                 await rm.addDomainMatchingFunc(config.functions[matchingDomainForGFunction]);
               } else {
                 props.onResponse(<Echo type={'error'}>Must sure the {matchingDomainForGFunction}() in config.functions</Echo>);
@@ -144,9 +141,7 @@ async function enforcer(props: RunTestProps) {
         continue;
       }
 
-      // const needsAbacParsing = new Set(['abac', 'abac_with_policy_rule']);
-      // const rvals = needsAbacParsing.has(props.modelKind) ? parseABACRequest(n) : n.split(',').map(n => n.trim());
-      const rvals = parseABACRequest(n);
+      const rvals = props.parseABAC ? parseABACRequest(n) : n.split(',').map(n => n.trim());
       result.push(await e.enforce(...rvals));
     }
 
