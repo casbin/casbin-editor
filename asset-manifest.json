@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.js": "/casbin-editor/static/js/main.d86231f9.chunk.js",
-    "main.js.map": "/casbin-editor/static/js/main.d86231f9.chunk.js.map",
+    "main.js": "/casbin-editor/static/js/main.e709e881.chunk.js",
+    "main.js.map": "/casbin-editor/static/js/main.e709e881.chunk.js.map",
     "runtime-main.js": "/casbin-editor/static/js/runtime-main.c0ce3c1d.js",
     "runtime-main.js.map": "/casbin-editor/static/js/runtime-main.c0ce3c1d.js.map",
-    "static/css/2.97ca6895.chunk.css": "/casbin-editor/static/css/2.97ca6895.chunk.css",
-    "static/js/2.012132c1.chunk.js": "/casbin-editor/static/js/2.012132c1.chunk.js",
-    "static/js/2.012132c1.chunk.js.map": "/casbin-editor/static/js/2.012132c1.chunk.js.map",
+    "static/css/2.77989f69.chunk.css": "/casbin-editor/static/css/2.77989f69.chunk.css",
+    "static/js/2.ee119029.chunk.js": "/casbin-editor/static/js/2.ee119029.chunk.js",
+    "static/js/2.ee119029.chunk.js.map": "/casbin-editor/static/js/2.ee119029.chunk.js.map",
     "index.html": "/casbin-editor/index.html",
-    "precache-manifest.7d6c2ce38b4d482bda58e4345c6c06c0.js": "/casbin-editor/precache-manifest.7d6c2ce38b4d482bda58e4345c6c06c0.js",
+    "precache-manifest.4067caeea533558b43dcf8d0f3a4bc8c.js": "/casbin-editor/precache-manifest.4067caeea533558b43dcf8d0f3a4bc8c.js",
     "service-worker.js": "/casbin-editor/service-worker.js",
-    "static/css/2.97ca6895.chunk.css.map": "/casbin-editor/static/css/2.97ca6895.chunk.css.map",
-    "static/js/2.012132c1.chunk.js.LICENSE.txt": "/casbin-editor/static/js/2.012132c1.chunk.js.LICENSE.txt"
+    "static/css/2.77989f69.chunk.css.map": "/casbin-editor/static/css/2.77989f69.chunk.css.map",
+    "static/js/2.ee119029.chunk.js.LICENSE.txt": "/casbin-editor/static/js/2.ee119029.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.c0ce3c1d.js",
-    "static/css/2.97ca6895.chunk.css",
-    "static/js/2.012132c1.chunk.js",
-    "static/js/main.d86231f9.chunk.js"
+    "static/css/2.77989f69.chunk.css",
+    "static/js/2.ee119029.chunk.js",
+    "static/js/main.e709e881.chunk.js"
   ]
 }
