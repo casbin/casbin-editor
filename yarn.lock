@@ -2560,7 +2560,7 @@ braces@^2.3.1, braces@^2.3.2:
     split-string "^3.0.2"
     to-regex "^3.0.1"
 
-braces@^3.0.1, braces@~3.0.2:
+braces@~3.0.2:
   version "3.0.2"
   resolved "https://registry.npm.taobao.org/braces/download/braces-3.0.2.tgz#3454e1a462ee8d599e236df336cd9ea4f8afe107"
   integrity sha1-NFThpGLujVmeI23zNs2epPiv4Qc=
@@ -2845,15 +2845,15 @@ capture-exit@^2.0.0:
   dependencies:
     rsvp "^4.8.4"
 
-casbin@^5.1.6:
-  version "5.1.6"
-  resolved "https://registry.npm.taobao.org/casbin/download/casbin-5.1.6.tgz#ef8ad6361359504d26b0d0597a31c7a4d569cdf1"
-  integrity sha1-74rWNhNZUE0msNBZejHHpNVpzfE=
+casbin@^5.6.3:
+  version "5.6.3"
+  resolved "https://registry.nlark.com/casbin/download/casbin-5.6.3.tgz#4c8dbd72a7f6e8323cc36cce9f80a7715033c0a5"
+  integrity sha1-TI29cqf26DI8w2zOn4CncVAzwKU=
   dependencies:
     await-lock "^2.0.1"
+    csv-parse "^4.15.3"
     expression-eval "^2.0.0"
-    ip "^1.1.5"
-    micromatch "^4.0.2"
+    picomatch "^2.2.3"
 
 case-sensitive-paths-webpack-plugin@2.3.0:
   version "2.3.0"
@@ -3612,6 +3612,11 @@ csstype@^3.0.2:
   version "3.0.3"
   resolved "https://registry.npm.taobao.org/csstype/download/csstype-3.0.3.tgz?cache=0&sync_timestamp=1598348227965&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcsstype%2Fdownload%2Fcsstype-3.0.3.tgz#2b410bbeba38ba9633353aff34b05d9755d065f8"
   integrity sha1-K0ELvro4upYzNTr/NLBdl1XQZfg=
+
+csv-parse@^4.15.3:
+  version "4.15.4"
+  resolved "https://registry.npm.taobao.org/csv-parse/download/csv-parse-4.15.4.tgz#ad1ec62aaf71a642982dfcb81f1848184d691db5"
+  integrity sha1-rR7GKq9xpkKYLfy4HxhIGE1pHbU=
 
 cyclist@^1.0.1:
   version "1.0.1"
@@ -6979,14 +6984,6 @@ micromatch@^3.1.10, micromatch@^3.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.2"
 
-micromatch@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.npm.taobao.org/micromatch/download/micromatch-4.0.2.tgz#4fcb0999bf9fbc2fcbdd212f6d629b9a56c39259"
-  integrity sha1-T8sJmb+fvC/L3SEvbWKbmlbDklk=
-  dependencies:
-    braces "^3.0.1"
-    picomatch "^2.0.5"
-
 miller-rabin@^4.0.0:
   version "4.0.1"
   resolved "https://registry.npm.taobao.org/miller-rabin/download/miller-rabin-4.0.1.tgz#f080351c865b0dc562a8462966daa53543c78a4d"
@@ -7847,10 +7844,15 @@ performance-now@^2.1.0:
   resolved "https://registry.npm.taobao.org/performance-now/download/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
-picomatch@^2.0.4, picomatch@^2.0.5, picomatch@^2.2.1:
+picomatch@^2.0.4, picomatch@^2.2.1:
   version "2.2.2"
   resolved "https://registry.npm.taobao.org/picomatch/download/picomatch-2.2.2.tgz#21f333e9b6b8eaff02468f5146ea406d345f4dad"
   integrity sha1-IfMz6ba46v8CRo9RRupAbTRfTa0=
+
+picomatch@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.npm.taobao.org/picomatch/download/picomatch-2.2.3.tgz#465547f359ccc206d3c48e46a1bcb89bf7ee619d"
+  integrity sha1-RlVH81nMwgbTxI5Goby4m/fuYZ0=
 
 pify@^2.0.0:
   version "2.3.0"
