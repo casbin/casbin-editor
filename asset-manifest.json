@@ -5,18 +5,18 @@
     "runtime-main.js": "/casbin-editor/static/js/runtime-main.c0ce3c1d.js",
     "runtime-main.js.map": "/casbin-editor/static/js/runtime-main.c0ce3c1d.js.map",
     "static/css/2.af0b6985.chunk.css": "/casbin-editor/static/css/2.af0b6985.chunk.css",
-    "static/js/2.f8c210ae.chunk.js": "/casbin-editor/static/js/2.f8c210ae.chunk.js",
-    "static/js/2.f8c210ae.chunk.js.map": "/casbin-editor/static/js/2.f8c210ae.chunk.js.map",
+    "static/js/2.4b722ec1.chunk.js": "/casbin-editor/static/js/2.4b722ec1.chunk.js",
+    "static/js/2.4b722ec1.chunk.js.map": "/casbin-editor/static/js/2.4b722ec1.chunk.js.map",
     "index.html": "/casbin-editor/index.html",
-    "precache-manifest.cdf0b7c52b5b1b8d29e5bb57f1b490a6.js": "/casbin-editor/precache-manifest.cdf0b7c52b5b1b8d29e5bb57f1b490a6.js",
+    "precache-manifest.2de36ffbe9adb37db6bea86ea9cba2f8.js": "/casbin-editor/precache-manifest.2de36ffbe9adb37db6bea86ea9cba2f8.js",
     "service-worker.js": "/casbin-editor/service-worker.js",
     "static/css/2.af0b6985.chunk.css.map": "/casbin-editor/static/css/2.af0b6985.chunk.css.map",
-    "static/js/2.f8c210ae.chunk.js.LICENSE.txt": "/casbin-editor/static/js/2.f8c210ae.chunk.js.LICENSE.txt"
+    "static/js/2.4b722ec1.chunk.js.LICENSE.txt": "/casbin-editor/static/js/2.4b722ec1.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.c0ce3c1d.js",
     "static/css/2.af0b6985.chunk.css",
-    "static/js/2.f8c210ae.chunk.js",
+    "static/js/2.4b722ec1.chunk.js",
     "static/js/main.e709e881.chunk.js"
   ]
 }
