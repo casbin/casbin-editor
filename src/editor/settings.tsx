@@ -62,7 +62,7 @@ export function Settings(props: SettingsProps) {
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span style={{ flex: 1, margin: "0.5rem 0" }}>Custom config</span>
-          <CustomFunctionEditor modelKind={"rbac"} onChange={props.onCustomConfigChange} />
+          <CustomFunctionEditor modelKind={props.modelKind} onChange={props.onCustomConfigChange} />
         </div>
       </div>
     </Container>

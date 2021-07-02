@@ -38,7 +38,7 @@ export function get(persist: Persist, modelName: ModelKind = DEFAULT_MODEL) {
     case Persist.REQUEST:
       return m.request;
     case Persist.CUSTOM_FUNCTION:
-      return m.customConfig || defaultCustomConfig;
+      return m.customConfig ? m.customConfig : defaultCustomConfig;
   }
 }
 

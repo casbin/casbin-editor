@@ -6,6 +6,7 @@ import * as codemirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/monokai.css';
 import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/mathematica/mathematica';
 import 'codemirror/addon/selection/active-line';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/display/placeholder';
@@ -121,7 +122,7 @@ export const RequestEditor = (props: EditorProps) => {
         indentUnit: 4,
         styleActiveLine: true,
         matchBrackets: true,
-        mode: 'casbin-csv',
+        mode: 'mathematica',
         lineWrapping: true,
         theme: 'monokai'
       }}
