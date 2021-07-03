@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 export const example = {
   basic: {
     name: 'ACL',
@@ -170,7 +171,7 @@ e = some(where (p.eft == allow))
 [matchers]
 m = g(r.sub, p.sub) && regexMatch(r.act, p.act)`,
     policy: `p, pen_admin, data1, GET
-g, /book/:id, book_admin
+g, /book/:id, pen_admin
 `,
     request: `/book/1, data1, GET`,
     customConfig: `(function() {
