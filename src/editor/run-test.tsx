@@ -9,10 +9,14 @@ interface RunTestProps {
   customConfig: string;
   request: string;
   onResponse: (com: JSX.Element | any[]) => void;
-  parseABAC: boolean
+  parseABAC: boolean;
 }
 
 function parseABACRequest(line: string): any[] {
+  if (!line.includes('{')) {
+    return line.split(',').map(n => n.trim());
+  }
+
   let value = '';
   let objectToken = 0;
   let parseToObject = false;
