@@ -2845,14 +2845,14 @@ capture-exit@^2.0.0:
   dependencies:
     rsvp "^4.8.4"
 
-casbin@^5.6.3:
-  version "5.6.3"
-  resolved "https://registry.nlark.com/casbin/download/casbin-5.6.3.tgz#4c8dbd72a7f6e8323cc36cce9f80a7715033c0a5"
-  integrity sha1-TI29cqf26DI8w2zOn4CncVAzwKU=
+casbin@5.11.0:
+  version "5.11.0"
+  resolved "https://registry.npmjs.org/casbin/-/casbin-5.11.0.tgz#1ac4241ade5018d5cc30ed9b615f158bb941541b"
+  integrity sha512-1w9yqJa9lQ/1UUGXhYvOIGgxRbqxuAdqjGN+Ozfb8Es5aA4TlDht4FVYIppDmOyLZXankpwOuoEnPvkTykiLbA==
   dependencies:
     await-lock "^2.0.1"
     csv-parse "^4.15.3"
-    expression-eval "^2.0.0"
+    expression-eval "^4.0.0"
     picomatch "^2.2.3"
 
 case-sensitive-paths-webpack-plugin@2.3.0:
@@ -4519,10 +4519,10 @@ express@^4.17.1:
     utils-merge "1.0.1"
     vary "~1.1.2"
 
-expression-eval@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.npm.taobao.org/expression-eval/download/expression-eval-2.1.0.tgz#422915caa46140a7c5b5f248650dea8bf8236e62"
-  integrity sha1-QikVyqRhQKfFtfJIZQ3qi/gjbmI=
+expression-eval@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/expression-eval/-/expression-eval-4.0.0.tgz#d6a07c93e8b33e635710419d4a595d9208b9cc5e"
+  integrity sha512-YHSnLTyIb9IKaho2IdQbvlei/pElxnGm48UgaXJ1Fe5au95Ck0R9ftm6rHJQuKw3FguZZ4eXVllJFFFc7LX0WQ==
   dependencies:
     jsep "^0.3.0"
 
@@ -10508,10 +10508,10 @@ typedarray@^0.0.6:
   resolved "https://registry.npm.taobao.org/typedarray/download/typedarray-0.0.6.tgz?cache=0&sync_timestamp=1596697411295&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftypedarray%2Fdownload%2Ftypedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^3.7.2:
-  version "3.9.7"
-  resolved "https://registry.npm.taobao.org/typescript/download/typescript-3.9.7.tgz?cache=0&sync_timestamp=1602141526326&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftypescript%2Fdownload%2Ftypescript-3.9.7.tgz#98d600a5ebdc38f40cb277522f12dc800e9e25fa"
-  integrity sha1-mNYApevcOPQMsndSLxLcgA6eJfo=
+typescript@^4.3.5:
+  version "4.3.5"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
+  integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"
