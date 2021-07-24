@@ -13,26 +13,18 @@ interface RunTestProps {
 }
 
 function parseABACRequest(line: string): any[] {
-  if (!line.includes('{')) {
-    return line.split(',').map(n => n.trim());
-  }
-
   let value = '';
   let objectToken = 0;
   let parseToObject = false;
   const request = [];
 
   for (let i = 0; i < line.length; i++) {
-    if (line[i] === ' ') {
-      continue;
-    }
-
     if (objectToken === 0 && line[i] === ',') {
       if (parseToObject) {
         // eslint-disable-next-line
         value = eval(`(${value})`);
       }
-      request.push(value);
+      request.push(value.trim());
 
       value = '';
       parseToObject = false;
