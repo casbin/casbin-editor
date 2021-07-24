@@ -78,7 +78,9 @@ async function enforcer(props: RunTestProps) {
       try {
         const builtinFunc = {
           keyMatch: Util.keyMatchFunc,
+          keyGet: Util.keyGetFunc,
           keyMatch2: Util.keyMatch2Func,
+          keyGet2: Util.keyGet2Func,
           keyMatch3: Util.keyMatch3Func,
           keyMatch4: Util.keyMatch4Func,
           regexMatch: Util.regexMatchFunc,
@@ -151,7 +153,7 @@ async function enforcer(props: RunTestProps) {
 
     const stopTime = performance.now();
 
-    props.onResponse(<Echo>{'Done in ' + ((stopTime - startTime) / 1000.0).toFixed(2) + 's'}</Echo>);
+    props.onResponse(<Echo>{'Done in ' + (stopTime - startTime).toFixed(2) + 'ms'}</Echo>);
     props.onResponse(result);
   } catch (e) {
     props.onResponse(<Echo type={'error'}>{e.message}</Echo>);
