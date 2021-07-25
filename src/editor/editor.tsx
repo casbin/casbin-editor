@@ -56,6 +56,7 @@ const CasbinCodeMirror = (props: CasbinCodeMirror) => {
 };
 
 CasbinCodeMirror.defaultProps = {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onChange: () => {}
 };
 
