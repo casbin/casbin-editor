@@ -10,6 +10,7 @@ export interface ShareFormat {
   policy: string;
   customConfig: string;
   request: string;
+  enableABAC: string;
 }
 
 async function dpaste(content: string) {
@@ -27,7 +28,8 @@ function shareInfo(props: ShareProps) {
     model: props.model,
     policy: props.policy,
     customConfig: props.customConfig,
-    request: props.request
+    request: props.request,
+    enableABAC: props.enableABAC
   };
   dpaste(JSON.stringify(shareContent)).then((url: string) => {
     const hash = url.split('/')[3];

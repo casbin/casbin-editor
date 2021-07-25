@@ -39,6 +39,7 @@ export const EditorScreen = () => {
           setModelText(sharedContent.model);
           setCustomConfig(sharedContent.customConfig);
           setRequest(sharedContent.request);
+          setEnableABAC(sharedContent.enableABAC);
           setRequestResult('');
           setEcho(<Echo>Shared Content Loaded.</Echo>);
         })
@@ -119,7 +120,14 @@ export const EditorScreen = () => {
               }
             }}
           />
-          <Share onResponse={v => setEcho(v)} model={modelText} policy={policy} customConfig={customConfig} request={request} />
+          <Share
+            onResponse={v => setEcho(v)}
+            model={modelText}
+            policy={policy}
+            customConfig={customConfig}
+            request={request}
+            enableABAC={enableABAC}
+          />
           <div style={{ display: 'inline-block' }}>{echo}</div>
         </div>
       </div>
