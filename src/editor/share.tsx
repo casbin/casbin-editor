@@ -33,7 +33,8 @@ function shareInfo(props: ShareProps) {
   };
   dpaste(JSON.stringify(shareContent)).then((url: string) => {
     const hash = url.split('/')[3];
-    props.onResponse(<Echo>{`Shared at ${window.location.href}#${hash}`}</Echo>);
+    const currentPath = window.location.origin + window.location.pathname;
+    props.onResponse(<Echo>{`Shared at ${currentPath}#${hash}`}</Echo>);
   });
 }
 
