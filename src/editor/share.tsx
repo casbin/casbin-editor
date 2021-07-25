@@ -10,7 +10,7 @@ export interface ShareFormat {
   policy: string;
   customConfig: string;
   request: string;
-  enableABAC: string;
+  enableABAC: boolean;
 }
 
 async function dpaste(content: string) {

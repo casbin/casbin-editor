@@ -27,6 +27,7 @@ export const EditorScreen = () => {
 
   const [customConfig, setCustomConfig] = useState('');
 
+  // eslint-disable-next-line
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     if (hash) {
@@ -47,6 +48,7 @@ export const EditorScreen = () => {
           setEcho(<Echo type={'error'}>Failed to load Shared Content.</Echo>);
         });
     }
+    // eslint-disable-next-line
   }, []);
 
   return (
