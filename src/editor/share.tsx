@@ -2,7 +2,7 @@ import { Button, Echo } from '../ui';
 import React from 'react';
 
 interface ShareProps extends ShareFormat {
-  onResponse: (echo: JSX.Element) => void;
+  onResponse: (info: JSX.Element | string) => void;
 }
 
 export interface ShareFormat {
@@ -22,23 +22,22 @@ async function dpaste(content: string) {
   return response.text();
 }
 
-function shareInfo(props: ShareProps) {
-  props.onResponse(<Echo>Sharing...</Echo>);
-  const shareContent: ShareFormat = {
-    model: props.model,
-    policy: props.policy,
-    customConfig: props.customConfig,
-    request: props.request,
-    enableABAC: props.enableABAC
-  };
-  dpaste(JSON.stringify(shareContent)).then((url: string) => {
-    const hash = url.split('/')[3];
-    const currentPath = window.location.origin + window.location.pathname;
-    props.onResponse(<Echo>{`Shared at ${currentPath}#${hash}`}</Echo>);
-  });
-}
-
 const Share = (props: ShareProps) => {
+  function shareInfo(props: ShareProps) {
+    props.onResponse(<Echo>Sharing...</Echo>);
+    const shareContent: ShareFormat = {
+      model: props.model,
+      policy: props.policy,
+      customConfig: props.customConfig,
+      request: props.request,
+      enableABAC: props.enableABAC
+    };
+    dpaste(JSON.stringify(shareContent)).then((url: string) => {
+      const hash = url.split('/')[3];
+      props.onResponse(hash);
+    });
+  }
+
   return (
     <Button style={{ marginRight: 8 }} onClick={() => shareInfo(props)}>
       SHARE

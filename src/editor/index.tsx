@@ -10,6 +10,7 @@ import { Settings } from './settings';
 import styled from 'styled-components';
 import { useLocalStorage } from './use-local-storage';
 import Share, { ShareFormat } from './share';
+import Copy from './copy';
 
 const Container = styled.div`
   display: flex;
@@ -23,9 +24,10 @@ export const EditorScreen = () => {
   const [request, setRequest] = useState('');
   const [echo, setEcho] = useState<JSX.Element>(<></>);
   const [requestResult, setRequestResult] = useState('');
-  const [enableABAC, setEnableABAC] = useLocalStorage(true, 'ENABLE_ABAC');
-
   const [customConfig, setCustomConfig] = useState('');
+  const [share, setShare] = useState('');
+
+  const [enableABAC, setEnableABAC] = useLocalStorage(true, 'ENABLE_ABAC');
 
   // eslint-disable-next-line
   useEffect(() => {
@@ -50,6 +52,16 @@ export const EditorScreen = () => {
     }
     // eslint-disable-next-line
   }, []);
+
+  function handleShare(v: JSX.Element | string) {
+    if (isValidElement(v)) {
+      setEcho(v);
+    } else {
+      const currentPath = window.location.origin + window.location.pathname;
+      setShare(v as string);
+      setEcho(<Echo>{`Shared at ${currentPath}#${v}`}</Echo>);
+    }
+  }
 
   return (
     <Container>
@@ -122,14 +134,24 @@ export const EditorScreen = () => {
               }
             }}
           />
-          <Share
-            onResponse={v => setEcho(v)}
-            model={modelText}
-            policy={policy}
-            customConfig={customConfig}
-            request={request}
-            enableABAC={enableABAC}
-          />
+          {!share ? (
+            <Share
+              onResponse={v => handleShare(v)}
+              model={modelText}
+              policy={policy}
+              customConfig={customConfig}
+              request={request}
+              enableABAC={enableABAC}
+            />
+          ) : (
+            <Copy
+              content={share}
+              cb={() => {
+                setShare('');
+                setEcho(<Echo>Copied.</Echo>);
+              }}
+            />
+          )}
           <div style={{ display: 'inline-block' }}>{echo}</div>
         </div>
       </div>
