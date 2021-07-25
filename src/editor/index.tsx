@@ -1,6 +1,6 @@
-import React, { isValidElement, useState } from 'react';
+import React, { isValidElement, useEffect, useState } from 'react';
 import SelectModel from './select-model';
-import { Button, EditorContainer, FlexRow, HeaderTitle } from '../ui';
+import { Button, Echo, EditorContainer, FlexRow, HeaderTitle } from '../ui';
 import { getSelectedModel, reset } from './persist';
 import { ModelEditor, PolicyEditor, RequestEditor, RequestResultEditor } from './editor';
 import Syntax from './syntax';
@@ -9,6 +9,7 @@ import { ModelKind } from './casbin-mode/example';
 import { Settings } from './settings';
 import styled from 'styled-components';
 import { useLocalStorage } from './use-local-storage';
+import Share, { ShareFormat } from './share';
 
 const Container = styled.div`
   display: flex;
@@ -25,6 +26,27 @@ export const EditorScreen = () => {
   const [enableABAC, setEnableABAC] = useLocalStorage(true, 'ENABLE_ABAC');
 
   const [customConfig, setCustomConfig] = useState('');
+
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      setEcho(<Echo>Loading Shared Content...</Echo>);
+      fetch(`https://dpaste.com/${hash}.txt`)
+        .then(resp => resp.text())
+        .then(content => {
+          const sharedContent = JSON.parse(content) as ShareFormat;
+          setPolicy(sharedContent.policy);
+          setModelText(sharedContent.model);
+          setCustomConfig(sharedContent.customConfig);
+          setRequest(sharedContent.request);
+          setRequestResult('');
+          setEcho(<Echo>Shared Content Loaded.</Echo>);
+        })
+        .catch(() => {
+          setEcho(<Echo type={'error'}>Failed to load Shared Content.</Echo>);
+        });
+    }
+  }, []);
 
   return (
     <Container>
@@ -97,6 +119,7 @@ export const EditorScreen = () => {
               }
             }}
           />
+          <Share onResponse={v => setEcho(v)} model={modelText} policy={policy} customConfig={customConfig} request={request} />
           <div style={{ display: 'inline-block' }}>{echo}</div>
         </div>
       </div>
