@@ -1,14 +1,14 @@
 import React, { isValidElement, useEffect, useState } from 'react';
 import SelectModel from './select-model';
 import { Button, Echo, EditorContainer, FlexRow, HeaderTitle } from '../ui';
-import { getSelectedModel, reset } from './persist';
+import { get, getSelectedModel, Persist, reset, set } from './persist';
 import { ModelEditor, PolicyEditor, RequestEditor, RequestResultEditor } from './editor';
 import Syntax from './syntax';
 import RunTest from './run-test';
 import { ModelKind } from './casbin-mode/example';
 import { Settings } from './settings';
 import styled from 'styled-components';
-import { useLocalStorage } from './use-local-storage';
+// import { useLocalStorage } from './use-local-storage';
 import Share, { ShareFormat } from './share';
 import Copy from './copy';
 
@@ -27,9 +27,26 @@ export const EditorScreen = () => {
   const [customConfig, setCustomConfig] = useState('');
   const [share, setShare] = useState('');
 
-  const [enableABAC, setEnableABAC] = useLocalStorage(true, 'ENABLE_ABAC');
+  function setPolicyPersistent(text: string): void {
+    set(Persist.POLICY, text);
+    setPolicy(text);
+  }
 
-  // eslint-disable-next-line
+  function setModelTextPersistent(text: string): void {
+    set(Persist.MODEL, text);
+    setModelText(text);
+  }
+
+  function setCustomConfigPersistent(text: string): void {
+    set(Persist.CUSTOM_FUNCTION, text);
+    setCustomConfig(text);
+  }
+
+  function setRequestPersistent(text: string): void {
+    set(Persist.REQUEST, text);
+    setRequest(text);
+  }
+
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     if (hash) {
@@ -38,11 +55,10 @@ export const EditorScreen = () => {
         .then(resp => resp.text())
         .then(content => {
           const sharedContent = JSON.parse(content) as ShareFormat;
-          setPolicy(sharedContent.policy);
-          setModelText(sharedContent.model);
-          setCustomConfig(sharedContent.customConfig);
-          setRequest(sharedContent.request);
-          setEnableABAC(sharedContent.enableABAC);
+          setPolicyPersistent(sharedContent.policy);
+          setModelTextPersistent(sharedContent.model);
+          setCustomConfigPersistent(sharedContent.customConfig);
+          setRequestPersistent(sharedContent.request);
           setRequestResult('');
           setEcho(<Echo>Shared Content Loaded.</Echo>);
         })
@@ -50,8 +66,14 @@ export const EditorScreen = () => {
           setEcho(<Echo type={'error'}>Failed to load Shared Content.</Echo>);
         });
     }
-    // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    setPolicy(get(Persist.POLICY, modelKind));
+    setModelText(get(Persist.MODEL, modelKind));
+    setRequest(get(Persist.REQUEST, modelKind));
+    setCustomConfig(get(Persist.CUSTOM_FUNCTION, modelKind));
+  }, [modelKind]);
 
   function handleShare(v: JSX.Element | string) {
     if (isValidElement(v)) {
@@ -66,13 +88,9 @@ export const EditorScreen = () => {
   return (
     <Container>
       <Settings
-        modelKind={modelKind}
-        enableABAC={enableABAC}
+        text={customConfig}
         onCustomConfigChange={v => {
-          setCustomConfig(v);
-        }}
-        onEnableABAC={v => {
-          setEnableABAC(v);
+          setCustomConfigPersistent(v);
         }}
       />
       <div style={{ flex: 1 }}>
@@ -98,18 +116,18 @@ export const EditorScreen = () => {
                 Reset
               </Button>
             </FlexRow>
-            <ModelEditor modelKind={modelKind} onChange={setModelText} />
+            <ModelEditor text={modelText} onChange={setModelTextPersistent} />
           </EditorContainer>
           <EditorContainer>
             <HeaderTitle>Policy</HeaderTitle>
-            <PolicyEditor modelKind={modelKind} onChange={setPolicy} />
+            <PolicyEditor text={policy} onChange={setPolicyPersistent} />
           </EditorContainer>
         </FlexRow>
 
         <FlexRow>
           <EditorContainer>
             <HeaderTitle>Request</HeaderTitle>
-            <RequestEditor modelKind={modelKind} onChange={setRequest} />
+            <RequestEditor text={request} onChange={setRequestPersistent} />
           </EditorContainer>
           <EditorContainer>
             <HeaderTitle>Enforcement Result</HeaderTitle>
@@ -125,7 +143,6 @@ export const EditorScreen = () => {
             policy={policy}
             customConfig={customConfig}
             request={request}
-            parseABAC={enableABAC}
             onResponse={v => {
               if (isValidElement(v)) {
                 setEcho(v);
@@ -135,14 +152,7 @@ export const EditorScreen = () => {
             }}
           />
           {!share ? (
-            <Share
-              onResponse={v => handleShare(v)}
-              model={modelText}
-              policy={policy}
-              customConfig={customConfig}
-              request={request}
-              enableABAC={enableABAC}
-            />
+            <Share onResponse={v => handleShare(v)} model={modelText} policy={policy} customConfig={customConfig} request={request} />
           ) : (
             <Copy
               content={share}

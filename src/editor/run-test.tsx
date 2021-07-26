@@ -9,7 +9,7 @@ interface RunTestProps {
   customConfig: string;
   request: string;
   onResponse: (com: JSX.Element | any[]) => void;
-  parseABAC: boolean;
+  // parseABAC: boolean;
 }
 
 function parseABACRequest(line: string): any[] {
@@ -139,7 +139,7 @@ async function enforcer(props: RunTestProps) {
         continue;
       }
 
-      const rvals = props.parseABAC ? parseABACRequest(n) : n.split(',').map(n => n.trim());
+      const rvals = parseABACRequest(n);
       result.push(await e.enforce(...rvals));
     }
 

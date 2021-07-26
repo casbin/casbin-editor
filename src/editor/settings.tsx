@@ -2,7 +2,6 @@ import React from 'react';
 
 import styled from 'styled-components';
 import { CustomFunctionEditor } from './editor';
-import { ModelKind } from './casbin-mode/example';
 import { useLocalStorage } from './use-local-storage';
 
 const Container = styled.div<{ open: boolean }>`
@@ -34,9 +33,9 @@ const ToggleButtonContainer = styled.div`
 `;
 
 interface SettingsProps {
-  modelKind: ModelKind;
-  enableABAC: boolean;
-  onEnableABAC: (v: boolean) => void;
+  text: string;
+  // enableABAC: boolean;
+  // onEnableABAC: (v: boolean) => void;
   onCustomConfigChange: (text: string) => void;
 }
 
@@ -51,20 +50,10 @@ export function Settings(props: SettingsProps) {
         </svg>
       </ToggleButtonContainer>
 
-      <div style={{ display: open ? 'flex' : 'none', flexDirection: 'column' }}>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <span style={{ flex: 1 }}>Enable ABAC</span>
-          <input
-            defaultChecked={props.enableABAC}
-            type={'checkbox'}
-            onChange={e => {
-              props.onEnableABAC(e.target.checked);
-            }}
-          />
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ flex: 1, margin: '0.5rem 0' }}>Custom config</span>
-          <CustomFunctionEditor modelKind={props.modelKind} onChange={props.onCustomConfigChange} />
+      <div style={{ display: open ? 'flex' : 'none', flexDirection: 'column', flexGrow: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+          <span style={{ margin: '0.5rem 0' }}>Custom config</span>
+          <CustomFunctionEditor style={{ flex: 1 }} text={props.text} onChange={props.onCustomConfigChange} />
         </div>
       </div>
     </Container>
