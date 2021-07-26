@@ -1,5 +1,5 @@
 import { Button, Echo } from '../ui';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface ShareProps extends ShareFormat {
   onResponse: (info: JSX.Element | string) => void;
@@ -10,7 +10,6 @@ export interface ShareFormat {
   policy: string;
   customConfig: string;
   request: string;
-  // enableABAC: boolean;
 }
 
 async function dpaste(content: string) {
@@ -23,7 +22,11 @@ async function dpaste(content: string) {
 }
 
 const Share = (props: ShareProps) => {
+  const [sharing, setSharing] = useState(false);
+
   function shareInfo(props: ShareProps) {
+    if (sharing) return;
+    setSharing(true);
     props.onResponse(<Echo>Sharing...</Echo>);
     const shareContent: ShareFormat = {
       model: props.model,
@@ -32,6 +35,7 @@ const Share = (props: ShareProps) => {
       request: props.request
     };
     dpaste(JSON.stringify(shareContent)).then((url: string) => {
+      setSharing(false);
       const hash = url.split('/')[3];
       props.onResponse(hash);
     });

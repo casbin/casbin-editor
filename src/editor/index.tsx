@@ -60,6 +60,7 @@ export const EditorScreen = () => {
           setCustomConfigPersistent(sharedContent.customConfig);
           setRequestPersistent(sharedContent.request);
           setRequestResult('');
+          window.location.hash = ''; // prevent duplicate load
           setEcho(<Echo>Shared Content Loaded.</Echo>);
         })
         .catch(() => {
