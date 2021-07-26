@@ -53,7 +53,7 @@ function parseABACRequest(line: string): any[] {
       // eslint-disable-next-line
       value = eval(`(${value})`);
     }
-    request.push(value);
+    request.push(value.trim());
   }
 
   return request;
