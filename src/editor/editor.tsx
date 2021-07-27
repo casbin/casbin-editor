@@ -1,6 +1,5 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties } from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-import { get, Persist, set } from './persist';
 
 import * as codemirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
@@ -12,57 +11,46 @@ import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/display/placeholder';
 import './casbin-mode/casbin-conf';
 import './casbin-mode/casbin-csv';
-import { ModelKind } from './casbin-mode/example';
+import './editor.css';
 
 interface CasbinCodeMirror {
-  modelKind: ModelKind;
+  content: string;
   options: codemirror.EditorConfiguration;
   style?: CSSProperties;
   onChange: (text: string) => void;
-  persist: Persist;
+  className?: string;
 }
 
 interface EditorProps {
-  modelKind: ModelKind;
+  text: string;
   onChange?: (text: string) => void;
   style?: CSSProperties;
 }
 
 const CasbinCodeMirror = (props: CasbinCodeMirror) => {
-  const [value, setValue] = useState(get(props.persist, props.modelKind));
-
-  const { modelKind, onChange, persist } = props;
-
-  useEffect(() => {
-    const modelText = get(persist, modelKind);
-    setValue(modelText);
-    onChange(modelText);
-    // eslint-disable-next-line
-  }, [modelKind, persist]);
-
   return (
-    <div style={props.style}>
+    <div style={props.style} className={props.className}>
       <CodeMirror
         onBeforeChange={(editor, data, value) => {
-          setValue(value);
           props.onChange(value);
-          set(props.persist, value);
         }}
         options={props.options}
-        value={value}
+        value={props.content}
       />
     </div>
   );
 };
 
 CasbinCodeMirror.defaultProps = {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onChange: () => {}
 };
 
 export const CustomFunctionEditor = (props: EditorProps) => {
   return (
     <CasbinCodeMirror
-      persist={Persist.CUSTOM_FUNCTION}
+      style={{ height: '100%' }}
+      content={props.text}
       options={{
         lineNumbers: true,
         indentUnit: 4,
@@ -72,6 +60,7 @@ export const CustomFunctionEditor = (props: EditorProps) => {
         lineWrapping: true,
         theme: 'monokai'
       }}
+      className={'function'}
       {...props}
     />
   );
@@ -80,7 +69,7 @@ export const CustomFunctionEditor = (props: EditorProps) => {
 export const ModelEditor = (props: EditorProps) => {
   return (
     <CasbinCodeMirror
-      persist={Persist.MODEL}
+      content={props.text}
       options={{
         lineNumbers: true,
         indentUnit: 4,
@@ -98,7 +87,7 @@ export const ModelEditor = (props: EditorProps) => {
 export const PolicyEditor = (props: EditorProps) => {
   return (
     <CasbinCodeMirror
-      persist={Persist.POLICY}
+      content={props.text}
       options={{
         lineNumbers: true,
         indentUnit: 4,
@@ -116,7 +105,7 @@ export const PolicyEditor = (props: EditorProps) => {
 export const RequestEditor = (props: EditorProps) => {
   return (
     <CasbinCodeMirror
-      persist={Persist.REQUEST}
+      content={props.text}
       options={{
         lineNumbers: true,
         indentUnit: 4,
