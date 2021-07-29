@@ -13,7 +13,7 @@ interface RunTestProps {
 }
 
 function parseABACRequest(line: string): any[] {
-  let value = '';
+  let value: string | Record<string, any> = '';
   let objectToken = 0;
   let parseToObject = false;
   const request = [];
@@ -24,7 +24,10 @@ function parseABACRequest(line: string): any[] {
         // eslint-disable-next-line
         value = eval(`(${value})`);
       }
-      request.push(value.trim());
+      if (typeof value === 'string') {
+        value = value.trim();
+      }
+      request.push(value);
 
       value = '';
       parseToObject = false;
@@ -53,7 +56,10 @@ function parseABACRequest(line: string): any[] {
       // eslint-disable-next-line
       value = eval(`(${value})`);
     }
-    request.push(value.trim());
+    if (typeof value === 'string') {
+      value = value.trim();
+    }
+    request.push(value);
   }
 
   return request;
