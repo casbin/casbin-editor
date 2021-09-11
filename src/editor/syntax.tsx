@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Echo } from '../ui';
-import { Config } from 'casbin';
+import { Config } from 'casbin.js';
 
 interface SyntaxProps {
   model: string;

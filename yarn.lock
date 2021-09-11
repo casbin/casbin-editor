@@ -2894,15 +2894,13 @@ capture-exit@^2.0.0:
   dependencies:
     rsvp "^4.8.4"
 
-casbin@5.11.3:
-  version "5.11.3"
-  resolved "https://registry.npmjs.org/casbin/-/casbin-5.11.3.tgz#7604bd66237424cdccf9f36f0d2478dfc4374bae"
-  integrity sha512-Bj/wQocX+swYEXsHyKV3d3TL7QKK/6BvGJJNodRLyMqP0pPR21JBEybQcqoHpUVDHvACo1rScus/MNmBbNmRVA==
+casbin.js@^1.0.0-beta.4:
+  version "1.0.0-beta.4"
+  resolved "https://registry.nlark.com/casbin.js/download/casbin.js-1.0.0-beta.4.tgz#0cd9c81cc2791a300bf79e60c7e64df022e9c80d"
+  integrity sha1-DNnIHMJ5GjAL955gx+ZN8CLpyA0=
   dependencies:
     await-lock "^2.0.1"
-    csv-parse "^4.15.3"
     expression-eval "^4.0.0"
-    picomatch "^2.2.3"
 
 case-sensitive-paths-webpack-plugin@2.3.0:
   version "2.3.0"
@@ -3667,11 +3665,6 @@ csstype@^3.0.2:
   version "3.0.8"
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.0.8.tgz#d2266a792729fb227cd216fb572f43728e1ad340"
   integrity sha512-jXKhWqXPmlUeoQnF/EhTtTl4C9SnrxSH/jZUih3jmO6lBKr99rP3/+FmrMj4EFpOXzMtXHAZkd3x0E6h6Fgflw==
-
-csv-parse@^4.15.3:
-  version "4.16.0"
-  resolved "https://registry.npmjs.org/csv-parse/-/csv-parse-4.16.0.tgz#b4c875e288a41f7ff917cb0d7d45880d563034f6"
-  integrity sha512-Zb4tGPANH4SW0LgC9+s9Mnequs9aqn7N3/pCqNbVjs2XhEF6yWNU2Vm4OGl1v2Go9nw8rXt87Cm2QN/o6Vpqgg==
 
 cyclist@^1.0.1:
   version "1.0.1"
@@ -7948,7 +7941,7 @@ performance-now@^2.1.0:
   resolved "https://registry.npmjs.org/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
-picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.2.3:
+picomatch@^2.0.4, picomatch@^2.2.1:
   version "2.3.0"
   resolved "https://registry.npmjs.org/picomatch/-/picomatch-2.3.0.tgz#f1f061de8f6a4bf022892e2d128234fb98302972"
   integrity sha512-lY1Q/PiJGC2zOv/z391WOTD+Z02bCgsFfvxoXXf6h7kv9o+WmsmzYqrAwY63sNgOxE4xEdq0WyUnXfKeBrSvYw==
