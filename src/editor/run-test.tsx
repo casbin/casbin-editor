@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Echo } from '../ui';
-import { DefaultRoleManager, newEnforcer, newModel, MemoryAdapter, Util } from 'casbin.js';
+import { DefaultRoleManager, newEnforcer, newModel, MemoryAdapter, Util } from 'casbin';
 
 interface RunTestProps {
   model: string;
