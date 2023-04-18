@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Echo } from '../ui';
-import { DefaultRoleManager, newEnforcer, newModel, MemoryAdapter, Util } from 'casbin';
+import { DefaultRoleManager, newEnforcer, newModel, StringAdapter, Util } from 'casbin';
 
 interface RunTestProps {
   model: string;
@@ -69,7 +69,7 @@ async function enforcer(props: RunTestProps) {
   const startTime = performance.now();
   const result = [];
   try {
-    const e = await newEnforcer(newModel(props.model), props.policy ? new MemoryAdapter(props.policy) : undefined);
+    const e = await newEnforcer(newModel(props.model), props.policy ? new StringAdapter(props.policy) : undefined);
 
     const customConfigCode = props.customConfig;
     if (customConfigCode) {
