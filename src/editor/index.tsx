@@ -8,9 +8,9 @@ import RunTest from './run-test';
 import { ModelKind } from './casbin-mode/example';
 import { Settings } from './settings';
 import styled from 'styled-components';
-// import { useLocalStorage } from './use-local-storage';
 import Share, { ShareFormat } from './share';
 import Copy from './copy';
+import { defaultEnforceContextData, SetupEnforceContext } from './setup-enforce-context';
 
 const Container = styled.div`
   display: flex;
@@ -26,6 +26,7 @@ export const EditorScreen = () => {
   const [requestResult, setRequestResult] = useState('');
   const [customConfig, setCustomConfig] = useState('');
   const [share, setShare] = useState('');
+  const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
 
   function setPolicyPersistent(text: string): void {
     set(Persist.POLICY, text);
@@ -47,6 +48,12 @@ export const EditorScreen = () => {
     setRequest(text);
   }
 
+  function setEnforceContextDataPersistent(map: Map<string, string>): void {
+    const text = JSON.stringify(Object.fromEntries(map));
+    set(Persist.ENFORCE_CONTEXT, text);
+    setEnforceContextData(new Map(map));
+  }
+
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     if (hash) {
@@ -59,6 +66,10 @@ export const EditorScreen = () => {
           setModelTextPersistent(sharedContent.model);
           setCustomConfigPersistent(sharedContent.customConfig);
           setRequestPersistent(sharedContent.request);
+          setRequestPersistent(sharedContent.request);
+          if (sharedContent.enforceContext) {
+            setEnforceContextDataPersistent(new Map(Object.entries(sharedContent.enforceContext)));
+          }
           setRequestResult('');
           window.location.hash = ''; // prevent duplicate load
           setEcho(<Echo>Shared Content Loaded.</Echo>);
@@ -74,6 +85,7 @@ export const EditorScreen = () => {
     setModelText(get(Persist.MODEL, modelKind));
     setRequest(get(Persist.REQUEST, modelKind));
     setCustomConfig(get(Persist.CUSTOM_FUNCTION, modelKind));
+    setEnforceContextData(new Map(Object.entries(JSON.parse(get(Persist.ENFORCE_CONTEXT, modelKind)!))));
   }, [modelKind]);
 
   function handleShare(v: JSX.Element | string) {
@@ -127,7 +139,10 @@ export const EditorScreen = () => {
 
         <FlexRow>
           <EditorContainer>
-            <HeaderTitle>Request</HeaderTitle>
+            <FlexRow>
+              <HeaderTitle>Request</HeaderTitle>
+              <SetupEnforceContext data={enforceContextData} onChange={setEnforceContextDataPersistent} />
+            </FlexRow>
             <RequestEditor text={request} onChange={setRequestPersistent} />
           </EditorContainer>
           <EditorContainer>
@@ -144,6 +159,7 @@ export const EditorScreen = () => {
             policy={policy}
             customConfig={customConfig}
             request={request}
+            enforceContextData={enforceContextData}
             onResponse={v => {
               if (isValidElement(v)) {
                 setEcho(v);
@@ -153,7 +169,14 @@ export const EditorScreen = () => {
             }}
           />
           {!share ? (
-            <Share onResponse={v => handleShare(v)} model={modelText} policy={policy} customConfig={customConfig} request={request} />
+            <Share
+              onResponse={v => handleShare(v)}
+              model={modelText}
+              policy={policy}
+              customConfig={customConfig}
+              request={request}
+              enforceContext={Object.entries(enforceContextData)}
+            />
           ) : (
             <Copy
               content={share}
