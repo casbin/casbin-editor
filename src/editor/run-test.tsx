@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Echo } from '../ui';
 import { DefaultRoleManager, newEnforcer, newModel, StringAdapter, Util } from 'casbin';
+import { newEnforceContext } from './setup-enforce-context';
 
 interface RunTestProps {
   model: string;
@@ -8,6 +9,7 @@ interface RunTestProps {
   policy: string;
   customConfig: string;
   request: string;
+  enforceContextData: Map<string, string>;
   onResponse: (com: JSX.Element | any[]) => void;
   // parseABAC: boolean;
 }
@@ -146,7 +148,9 @@ async function enforcer(props: RunTestProps) {
       }
 
       const rvals = parseABACRequest(n);
-      result.push(await e.enforce(...rvals));
+      const ctx = newEnforceContext(props.enforceContextData);
+
+      result.push(await e.enforce(ctx, ...rvals));
     }
 
     const stopTime = performance.now();

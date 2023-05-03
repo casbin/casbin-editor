@@ -1,12 +1,13 @@
-import { defaultCustomConfig, example, ModelKind } from './casbin-mode/example';
+import { defaultCustomConfig, defaultEnforceContext, example, ModelKind } from './casbin-mode/example';
 
-export const DEFAULT_MODEL: ModelKind = 'basic';
+export const DEFAULT_MODEL = 'basic';
 
 export enum Persist {
   MODEL,
   POLICY,
   REQUEST,
-  CUSTOM_FUNCTION
+  CUSTOM_FUNCTION,
+  ENFORCE_CONTEXT
 }
 
 function getKey(persist: Persist, modelName: string) {
@@ -22,7 +23,7 @@ export function setSelectedModel(value: string) {
   window.localStorage.setItem(Persist[Persist.MODEL], value);
 }
 
-export function get(persist: Persist, modelName: ModelKind = DEFAULT_MODEL) {
+export function get(persist: Persist, modelName: ModelKind = DEFAULT_MODEL): string {
   const data = window.localStorage.getItem(getKey(persist, modelName));
 
   if (data) {
@@ -39,6 +40,8 @@ export function get(persist: Persist, modelName: ModelKind = DEFAULT_MODEL) {
       return m.request;
     case Persist.CUSTOM_FUNCTION:
       return m.customConfig ? m.customConfig : defaultCustomConfig;
+    case Persist.ENFORCE_CONTEXT:
+      return m.enforceContext ? m.enforceContext : defaultEnforceContext;
   }
 }
 

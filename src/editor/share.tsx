@@ -10,6 +10,7 @@ export interface ShareFormat {
   policy: string;
   customConfig: string;
   request: string;
+  enforceContext: object;
 }
 
 async function dpaste(content: string) {
@@ -32,7 +33,8 @@ const Share = (props: ShareProps) => {
       model: props.model,
       policy: props.policy,
       customConfig: props.customConfig,
-      request: props.request
+      request: props.request,
+      enforceContext: props.enforceContext
     };
     dpaste(JSON.stringify(shareContent)).then((url: string) => {
       setSharing(false);
