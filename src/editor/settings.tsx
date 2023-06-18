@@ -53,7 +53,7 @@ export function Settings(props: SettingsProps) {
       <div style={{ display: open ? 'flex' : 'none', flexDirection: 'column', flexGrow: 1 }}>
         <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
           <span style={{ margin: '0.5rem 0' }}>Custom config</span>
-          <CustomFunctionEditor style={{ flex: 1 }} text={props.text} onChange={props.onCustomConfigChange} />
+          <CustomFunctionEditor style={{ flex: 1, position: 'relative' }} text={props.text} onChange={props.onCustomConfigChange} />
         </div>
       </div>
     </Container>
