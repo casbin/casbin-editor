@@ -188,12 +188,12 @@ g, /book/:id, pen_admin
     /**
      * Here is custom functions for Casbin.
      * Currently, there are built-in globMatch, keyMatch, keyMatch2, keyMatch3, keyMatch4, regexMatch, ipMatch.
-     * See https://casbin.org/docs/en/function#functions-in-matchers for more details.
+     * See https://casbin.org/docs/function#functions-in-matchers for more details.
      */
     functions: {},
     /**
      * The value comes from config.functions, Casbin will not use this configuration if the value is undefined.
-     * See https://casbin.org/docs/en/rbac#use-pattern-matching-in-rbac for more details.
+     * See https://casbin.org/docs/rbac#use-pattern-matching-in-rbac for more details.
      * example:
      * matchingForGFunction: 'globMatch'
      * matchingDomainForGFunction: 'keyMatch'
