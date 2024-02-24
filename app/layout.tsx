@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import type { Metadata } from 'next'
-import './globals.css'
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'casbin-editor',
   description: 'web playground for casbin',
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en">
       <body>{children}</body>
     </html>
-  )
+  );
 }

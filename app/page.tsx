@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-'use client'
-import { EditorScreen } from '@/app/components/editor'
+'use client';
+import { EditorScreen } from '@/app/components/editor';
 export default function Home() {
   return (
     <main>
@@ -34,5 +34,5 @@ export default function Home() {
         </span>
       </div>
     </main>
-  )
+  );
 }

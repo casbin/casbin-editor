@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { EditorProps } from '@/app/components/editor/editors/CustomFunctionEditor'
-import CodeMirror from '@uiw/react-codemirror'
-import { monokai } from '@uiw/codemirror-theme-monokai'
-import { basicSetup } from 'codemirror'
-import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf'
-import { indentUnit } from '@codemirror/language'
-import { EditorView } from '@codemirror/view'
-import React from 'react'
+import { EditorProps } from '@/app/components/editor/editors/CustomFunctionEditor';
+import CodeMirror from '@uiw/react-codemirror';
+import { monokai } from '@uiw/codemirror-theme-monokai';
+import { basicSetup } from 'codemirror';
+import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
+import { indentUnit } from '@codemirror/language';
+import { EditorView } from '@codemirror/view';
+import React from 'react';
 
 export const ModelEditor = (props: EditorProps) => {
   return (
@@ -27,7 +27,7 @@ export const ModelEditor = (props: EditorProps) => {
       <CodeMirror
         theme={monokai}
         onChange={(value) => {
-          props.onChange(value)
+          props.onChange(value);
         }}
         basicSetup={{
           lineNumbers: true,
@@ -45,5 +45,5 @@ export const ModelEditor = (props: EditorProps) => {
         value={props.text}
       />
     </div>
-  )
-}
+  );
+};

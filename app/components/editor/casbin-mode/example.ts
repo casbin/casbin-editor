@@ -15,12 +15,12 @@
 export const example: Record<
   string,
   {
-    name: string
-    model: string
-    policy: string
-    request: string
-    customConfig?: string
-    enforceContext?: string
+    name: string;
+    model: string;
+    policy: string;
+    request: string;
+    customConfig?: string;
+    enforceContext?: string;
   }
 > = {
   basic: {
@@ -428,7 +428,7 @@ g, bob, data2_allow_group`,
     customConfig: undefined,
     enforceContext: undefined,
   },
-}
+};
 
 export const defaultCustomConfig = `(function() {
   return {
@@ -446,12 +446,12 @@ export const defaultCustomConfig = `(function() {
     matchingForGFunction: undefined,
     matchingDomainForGFunction: undefined
   };
-})();`
+})();`;
 export const defaultEnforceContext = `{
   "r": "r",
   "p": "p",
   "e": "e",
   "m": "m"
-}`
+}`;
 
-export type ModelKind = string
+export type ModelKind = string;

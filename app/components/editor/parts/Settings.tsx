@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-import { CustomFunctionEditor } from '@/app/components/editor/editors/CustomFunctionEditor'
+import { CustomFunctionEditor } from '@/app/components/editor/editors/CustomFunctionEditor';
 
 interface SettingsProps {
-  text: string
-  onCustomConfigChange: (text: string) => void
+  text: string;
+  onCustomConfigChange: (text: string) => void;
 }
 
 export function Settings(props: SettingsProps) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(true);
 
   return (
     <div>
@@ -31,7 +31,7 @@ export function Settings(props: SettingsProps) {
         <div
           className={'h-10 w-10'}
           onClick={() => {
-            return setOpen(!open)
+            return setOpen(!open);
           }}
         >
           <svg
@@ -60,5 +60,5 @@ export function Settings(props: SettingsProps) {
         )}
       </div>
     </div>
-  )
+  );
 }

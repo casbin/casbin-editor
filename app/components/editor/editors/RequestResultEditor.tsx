@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { CSSProperties } from 'react'
-import CodeMirror from '@uiw/react-codemirror'
-import { monokai } from '@uiw/codemirror-theme-monokai'
-import { basicSetup } from 'codemirror'
-import { javascriptLanguage } from '@codemirror/lang-javascript'
-import { indentUnit } from '@codemirror/language'
-import { EditorView } from '@codemirror/view'
+import React, { CSSProperties } from 'react';
+import CodeMirror from '@uiw/react-codemirror';
+import { monokai } from '@uiw/codemirror-theme-monokai';
+import { basicSetup } from 'codemirror';
+import { javascriptLanguage } from '@codemirror/lang-javascript';
+import { indentUnit } from '@codemirror/language';
+import { EditorView } from '@codemirror/view';
 
 interface RequestResultEditorProps {
-  value: string
-  style?: CSSProperties
+  value: string;
+  style?: CSSProperties;
 }
 
 export const RequestResultEditor = (props: RequestResultEditorProps) => {
@@ -30,7 +30,7 @@ export const RequestResultEditor = (props: RequestResultEditorProps) => {
     <div style={props.style}>
       <CodeMirror
         onChange={() => {
-          return
+          return;
         }}
         theme={monokai}
         extensions={[
@@ -48,5 +48,5 @@ export const RequestResultEditor = (props: RequestResultEditorProps) => {
         value={props.value}
       />
     </div>
-  )
-}
+  );
+};

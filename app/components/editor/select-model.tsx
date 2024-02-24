@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react'
-import { ModelKind, example } from './casbin-mode/example'
+import React from 'react';
+import { ModelKind, example } from './casbin-mode/example';
 
 interface SelectModelProps {
-  onChange: (value: string) => void
+  onChange: (value: string) => void;
 }
 
 const SelectModel = (props: SelectModelProps) => {
@@ -24,8 +24,8 @@ const SelectModel = (props: SelectModelProps) => {
     <select
       defaultValue={''}
       onChange={(e) => {
-        const model = e.target.value
-        props.onChange(model)
+        const model = e.target.value;
+        props.onChange(model);
       }}
     >
       <option value="" disabled>
@@ -36,10 +36,10 @@ const SelectModel = (props: SelectModelProps) => {
           <option key={n} value={n}>
             {example[n as ModelKind].name}
           </option>
-        )
+        );
       })}
     </select>
-  )
-}
+  );
+};
 
-export default SelectModel
+export default SelectModel;

@@ -12,26 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react'
+import React from 'react';
 
 interface CopyProps {
-  content: string
-  cb: () => void
+  content: string;
+  cb: () => void;
 }
 
 const Copy = (props: CopyProps) => {
   function copy(data: string): void {
     const listener = (e: ClipboardEvent) => {
       if (!e.clipboardData) {
-        throw new Error('Clipboard API unavailable.')
+        throw new Error('Clipboard API unavailable.');
       }
-      e.clipboardData.setData('text/plain', data)
-      e.preventDefault()
-      document.removeEventListener('copy', listener)
-    }
-    document.addEventListener('copy', listener)
-    document.execCommand('copy')
-    props.cb()
+      e.clipboardData.setData('text/plain', data);
+      e.preventDefault();
+      document.removeEventListener('copy', listener);
+    };
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    props.cb();
   }
 
   return (
@@ -40,12 +40,12 @@ const Copy = (props: CopyProps) => {
       onClick={() => {
         return copy(
           `${window.location.origin + window.location.pathname}#${props.content}`,
-        )
+        );
       }}
     >
       COPY
     </button>
-  )
-}
+  );
+};
 
-export default Copy
+export default Copy;

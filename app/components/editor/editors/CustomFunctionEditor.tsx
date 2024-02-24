@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import CodeMirror from '@uiw/react-codemirror'
-import { monokai } from '@uiw/codemirror-theme-monokai'
-import { basicSetup } from 'codemirror'
-import { indentUnit, StreamLanguage } from '@codemirror/language'
-import { go } from '@codemirror/legacy-modes/mode/go'
-import { EditorView } from '@codemirror/view'
-import React, { CSSProperties } from 'react'
+import CodeMirror from '@uiw/react-codemirror';
+import { monokai } from '@uiw/codemirror-theme-monokai';
+import { basicSetup } from 'codemirror';
+import { indentUnit, StreamLanguage } from '@codemirror/language';
+import { go } from '@codemirror/legacy-modes/mode/go';
+import { EditorView } from '@codemirror/view';
+import React, { CSSProperties } from 'react';
 export interface EditorProps {
-  text: string
-  onChange: (text: string) => void
-  style?: CSSProperties
+  text: string;
+  onChange: (text: string) => void;
+  style?: CSSProperties;
 }
 export const CustomFunctionEditor = (props: EditorProps) => {
   return (
     <div style={{ height: '100%', ...props.style }}>
       <CodeMirror
         onChange={(value) => {
-          props.onChange(value)
+          props.onChange(value);
         }}
         theme={monokai}
         basicSetup={{
@@ -48,5 +48,5 @@ export const CustomFunctionEditor = (props: EditorProps) => {
         value={props.text}
       />
     </div>
-  )
-}
+  );
+};

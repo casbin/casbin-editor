@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { PolicyEditor } from '@/app/components/editor/editors/PolicyEditor'
-import React from 'react'
+import { PolicyEditor } from '@/app/components/editor/editors/PolicyEditor';
+import React from 'react';
 interface Props {
-  policy: string
-  setPolicyPersistent: (value: string) => void
+  policy: string;
+  setPolicyPersistent: (value: string) => void;
 }
 
 export default function Policy({ policy, setPolicyPersistent }: Props) {
@@ -25,5 +25,5 @@ export default function Policy({ policy, setPolicyPersistent }: Props) {
       <div className={'h-10 flex items-center justify-center '}>Policy</div>
       <PolicyEditor text={policy} onChange={setPolicyPersistent} />
     </div>
-  )
+  );
 }

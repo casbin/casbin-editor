@@ -17,41 +17,41 @@ import {
   LanguageSupport,
   StreamLanguage,
   StringStream,
-} from '@codemirror/language'
-import { tags as t } from '@lezer/highlight'
+} from '@codemirror/language';
+import { tags as t } from '@lezer/highlight';
 
 const token = (stream: StringStream, state) => {
-  const ch = stream.peek()
+  const ch = stream.peek();
 
   if (ch === '#') {
-    stream.skipToEnd()
-    return 'comment'
+    stream.skipToEnd();
+    return 'comment';
   } else if (ch === ',') {
-    stream.eat(',')
-    return ''
+    stream.eat(',');
+    return '';
   }
 
   if (stream.sol() && stream.match('p')) {
-    return 'def'
+    return 'def';
   }
   if (stream.sol() && (stream.match('g2') || stream.match('g'))) {
-    return 'keyword'
+    return 'keyword';
   }
 
   if (stream.skipTo(',')) {
-    return 'string'
+    return 'string';
   }
 
-  stream.skipToEnd()
-  return 'property'
+  stream.skipToEnd();
+  return 'property';
 
   // stream.next();
-}
+};
 
 export const CasbinPolicyLang = StreamLanguage.define({
   name: 'firestore',
   startState: (indentUnit: number) => {
-    return {}
+    return {};
   },
   token: token,
   blankLine: (state: {}, indentUnit: number): void => {},
@@ -61,7 +61,7 @@ export const CasbinPolicyLang = StreamLanguage.define({
     textAfter: string,
     context: IndentContext,
   ): number | null => {
-    return 0
+    return 0;
   },
   languageData: {
     commentTokens: { line: ';' },
@@ -71,8 +71,8 @@ export const CasbinPolicyLang = StreamLanguage.define({
     read: t.keyword,
     write: t.keyword,
   },
-})
+});
 
 export function CasbinPolicySupport() {
-  return new LanguageSupport(CasbinPolicyLang)
+  return new LanguageSupport(CasbinPolicyLang);
 }

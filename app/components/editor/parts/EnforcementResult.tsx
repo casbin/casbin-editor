@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { RequestResultEditor } from '@/app/components/editor/editors/RequestResultEditor'
-import React from 'react'
+import { RequestResultEditor } from '@/app/components/editor/editors/RequestResultEditor';
+import React from 'react';
 interface Props {
-  requestResult: string
+  requestResult: string;
 }
 
 export default function EnforcementResult({ requestResult }: Props) {
@@ -26,5 +26,5 @@ export default function EnforcementResult({ requestResult }: Props) {
       </div>
       <RequestResultEditor value={requestResult} />
     </div>
-  )
+  );
 }

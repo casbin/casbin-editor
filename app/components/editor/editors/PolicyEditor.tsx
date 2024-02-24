@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { EditorProps } from '@/app/components/editor/editors/CustomFunctionEditor'
-import CodeMirror from '@uiw/react-codemirror'
-import { basicSetup } from 'codemirror'
-import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv'
-import { indentUnit } from '@codemirror/language'
-import { EditorView } from '@codemirror/view'
-import { monokai } from '@uiw/codemirror-theme-monokai'
-import React from 'react'
+import { EditorProps } from '@/app/components/editor/editors/CustomFunctionEditor';
+import CodeMirror from '@uiw/react-codemirror';
+import { basicSetup } from 'codemirror';
+import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
+import { indentUnit } from '@codemirror/language';
+import { EditorView } from '@codemirror/view';
+import { monokai } from '@uiw/codemirror-theme-monokai';
+import React from 'react';
 
 export const PolicyEditor = (props: EditorProps) => {
   return (
@@ -39,11 +39,11 @@ export const PolicyEditor = (props: EditorProps) => {
         }}
         theme={monokai}
         onChange={(value) => {
-          props.onChange(value)
+          props.onChange(value);
         }}
         className={'function'}
         value={props.text}
       />
     </div>
-  )
-}
+  );
+};

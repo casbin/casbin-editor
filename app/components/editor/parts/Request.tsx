@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { SetupEnforceContext } from '@/app/components/editor/setup-enforce-context'
-import { RequestEditor } from '@/app/components/editor/editors/RequestEditor'
-import React from 'react'
+import { SetupEnforceContext } from '@/app/components/editor/setup-enforce-context';
+import { RequestEditor } from '@/app/components/editor/editors/RequestEditor';
+import React from 'react';
 interface Props {
-  request: string
-  setRequestPersistent: (value: string) => void
-  enforceContextData: Map<string, string>
-  setEnforceContextDataPersistent: (value: Map<string, string>) => void
+  request: string;
+  setRequestPersistent: (value: string) => void;
+  enforceContextData: Map<string, string>;
+  setEnforceContextDataPersistent: (value: Map<string, string>) => void;
 }
 
 export default function Request({
@@ -39,5 +39,5 @@ export default function Request({
       </div>
       <RequestEditor text={request} onChange={setRequestPersistent} />
     </div>
-  )
+  );
 }
