@@ -1,6 +1,25 @@
+// Copyright 2024 The casbin Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import React from 'react';
-import { Button, Echo } from '../ui';
-import { DefaultRoleManager, newEnforcer, newModel, StringAdapter, Util } from 'casbin';
+import {
+  DefaultRoleManager,
+  newEnforcer,
+  newModel,
+  StringAdapter,
+  Util,
+} from 'casbin';
 import { newEnforceContext } from './setup-enforce-context';
 
 interface RunTestProps {
@@ -29,6 +48,7 @@ function parseABACRequest(line: string): any[] {
       if (typeof value === 'string') {
         value = value.trim();
       }
+      // @ts-ignore
       request.push(value);
 
       value = '';
@@ -61,6 +81,7 @@ function parseABACRequest(line: string): any[] {
     if (typeof value === 'string') {
       value = value.trim();
     }
+    // @ts-ignore
     request.push(value);
   }
 
@@ -71,7 +92,10 @@ async function enforcer(props: RunTestProps) {
   const startTime = performance.now();
   const result = [];
   try {
-    const e = await newEnforcer(newModel(props.model), props.policy ? new StringAdapter(props.policy) : undefined);
+    const e = await newEnforcer(
+      newModel(props.model),
+      props.policy ? new StringAdapter(props.policy) : undefined,
+    );
 
     const customConfigCode = props.customConfig;
     if (customConfigCode) {
@@ -85,15 +109,20 @@ async function enforcer(props: RunTestProps) {
           keyMatch4: Util.keyMatch4Func,
           regexMatch: Util.regexMatchFunc,
           ipMatch: Util.ipMatchFunc,
-          globMatch: Util.globMatch
+          globMatch: Util.globMatch,
         };
 
         // eslint-disable-next-line
         let config = eval(customConfigCode);
         if (config) {
-          config = { ...config, functions: { ...config.functions, ...builtinFunc } };
+          config = {
+            ...config,
+            functions: { ...config.functions, ...builtinFunc },
+          };
           if (config?.functions) {
-            Object.keys(config.functions).forEach(key => e.addFunction(key, config.functions[key]));
+            Object.keys(config.functions).forEach((key) => {
+              return e.addFunction(key, config.functions[key]);
+            });
           }
 
           const rm = e.getRoleManager() as DefaultRoleManager;
@@ -104,9 +133,15 @@ async function enforcer(props: RunTestProps) {
             }
             if (typeof matchingForGFunction === 'string') {
               if (matchingForGFunction in config.functions) {
-                await rm.addMatchingFunc(config.functions[matchingForGFunction]);
+                await rm.addMatchingFunc(
+                  config.functions[matchingForGFunction],
+                );
               } else {
-                props.onResponse(<Echo type={'error'}>Must sure the {matchingForGFunction}() in config.functions</Echo>);
+                props.onResponse(
+                  <div>
+                    Must sure the {matchingForGFunction}() in config.functions
+                  </div>,
+                );
                 return;
               }
             }
@@ -119,16 +154,27 @@ async function enforcer(props: RunTestProps) {
             }
             if (typeof matchingDomainForGFunction === 'string') {
               if (matchingDomainForGFunction in config.functions) {
-                await rm.addDomainMatchingFunc(config.functions[matchingDomainForGFunction]);
+                await rm.addDomainMatchingFunc(
+                  config.functions[matchingDomainForGFunction],
+                );
               } else {
-                props.onResponse(<Echo type={'error'}>Must sure the {matchingDomainForGFunction}() in config.functions</Echo>);
+                props.onResponse(
+                  <div>
+                    Must sure the {matchingDomainForGFunction}() in
+                    config.functions
+                  </div>,
+                );
                 return;
               }
             }
           }
         }
       } catch (e) {
-        props.onResponse(<Echo type={'error'}>Please check syntax in Custom Function Editor: {e.message}</Echo>);
+        props.onResponse(
+          <div>
+            Please check syntax in Custom Function Editor: {(e as any).message}
+          </div>,
+        );
         return;
       }
     }
@@ -138,11 +184,13 @@ async function enforcer(props: RunTestProps) {
     for (const n of requests) {
       const line = n.trim();
       if (!line) {
+        // @ts-ignore
         result.push('// ignore');
         continue;
       }
 
       if (line[0] === '#') {
+        // @ts-ignore
         result.push('// ignore');
         continue;
       }
@@ -150,24 +198,32 @@ async function enforcer(props: RunTestProps) {
       const rvals = parseABACRequest(n);
       const ctx = newEnforceContext(props.enforceContextData);
 
+      // @ts-ignore
       result.push(await e.enforce(ctx, ...rvals));
     }
 
     const stopTime = performance.now();
 
-    props.onResponse(<Echo>{'Done in ' + (stopTime - startTime).toFixed(2) + 'ms'}</Echo>);
+    props.onResponse(
+      <div>{'Done in ' + (stopTime - startTime).toFixed(2) + 'ms'}</div>,
+    );
     props.onResponse(result);
   } catch (e) {
-    props.onResponse(<Echo type={'error'}>{e.message}</Echo>);
+    props.onResponse(<div>{(e as any).message}</div>);
     props.onResponse([]);
   }
 }
 
 const RunTest = (props: RunTestProps) => {
   return (
-    <Button style={{ marginRight: 8 }} onClick={() => enforcer(props)}>
+    <button
+      style={{ marginRight: 8 }}
+      onClick={() => {
+        return enforcer(props);
+      }}
+    >
       RUN THE TEST
-    </Button>
+    </button>
   );
 };
 

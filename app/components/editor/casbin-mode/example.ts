@@ -1,7 +1,27 @@
-/* eslint-disable @typescript-eslint/camelcase */
+// Copyright 2024 The casbin Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 export const example: Record<
   string,
-  { name: string; model: string; policy: string; request: string; customConfig?: string; enforceContext?: string }
+  {
+    name: string;
+    model: string;
+    policy: string;
+    request: string;
+    customConfig?: string;
+    enforceContext?: string;
+  }
 > = {
   basic: {
     name: 'ACL',
@@ -20,7 +40,7 @@ m = r.sub == p.sub && r.obj == p.obj && r.act == p.act`,
 p, bob, data2, write`,
     request: `alice, data1, read`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   basic_with_root: {
     name: 'ACL with superuser',
@@ -39,7 +59,7 @@ m = r.sub == p.sub && r.obj == p.obj && r.act == p.act || r.sub == "root"`,
 p, bob, data2, write`,
     request: `alice, data1, read`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   basic_without_resources: {
     name: 'ACL without resources',
@@ -58,7 +78,7 @@ m = r.sub == p.sub && r.act == p.act`,
 p, bob, write`,
     request: `alice, read`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   basic_without_users: {
     name: 'ACL without users',
@@ -77,7 +97,7 @@ m = r.obj == p.obj && r.act == p.act`,
 p, data2, write`,
     request: `data1, read`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   rbac: {
     name: 'RBAC',
@@ -103,7 +123,7 @@ p, data2_admin, data2, write
 g, alice, data2_admin`,
     request: `alice, data2, read`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   rbac_with_resource_roles: {
     name: 'RBAC with resource roles',
@@ -134,7 +154,7 @@ alice, data1, write
 alice, data2, read
 alice, data2, write `,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   rbac_with_domains: {
     name: 'RBAC with domains/tenants',
@@ -161,7 +181,7 @@ g, alice, admin, domain1
 g, bob, admin, domain2`,
     request: `alice, domain1, data1, read`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   rbac_with_pattern: {
     name: 'RBAC with pattern',
@@ -202,7 +222,7 @@ g, /book/:id, pen_admin
     matchingDomainForGFunction: undefined
   };
 })();`,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   rbac_with_all_pattern: {
     name: 'RBAC with all pattern',
@@ -244,7 +264,7 @@ g, /book/:id, book_group, *`,
     matchingDomainForGFunction: 'keyMatch2'
   };
 })();`,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   rbac_with_deny: {
     name: 'RBAC with deny-override',
@@ -272,7 +292,7 @@ g, alice, data2_admin`,
     request: `alice, data1, read
 alice, data2, write`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   abac: {
     name: 'ABAC',
@@ -291,7 +311,7 @@ m = r.sub == r.obj.Owner`,
     request: `alice, { Owner: 'alice'}
 alice, { Owner: 'bob'}`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   abac_with_policy_rule: {
     name: 'ABAC with policy rule',
@@ -310,7 +330,7 @@ m = eval(p.sub_rule) && r.obj == p.obj && r.act == p.act`,
 `,
     request: `{ Age: 30}, /data1, read`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   keymatch: {
     name: 'RESTful (KeyMatch)',
@@ -334,7 +354,7 @@ p, bob, /bob_data/*, POST
 p, cathy, /cathy_data, (GET)|(POST)`,
     request: 'alice, /alice_data/hello, GET',
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   keymatch2: {
     name: 'RESTful (KeyMatch2)',
@@ -354,7 +374,7 @@ p, alice, /alice_data2/:id/using/:resId, GET`,
     request: `alice, /alice_data/hello, GET
 alice, /alice_data/hello, POST`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   ipmatch: {
     name: 'IP match',
@@ -374,7 +394,7 @@ p, 10.0.0.0/16, data2, write`,
     request: `192.168.2.1, data1, read
 10.0.2.3, data2, write`,
     customConfig: undefined,
-    enforceContext: undefined
+    enforceContext: undefined,
   },
   priority: {
     name: 'Priority',
@@ -406,8 +426,8 @@ p, bob, data2, write, deny
 g, bob, data2_allow_group`,
     request: `alice, data1, read`,
     customConfig: undefined,
-    enforceContext: undefined
-  }
+    enforceContext: undefined,
+  },
 };
 
 export const defaultCustomConfig = `(function() {
@@ -431,7 +451,7 @@ export const defaultEnforceContext = `{
   "r": "r",
   "p": "p",
   "e": "e",
-  "m": "m" 
+  "m": "m"
 }`;
 
 export type ModelKind = string;
