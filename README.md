@@ -1,6 +1,6 @@
 # Casbin-editor
 
-Casbin-editor is a web-based Casbin model and policy editor. It's based on React + TypeScript.
+Casbin-editor is a web-based Casbin model and policy editor. It's based on Next.js + TypeScript.
 
 Use the Casbin-editor to write your Casbin model and policy in your web browser.
 It provides functionality such as syntax highlighting and code completion, just like an IDE for a programming language.
@@ -16,19 +16,23 @@ Casbin-editor is a pure frontend Javascript project. It uses [node-casbin](https
 
 This project can be viewed as an example for using node-casbin in the browser.
 
-## Getting started
+## For Dev
 
 ```shell
-npm install
-npm start
+yarn install
+yarn dev
 ```
 
 Open browser: http://localhost:3000/
 
-## Deployment
+## Production Preview
 
-```
-npm deploy
+
+```shell
+yarn build
+
+# Make sure port 3000 is not in use
+yarn start
 ```
 
-The generated static pages will be pushed into `gh-pages` branch of `origin` and published in GitHub Pages (https://editor.casbin.org). The Casbin official site (https://casbin.org/editor) uses iframe to embed the published GitHub pages. 
+Open browser: http://localhost:3000/
