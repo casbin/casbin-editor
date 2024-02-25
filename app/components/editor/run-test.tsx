@@ -21,6 +21,7 @@ import {
   Util,
 } from 'casbin';
 import { newEnforceContext } from './setup-enforce-context';
+import { Button } from '@/components/ui/button';
 
 interface RunTestProps {
   model: string;
@@ -216,14 +217,14 @@ async function enforcer(props: RunTestProps) {
 
 const RunTest = (props: RunTestProps) => {
   return (
-    <button
+    <Button
       style={{ marginRight: 8 }}
       onClick={() => {
         return enforcer(props);
       }}
     >
       RUN THE TEST
-    </button>
+    </Button>
   );
 };
 

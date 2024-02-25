@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 interface ShareProps extends ShareFormat {
   onResponse: (info: JSX.Element | string) => void;
@@ -57,14 +58,14 @@ const Share = (props: ShareProps) => {
   }
 
   return (
-    <button
+    <Button
       style={{ marginRight: 8 }}
       onClick={() => {
         return shareInfo(props);
       }}
     >
       SHARE
-    </button>
+    </Button>
   );
 };
 

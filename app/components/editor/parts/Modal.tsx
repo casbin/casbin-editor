@@ -16,6 +16,7 @@ import SelectModel from '@/app/components/editor/select-model';
 import { ModelKind } from '@/app/components/editor/casbin-mode/example';
 import { ModelEditor } from '@/app/components/editor/editors/ModalEditor';
 import React from 'react';
+import { Button } from '@/components/ui/button';
 interface Props {
   setModelKind: (value: string) => void;
   modelText: string;
@@ -36,7 +37,7 @@ export default function Modal({
             setModelKind(value as ModelKind);
           }}
         />
-        <button
+        <Button
           onClick={() => {
             const ok = window.confirm('Confirm Reset?');
             if (ok) {
@@ -45,7 +46,7 @@ export default function Modal({
           }}
         >
           Reset
-        </button>
+        </Button>
       </div>
       <ModelEditor text={modelText} onChange={setModelTextPersistent} />
     </div>

@@ -14,6 +14,7 @@
 
 import React from 'react';
 import { Config } from 'casbin';
+import { Button } from '@/components/ui/button';
 
 interface SyntaxProps {
   model: string;
@@ -22,7 +23,7 @@ interface SyntaxProps {
 
 const Syntax = (props: SyntaxProps) => {
   return (
-    <button
+    <Button
       style={{ marginRight: 8 }}
       onClick={() => {
         try {
@@ -34,7 +35,7 @@ const Syntax = (props: SyntaxProps) => {
       }}
     >
       SYNTAX VALIDATE
-    </button>
+    </Button>
   );
 };
 

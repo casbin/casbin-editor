@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
 
 interface CopyProps {
   content: string;
@@ -35,7 +36,7 @@ const Copy = (props: CopyProps) => {
   }
 
   return (
-    <button
+    <Button
       style={{ marginRight: 8 }}
       onClick={() => {
         return copy(
@@ -44,7 +45,7 @@ const Copy = (props: CopyProps) => {
       }}
     >
       COPY
-    </button>
+    </Button>
   );
 };
 
