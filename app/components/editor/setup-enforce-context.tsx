@@ -14,6 +14,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { EnforceContext } from 'casbin';
+import { Input } from '@/components/ui/input';
 
 interface SetupEnforceContextProps {
   data: Map<string, string>;
@@ -57,8 +58,8 @@ export const SetupEnforceContext = ({
   }, [data]);
 
   return (
-    <div className={''}>
-      <input
+    <div className={'flex flex-row'}>
+      <Input
         className={'w-10'}
         value={enforceContextData.get(r)}
         placeholder={r}
@@ -66,7 +67,7 @@ export const SetupEnforceContext = ({
           return handleEnforceContextChange(r, event.target.value);
         }}
       />
-      <input
+      <Input
         className={'w-10'}
         value={enforceContextData.get(p)}
         placeholder={p}
@@ -74,7 +75,7 @@ export const SetupEnforceContext = ({
           return handleEnforceContextChange(p, event.target.value);
         }}
       />
-      <input
+      <Input
         className={'w-10'}
         value={enforceContextData.get(e)}
         placeholder={e}
@@ -82,7 +83,7 @@ export const SetupEnforceContext = ({
           return handleEnforceContextChange(e, event.target.value);
         }}
       />
-      <input
+      <Input
         className={'w-10'}
         value={enforceContextData.get(m)}
         placeholder={m}
