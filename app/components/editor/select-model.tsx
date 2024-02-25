@@ -14,6 +14,13 @@
 
 import React from 'react';
 import { ModelKind, example } from './casbin-mode/example';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface SelectModelProps {
   onChange: (value: string) => void;
@@ -21,24 +28,25 @@ interface SelectModelProps {
 
 const SelectModel = (props: SelectModelProps) => {
   return (
-    <select
+    <Select
       defaultValue={''}
-      onChange={(e) => {
-        const model = e.target.value;
-        props.onChange(model);
+      onValueChange={(value) => {
+        props.onChange(value);
       }}
     >
-      <option value="" disabled>
-        Select your model
-      </option>
-      {Object.keys(example).map((n) => {
-        return (
-          <option key={n} value={n}>
-            {example[n as ModelKind].name}
-          </option>
-        );
-      })}
-    </select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select your model" />
+      </SelectTrigger>
+      <SelectContent>
+        {Object.keys(example).map((n) => {
+          return (
+            <SelectItem key={n} value={n}>
+              {example[n as ModelKind].name}
+            </SelectItem>
+          );
+        })}
+      </SelectContent>
+    </Select>
   );
 };
 
