@@ -23,14 +23,13 @@ interface Props {
 export default function Policy({ policy, setPolicyPersistent }: Props) {
   return (
     <div>
-      <h4
-        className={clsx(
-          'h-10 flex items-center justify-center ',
-          'scroll-m-20 text-2xl font-semibold tracking-tight',
-        )}
-      >
-        Policy
-      </h4>
+      <div className={clsx('h-10 flex items-center justify-start')}>
+        <h4
+          className={clsx('scroll-m-20 text-2xl font-semibold tracking-tight')}
+        >
+          Policy
+        </h4>
+      </div>
       <PolicyEditor text={policy} onChange={setPolicyPersistent} />
     </div>
   );

@@ -31,18 +31,17 @@ export default function Request({
 }: Props) {
   return (
     <div>
-      <h4
-        className={clsx(
-          'h-10 flex items-center justify-center ',
-          'scroll-m-20 text-2xl font-semibold tracking-tight',
-        )}
-      >
-        <div>Request</div>
+      <div className={clsx('h-10', 'flex items-center justify-start gap-2')}>
+        <h4
+          className={clsx('scroll-m-20 text-2xl font-semibold tracking-tight')}
+        >
+          Request
+        </h4>
         <SetupEnforceContext
           data={enforceContextData}
           onChange={setEnforceContextDataPersistent}
         />
-      </h4>
+      </div>
       <RequestEditor text={request} onChange={setRequestPersistent} />
     </div>
   );

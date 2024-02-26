@@ -31,10 +31,11 @@ export default function Modal({
 }: Props) {
   return (
     <div>
-      <div className={'flex flex-row items-center'}>
+      <div className={'flex flex-row items-center space-x-2'}>
         <h4
           className={clsx(
-            'h-10 flex items-center justify-center ',
+            'h-10',
+            'flex items-center justify-center ',
             'scroll-m-20 text-2xl font-semibold tracking-tight',
           )}
         >

@@ -122,7 +122,7 @@ export const EditorScreen = () => {
   }
 
   return (
-    <div className={clsx('flex flex-row  gap-1')}>
+    <div className={clsx('flex flex-row  gap-2')}>
       <div className={'max-w-64'}>
         <Settings
           text={customConfig}
@@ -131,8 +131,8 @@ export const EditorScreen = () => {
           }}
         />
       </div>
-      <div className={clsx('flex flex-col grow')}>
-        <div className={clsx('flex flex-row  gap-1')}>
+      <div className={clsx('grow', 'flex flex-col gap-2')}>
+        <div className={clsx('', 'flex flex-row gap-1')}>
           <div className={'flex-1'}>
             <Modal
               setModelKind={setModelKind}

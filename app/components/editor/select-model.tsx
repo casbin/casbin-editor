@@ -29,7 +29,7 @@ interface SelectModelProps {
 const SelectModel = (props: SelectModelProps) => {
   return (
     <Select
-      defaultValue={''}
+      defaultValue={'basic'}
       onValueChange={(value) => {
         props.onChange(value);
       }}

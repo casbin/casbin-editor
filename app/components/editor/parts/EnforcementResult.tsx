@@ -22,14 +22,13 @@ interface Props {
 export default function EnforcementResult({ requestResult }: Props) {
   return (
     <div>
-      <h4
-        className={clsx(
-          'h-10 flex items-center justify-center ',
-          'scroll-m-20 text-2xl font-semibold tracking-tight',
-        )}
-      >
-        Enforcement Result
-      </h4>
+      <div className={clsx('h-10 flex items-center justify-start ')}>
+        <h4
+          className={clsx('scroll-m-20 text-2xl font-semibold tracking-tight')}
+        >
+          Enforcement Result
+        </h4>
+      </div>
       <RequestResultEditor value={requestResult} />
     </div>
   );
