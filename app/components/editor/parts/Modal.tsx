@@ -17,6 +17,7 @@ import { ModelKind } from '@/app/components/editor/casbin-mode/example';
 import { ModelEditor } from '@/app/components/editor/editors/ModalEditor';
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { clsx } from 'clsx';
 interface Props {
   setModelKind: (value: string) => void;
   modelText: string;
@@ -31,7 +32,14 @@ export default function Modal({
   return (
     <div>
       <div className={'flex flex-row items-center'}>
-        <div className={'h-10 flex items-center justify-center '}>Model</div>
+        <h4
+          className={clsx(
+            'h-10 flex items-center justify-center ',
+            'scroll-m-20 text-2xl font-semibold tracking-tight',
+          )}
+        >
+          Model
+        </h4>
         <SelectModel
           onChange={(value) => {
             setModelKind(value as ModelKind);

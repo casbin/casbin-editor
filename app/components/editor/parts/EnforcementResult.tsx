@@ -14,6 +14,7 @@
 
 import { RequestResultEditor } from '@/app/components/editor/editors/RequestResultEditor';
 import React from 'react';
+import { clsx } from 'clsx';
 interface Props {
   requestResult: string;
 }
@@ -21,9 +22,14 @@ interface Props {
 export default function EnforcementResult({ requestResult }: Props) {
   return (
     <div>
-      <div className={'h-10 flex items-center justify-center '}>
+      <h4
+        className={clsx(
+          'h-10 flex items-center justify-center ',
+          'scroll-m-20 text-2xl font-semibold tracking-tight',
+        )}
+      >
         Enforcement Result
-      </div>
+      </h4>
       <RequestResultEditor value={requestResult} />
     </div>
   );

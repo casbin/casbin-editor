@@ -15,6 +15,7 @@
 import React, { useState } from 'react';
 
 import { CustomFunctionEditor } from '@/app/components/editor/editors/CustomFunctionEditor';
+import { clsx } from 'clsx';
 
 interface SettingsProps {
   text: string;
@@ -27,7 +28,11 @@ export function Settings(props: SettingsProps) {
   return (
     <div>
       <div className={'h-10 flex items-center justify-center '}>
-        <span>Custom config</span>
+        <h4
+          className={clsx('scroll-m-20 text-2xl font-semibold tracking-tight')}
+        >
+          Custom config
+        </h4>
         <div
           className={'h-10 w-10'}
           onClick={() => {

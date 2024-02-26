@@ -15,6 +15,7 @@
 import { SetupEnforceContext } from '@/app/components/editor/setup-enforce-context';
 import { RequestEditor } from '@/app/components/editor/editors/RequestEditor';
 import React from 'react';
+import { clsx } from 'clsx';
 interface Props {
   request: string;
   setRequestPersistent: (value: string) => void;
@@ -30,13 +31,18 @@ export default function Request({
 }: Props) {
   return (
     <div>
-      <div className={'h-10 flex items-center justify-center '}>
+      <h4
+        className={clsx(
+          'h-10 flex items-center justify-center ',
+          'scroll-m-20 text-2xl font-semibold tracking-tight',
+        )}
+      >
         <div>Request</div>
         <SetupEnforceContext
           data={enforceContextData}
           onChange={setEnforceContextDataPersistent}
         />
-      </div>
+      </h4>
       <RequestEditor text={request} onChange={setRequestPersistent} />
     </div>
   );

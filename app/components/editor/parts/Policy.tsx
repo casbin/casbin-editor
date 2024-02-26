@@ -14,6 +14,7 @@
 
 import { PolicyEditor } from '@/app/components/editor/editors/PolicyEditor';
 import React from 'react';
+import { clsx } from 'clsx';
 interface Props {
   policy: string;
   setPolicyPersistent: (value: string) => void;
@@ -22,7 +23,14 @@ interface Props {
 export default function Policy({ policy, setPolicyPersistent }: Props) {
   return (
     <div>
-      <div className={'h-10 flex items-center justify-center '}>Policy</div>
+      <h4
+        className={clsx(
+          'h-10 flex items-center justify-center ',
+          'scroll-m-20 text-2xl font-semibold tracking-tight',
+        )}
+      >
+        Policy
+      </h4>
       <PolicyEditor text={policy} onChange={setPolicyPersistent} />
     </div>
   );
