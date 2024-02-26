@@ -20,7 +20,7 @@ import {
   StringAdapter,
   Util,
 } from 'casbin';
-import { newEnforceContext } from './setup-enforce-context';
+import { newEnforceContext } from '@/app/components/editor/hooks/useSetupEnforceContext';
 
 interface RunTestProps {
   model: string;
@@ -214,17 +214,8 @@ async function enforcer(props: RunTestProps) {
   }
 }
 
-const RunTest = (props: RunTestProps) => {
-  return (
-    <button
-      style={{ marginRight: 8 }}
-      onClick={() => {
-        return enforcer(props);
-      }}
-    >
-      RUN THE TEST
-    </button>
-  );
-};
-
-export default RunTest;
+export default function useRunTest() {
+  return {
+    enforcer,
+  };
+}

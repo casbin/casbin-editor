@@ -35,7 +35,7 @@ async function dpaste(content: string) {
   return response.text();
 }
 
-const Share = (props: ShareProps) => {
+export default function useShareInfo() {
   const [sharing, setSharing] = useState(false);
 
   function shareInfo(props: ShareProps) {
@@ -56,16 +56,7 @@ const Share = (props: ShareProps) => {
     });
   }
 
-  return (
-    <button
-      style={{ marginRight: 8 }}
-      onClick={() => {
-        return shareInfo(props);
-      }}
-    >
-      SHARE
-    </button>
-  );
-};
-
-export default Share;
+  return {
+    shareInfo,
+  };
+}
