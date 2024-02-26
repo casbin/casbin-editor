@@ -20,7 +20,7 @@ import {
   example,
   ModelKind,
 } from './casbin-mode/example';
-import { Settings } from './parts/Settings';
+import { Settings } from './parts/Settings/Settings';
 import { ShareFormat } from './share';
 import { defaultEnforceContextData } from './setup-enforce-context';
 
@@ -123,7 +123,7 @@ export const EditorScreen = () => {
 
   return (
     <div className={clsx('flex flex-row  gap-1')}>
-      <div className={'w-64'}>
+      <div className={'max-w-64'}>
         <Settings
           text={customConfig}
           onCustomConfigChange={(v) => {

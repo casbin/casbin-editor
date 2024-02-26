@@ -16,9 +16,9 @@
 import { EditorScreen } from '@/app/components/editor';
 export default function Home() {
   return (
-    <main>
+    <main className={'space-y-2'}>
       <EditorScreen />
-      <div>
+      <div className={'bg-gray-500 p-5'}>
         <a
           target="_blank"
           rel="noopener noreferrer"

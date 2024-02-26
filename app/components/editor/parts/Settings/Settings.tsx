@@ -16,6 +16,7 @@ import React, { useState } from 'react';
 
 import { CustomFunctionEditor } from '@/app/components/editor/editors/CustomFunctionEditor';
 import { clsx } from 'clsx';
+import HiddenButton from '@/app/components/editor/parts/Settings/HiddenButton';
 
 interface SettingsProps {
   text: string;
@@ -27,32 +28,17 @@ export function Settings(props: SettingsProps) {
 
   return (
     <div>
-      <div className={'h-10 flex items-center justify-center '}>
-        <h4
-          className={clsx('scroll-m-20 text-2xl font-semibold tracking-tight')}
-        >
-          Custom config
-        </h4>
-        <div
-          className={'h-10 w-10'}
-          onClick={() => {
-            return setOpen(!open);
-          }}
-        >
-          <svg
-            style={{
-              width: '100%',
-              height: '100%',
-              transform: open ? 'rotateZ(0deg)' : 'rotateZ(180deg)',
-            }}
-            viewBox="0 0 24 24"
+      <div className={' flex items-center justify-center '}>
+        {open && (
+          <h4
+            className={clsx(
+              'scroll-m-20 text-2xl font-semibold tracking-tight',
+            )}
           >
-            <path
-              fill={'currentColor'}
-              d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"
-            />
-          </svg>
-        </div>
+            Custom config
+          </h4>
+        )}
+        <HiddenButton open={open} setOpen={setOpen}></HiddenButton>
       </div>
       <div>
         {open && (
