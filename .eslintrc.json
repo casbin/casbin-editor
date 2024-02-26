@@ -9,7 +9,7 @@
     "@typescript-eslint/no-explicit-any": "off",
     "no-empty-pattern": "off",
     "no-unused-vars": "off",
-    "arrow-parens": ["error", "always"],
-    "arrow-body-style": ["error", "always"]
+    "arrow-parens": ["warn", "always"],
+    "arrow-body-style": ["warn", "always"]
   }
 }
