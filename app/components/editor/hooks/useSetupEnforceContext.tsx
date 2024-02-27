@@ -20,10 +20,10 @@ interface SetupEnforceContextProps {
   onChange: (data: Map<string, string>) => void;
 }
 
-const r = 'r';
-const p = 'p';
-const e = 'e';
-const m = 'm';
+export const r = 'r';
+export const p = 'p';
+export const e = 'e';
+export const m = 'm';
 
 export const defaultEnforceContextData = new Map<string, string>([
   [r, r],
@@ -41,10 +41,10 @@ export const newEnforceContext = (data: Map<string, string>) => {
   );
 };
 
-export const SetupEnforceContext = ({
+export default function useSetupEnforceContext({
   onChange,
   data,
-}: SetupEnforceContextProps) => {
+}: SetupEnforceContextProps) {
   const [enforceContextData, setEnforceContextData] = useState(
     new Map(defaultEnforceContextData),
   );
@@ -56,40 +56,8 @@ export const SetupEnforceContext = ({
     setEnforceContextData(data);
   }, [data]);
 
-  return (
-    <div className={''}>
-      <input
-        className={'w-10'}
-        value={enforceContextData.get(r)}
-        placeholder={r}
-        onChange={(event) => {
-          return handleEnforceContextChange(r, event.target.value);
-        }}
-      />
-      <input
-        className={'w-10'}
-        value={enforceContextData.get(p)}
-        placeholder={p}
-        onChange={(event) => {
-          return handleEnforceContextChange(p, event.target.value);
-        }}
-      />
-      <input
-        className={'w-10'}
-        value={enforceContextData.get(e)}
-        placeholder={e}
-        onChange={(event) => {
-          return handleEnforceContextChange(e, event.target.value);
-        }}
-      />
-      <input
-        className={'w-10'}
-        value={enforceContextData.get(m)}
-        placeholder={m}
-        onChange={(event) => {
-          return handleEnforceContextChange(m, event.target.value);
-        }}
-      />
-    </div>
-  );
-};
+  return {
+    setupEnforceContextData: enforceContextData,
+    setupHandleEnforceContextChange: handleEnforceContextChange,
+  };
+}

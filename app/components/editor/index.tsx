@@ -13,169 +13,479 @@
 // limitations under the License.
 
 'use client';
-import React, { isValidElement, ReactNode, useEffect, useState } from 'react';
+import React, { isValidElement, useState } from 'react';
+import { example, ModelKind } from './casbin-mode/example';
 import {
-  defaultCustomConfig,
-  defaultEnforceContext,
-  example,
-  ModelKind,
-} from './casbin-mode/example';
-import { Settings } from './parts/Settings';
-import { ShareFormat } from './share';
-import { defaultEnforceContextData } from './setup-enforce-context';
+  e,
+  m,
+  p,
+  r,
+} from '@/app/components/editor/hooks/useSetupEnforceContext';
 
-import Modal from '@/app/components/editor/parts/Modal';
-import Policy from '@/app/components/editor/parts/Policy';
-import Request from '@/app/components/editor/parts/Request';
-import EnforcementResult from '@/app/components/editor/parts/EnforcementResult';
-import ButtonGroup from '@/app/components/editor/parts/ButtonGroup';
 import { clsx } from 'clsx';
+import CodeMirror from '@uiw/react-codemirror';
+import { monokai } from '@uiw/codemirror-theme-monokai';
+import { basicSetup } from 'codemirror';
+import { indentUnit, StreamLanguage } from '@codemirror/language';
+import { go } from '@codemirror/legacy-modes/mode/go';
+import { EditorView } from '@codemirror/view';
+import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
+import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
+import { Config } from 'casbin';
+import { javascriptLanguage } from '@codemirror/lang-javascript';
+import useRunTest from '@/app/components/editor/hooks/useRunTest';
+import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
+import useCopy from '@/app/components/editor/hooks/useCopy';
+import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforceContext';
+import useIndex from '@/app/components/editor/hooks/useIndex';
 
 export const EditorScreen = () => {
-  const [modelKind, setModelKind] = useState<ModelKind>('basic');
-  const [modelText, setModelText] = useState('');
-  const [policy, setPolicy] = useState('');
-  const [request, setRequest] = useState('');
-  const [echo, setEcho] = useState<ReactNode>(<></>);
-  const [requestResult, setRequestResult] = useState('');
-  const [customConfig, setCustomConfig] = useState('');
-  const [share, setShare] = useState('');
-  const [enforceContextData, setEnforceContextData] = useState(
-    new Map(defaultEnforceContextData),
-  );
+  const {
+    modelKind,
+    setModelKind,
+    modelText,
+    setModelText,
+    policy,
+    setPolicy,
+    request,
+    setRequest,
+    echo,
+    setEcho,
+    requestResult,
+    setRequestResult,
+    customConfig,
+    setCustomConfig,
+    share,
+    setShare,
+    enforceContextData,
+    setEnforceContextData,
+    setPolicyPersistent,
+    setModelTextPersistent,
+    setCustomConfigPersistent,
+    setRequestPersistent,
+    setEnforceContextDataPersistent,
+    handleShare,
+  } = useIndex();
 
-  function setPolicyPersistent(text: string): void {
-    setPolicy(text);
-  }
-
-  function setModelTextPersistent(text: string): void {
-    setModelText(text);
-  }
-
-  function setCustomConfigPersistent(text: string): void {
-    setCustomConfig(text);
-  }
-
-  function setRequestPersistent(text: string): void {
-    setRequest(text);
-  }
-
-  function setEnforceContextDataPersistent(map: Map<string, string>): void {
-    const text = JSON.stringify(Object.fromEntries(map));
-    setEnforceContextData(new Map(map));
-  }
-
-  useEffect(() => {
-    const hash = window.location.hash.slice(1);
-    if (hash) {
-      setEcho(<div>Loading Shared Content...</div>);
-      fetch(`https://dpaste.com/${hash}.txt`)
-        .then((resp) => {
-          return resp.text();
-        })
-        .then((content) => {
-          const sharedContent = JSON.parse(content) as ShareFormat;
-          setPolicyPersistent(sharedContent.policy);
-          setModelTextPersistent(sharedContent.model);
-          setCustomConfigPersistent(sharedContent.customConfig);
-          setRequestPersistent(sharedContent.request);
-          setRequestPersistent(sharedContent.request);
-          if (sharedContent.enforceContext) {
-            setEnforceContextDataPersistent(
-              new Map(Object.entries(sharedContent.enforceContext)),
-            );
-          }
-          setRequestResult('');
-          window.location.hash = ''; // prevent duplicate load
-          setEcho(<div>Shared Content Loaded.</div>);
-        })
-        .catch(() => {
-          setEcho(<div>Failed to load Shared Content.</div>);
-        });
-    }
-  }, []);
-
-  useEffect(() => {
-    setPolicy(example[modelKind].policy);
-    setModelText(example[modelKind].model);
-    setRequest(example[modelKind].request);
-    setCustomConfig(defaultCustomConfig);
-    setEnforceContextData(
-      new Map(
-        Object.entries(
-          JSON.parse(
-            example[modelKind].enforceContext || defaultEnforceContext,
-          ),
-        ),
-      ),
-    );
-  }, [modelKind]);
-
-  function handleShare(v: ReactNode | string) {
-    if (isValidElement(v)) {
-      setEcho(v);
-    } else {
-      const currentPath = window.location.origin + window.location.pathname;
-      setShare(v as string);
-      setEcho(<div>{`Shared at ${currentPath}#${v}`}</div>);
-    }
-  }
+  const [open, setOpen] = useState(true);
+  const { enforcer } = useRunTest();
+  const { shareInfo } = useShareInfo();
+  const { copy } = useCopy();
+  const { setupEnforceContextData, setupHandleEnforceContextChange } =
+    useSetupEnforceContext({
+      onChange: setEnforceContextDataPersistent,
+      data: enforceContextData,
+    });
 
   return (
-    <div className={clsx('flex flex-row  gap-1')}>
-      <div className={'w-64'}>
-        <Settings
-          text={customConfig}
-          onCustomConfigChange={(v) => {
-            setCustomConfigPersistent(v);
-          }}
-        />
+    <div className={clsx('flex flex-row')}>
+      <div
+        className={clsx(
+          open ? 'w-72' : 'w-5',
+          'relative',
+          'pl-2 pr-2 border-r border-[#dddddd]',
+        )}
+      >
+        <div>
+          <button
+            className={clsx(
+              'absolute top-.5 right-0 translate-x-1/2',
+              'h-7 w-7',
+              'bg-[#ffffff]',
+              'border-[1.5px] rounded-full',
+              'flex items-center justify-center',
+            )}
+            onClick={() => {
+              return setOpen(!open);
+            }}
+          >
+            <svg
+              className={clsx('h-8 w-8', '')}
+              style={{
+                transform: open ? 'rotateZ(0deg)' : 'rotateZ(180deg)',
+              }}
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill={'currentColor'}
+                d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"
+              />
+            </svg>
+          </button>
+
+          <div className={'pt-6 h-12 flex items-center'}>
+            {open && <div>Custom config</div>}
+          </div>
+          <div>
+            {open && (
+              <div>
+                <div style={{ height: '100%' }}>
+                  <CodeMirror
+                    height={'800px'}
+                    onChange={setCustomConfigPersistent}
+                    theme={monokai}
+                    basicSetup={{
+                      lineNumbers: true,
+                      highlightActiveLine: true,
+                      bracketMatching: true,
+                      indentOnInput: true,
+                    }}
+                    extensions={[
+                      basicSetup,
+                      StreamLanguage.define(go),
+                      indentUnit.of('    '),
+                      EditorView.lineWrapping,
+                    ]}
+                    className={'function'}
+                    value={customConfig}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
       <div className={clsx('flex flex-col grow')}>
-        <div className={clsx('flex flex-row  gap-1')}>
+        <div className={clsx('flex flex-row  gap-1', 'py-4')}>
           <div className={'flex-1'}>
-            <Modal
-              setModelKind={setModelKind}
-              modelText={modelText}
-              setModelTextPersistent={setModelTextPersistent}
-            ></Modal>
+            <div>
+              <div
+                className={clsx(
+                  'flex flex-row items-center justify-start gap-2',
+                )}
+              >
+                <div
+                  className={clsx(
+                    'pl-2 h-12',
+                    'flex items-center justify-center',
+                    'font-bold',
+                  )}
+                >
+                  Model
+                </div>
+                <select
+                  defaultValue={'basic'}
+                  onChange={(e) => {
+                    const model = e.target.value;
+                    setModelKind(model);
+                  }}
+                  className={'border-[#767676] border rounded'}
+                >
+                  <option value="" disabled>
+                    Select your model
+                  </option>
+                  {Object.keys(example).map((n) => {
+                    return (
+                      <option key={n} value={n}>
+                        {example[n as ModelKind].name}
+                      </option>
+                    );
+                  })}
+                </select>
+                <button
+                  className={clsx(
+                    'rounded',
+                    'text-[#453d7d]',
+                    'px-1',
+                    'border border-[#453d7d]',
+                    'bg-[#efefef]',
+                    'hover:bg-[#453d7d] hover:text-white',
+                    'transition-colors duration-500',
+                  )}
+                  onClick={() => {
+                    const ok = window.confirm('Confirm Reset?');
+                    if (ok) {
+                      window.location.reload();
+                    }
+                  }}
+                >
+                  RESET
+                </button>
+              </div>
+              <div style={{ height: '100%' }}>
+                <CodeMirror
+                  height={'343px'}
+                  theme={monokai}
+                  onChange={setModelTextPersistent}
+                  basicSetup={{
+                    lineNumbers: true,
+                    highlightActiveLine: true,
+                    bracketMatching: true,
+                    indentOnInput: true,
+                  }}
+                  extensions={[
+                    basicSetup,
+                    CasbinConfSupport(),
+                    indentUnit.of('    '),
+                    EditorView.lineWrapping,
+                  ]}
+                  className={'function'}
+                  value={modelText}
+                />
+              </div>
+            </div>
           </div>
           <div className={'flex-1'}>
-            <Policy
-              policy={policy}
-              setPolicyPersistent={setPolicyPersistent}
-            ></Policy>
+            <div>
+              <div
+                className={clsx(
+                  'h-12 font-bold',
+                  'flex items-center justify-start ',
+                )}
+              >
+                Policy
+              </div>
+              <div style={{ height: '100%' }}>
+                <CodeMirror
+                  height={'343px'}
+                  extensions={[
+                    basicSetup,
+                    CasbinPolicySupport(),
+                    indentUnit.of('    '),
+                    EditorView.lineWrapping,
+                  ]}
+                  basicSetup={{
+                    lineNumbers: true,
+                    highlightActiveLine: true,
+                    bracketMatching: true,
+                    indentOnInput: true,
+                  }}
+                  theme={monokai}
+                  onChange={setPolicyPersistent}
+                  className={'function'}
+                  value={policy}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div className={'flex flex-row gap-1'}>
           <div className={'flex-1'}>
-            <Request
-              request={request}
-              setRequestPersistent={setRequest}
-              enforceContextData={enforceContextData}
-              setEnforceContextDataPersistent={setEnforceContextDataPersistent}
-            ></Request>
+            <div>
+              <div
+                className={clsx(
+                  'h-10 pl-2',
+                  'flex items-center justify-start gap-3',
+                )}
+              >
+                <div className={'font-bold'}>Request</div>
+                <div className={'space-x-2'}>
+                  <input
+                    className={clsx('w-7 pl-1', 'border border-black rounded')}
+                    value={setupEnforceContextData.get(r)}
+                    placeholder={r}
+                    onChange={(event) => {
+                      return setupHandleEnforceContextChange(
+                        r,
+                        event.target.value,
+                      );
+                    }}
+                  />
+                  <input
+                    className={clsx('w-7 pl-1', 'border border-black rounded')}
+                    value={setupEnforceContextData.get(p)}
+                    placeholder={p}
+                    onChange={(event) => {
+                      return setupHandleEnforceContextChange(
+                        p,
+                        event.target.value,
+                      );
+                    }}
+                  />
+                  <input
+                    className={clsx('w-7 pl-1', 'border border-black rounded')}
+                    value={setupEnforceContextData.get(e)}
+                    placeholder={e}
+                    onChange={(event) => {
+                      return setupHandleEnforceContextChange(
+                        e,
+                        event.target.value,
+                      );
+                    }}
+                  />
+                  <input
+                    className={clsx('w-7 pl-1', 'border border-black rounded')}
+                    value={setupEnforceContextData.get(m)}
+                    placeholder={m}
+                    onChange={(event) => {
+                      return setupHandleEnforceContextChange(
+                        m,
+                        event.target.value,
+                      );
+                    }}
+                  />
+                </div>
+              </div>
+              <div style={{ height: '100%' }}>
+                <CodeMirror
+                  height={'343px'}
+                  theme={monokai}
+                  onChange={(value) => {
+                    setRequestPersistent(value);
+                  }}
+                  extensions={[
+                    basicSetup,
+                    CasbinPolicySupport(),
+                    indentUnit.of('    '),
+                    EditorView.lineWrapping,
+                  ]}
+                  basicSetup={{
+                    lineNumbers: true,
+                    highlightActiveLine: true,
+                    bracketMatching: true,
+                    indentOnInput: true,
+                  }}
+                  className={'function'}
+                  value={request}
+                />
+              </div>
+            </div>
           </div>
           <div className={'flex-1'}>
-            <EnforcementResult
-              requestResult={requestResult}
-            ></EnforcementResult>
+            <div>
+              <div
+                className={clsx(
+                  'h-10 font-bold',
+                  'flex items-center justify-start',
+                )}
+              >
+                Enforcement Result
+              </div>
+              <div>
+                <CodeMirror
+                  height={'343px'}
+                  onChange={() => {
+                    return;
+                  }}
+                  theme={monokai}
+                  extensions={[
+                    basicSetup,
+                    javascriptLanguage,
+                    indentUnit.of('    '),
+                    EditorView.lineWrapping,
+                  ]}
+                  basicSetup={{
+                    lineNumbers: true,
+                    highlightActiveLine: true,
+                    bracketMatching: true,
+                    indentOnInput: true,
+                  }}
+                  value={requestResult}
+                />
+              </div>
+            </div>
           </div>
         </div>
-        <ButtonGroup
-          modelText={modelText}
-          echo={echo}
-          setEcho={setEcho}
-          modelKind={modelKind}
-          policy={policy}
-          customConfig={customConfig}
-          request={request}
-          enforceContextData={enforceContextData}
-          setRequestResult={setRequestResult}
-          share={share}
-          setShare={setShare}
-          handleShare={handleShare}
-        ></ButtonGroup>
+        <div className={clsx('py-2 px-1')}>
+          <button
+            className={clsx(
+              'rounded',
+              'px-2 py-1',
+              'border border-[#453d7d]',
+              'bg-[#efefef]',
+              'text-[#453d7a]',
+              'hover:bg-[#453d7d] hover:text-white',
+              'transition-colors duration-500',
+            )}
+            style={{ marginRight: 8 }}
+            onClick={() => {
+              try {
+                Config.newConfigFromText(modelText);
+                setEcho(<div>Passed</div>);
+              } catch (e) {
+                setEcho(<div>{(e as any).message}</div>);
+              }
+            }}
+          >
+            SYNTAX VALIDATE
+          </button>
+          <button
+            className={clsx(
+              'rounded',
+              'px-2 py-1',
+              'border border-[#453d7d]',
+              'text-[#453d7a]',
+              'bg-[#efefef]',
+              'hover:bg-[#453d7d] hover:text-white',
+              'transition-colors duration-500',
+            )}
+            style={{ marginRight: 8 }}
+            onClick={() => {
+              return enforcer({
+                modelKind,
+                model: modelText,
+                policy,
+                customConfig,
+                request,
+                enforceContextData,
+                onResponse: (v) => {
+                  if (isValidElement(v)) {
+                    setEcho(v);
+                  } else if (Array.isArray(v)) {
+                    setRequestResult(v.join('\n'));
+                  }
+                },
+              });
+            }}
+          >
+            RUN THE TEST
+          </button>
+          {!share ? (
+            <span>
+              <button
+                className={clsx(
+                  'rounded',
+                  'px-2 py-1',
+                  'border border-[#453d7d]',
+                  'text-[#453d7a]',
+                  'bg-[#efefef]',
+                  'hover:bg-[#453d7d] hover:text-white',
+                  'transition-colors duration-500',
+                )}
+                style={{ marginRight: 8 }}
+                onClick={() => {
+                  return shareInfo({
+                    onResponse: (v) => {
+                      return handleShare(v);
+                    },
+                    model: modelText,
+                    policy,
+                    customConfig,
+                    request,
+                    enforceContext: Object.entries(enforceContextData),
+                  });
+                }}
+              >
+                SHARE
+              </button>
+            </span>
+          ) : (
+            <button
+              className={clsx(
+                'rounded',
+                'px-2 py-1',
+                'border border-[#453d7d]',
+                'text-[#453d7a]',
+                'bg-[#efefef]',
+                'hover:bg-[#453d7d] hover:text-white',
+                'transition-colors duration-500',
+              )}
+              style={{ marginRight: 8 }}
+              onClick={() => {
+                return copy(
+                  () => {
+                    setShare('');
+                    setEcho(<div>Copied.</div>);
+                  },
+                  `${window.location.origin + window.location.pathname}#${share}`,
+                );
+              }}
+            >
+              COPY
+            </button>
+          )}
+          <div style={{ display: 'inline-block' }}>{echo}</div>
+        </div>
       </div>
     </div>
   );

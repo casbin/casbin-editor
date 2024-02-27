@@ -14,11 +14,17 @@
 
 'use client';
 import { EditorScreen } from '@/app/components/editor';
+import { clsx } from 'clsx';
 export default function Home() {
   return (
     <main>
       <EditorScreen />
-      <div>
+      <div
+        className={clsx(
+          'bg-[#222222] px-2 py-3 mb-3',
+          'flex flex-row items-center',
+        )}
+      >
         <a
           target="_blank"
           rel="noopener noreferrer"
@@ -29,6 +35,7 @@ export default function Home() {
             src="https://img.shields.io/github/stars/casbin/casbin-editor?style=social"
           />
         </a>
+        <div className={'grow'}></div>
         <span style={{ color: '#FFFFFF', float: 'right', fontSize: 14 }}>
           Copyright © {new Date().getFullYear()} Casbin contributors.
         </span>

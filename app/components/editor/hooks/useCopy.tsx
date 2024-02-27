@@ -12,18 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { PolicyEditor } from '@/app/components/editor/editors/PolicyEditor';
-import React from 'react';
-interface Props {
-  policy: string;
-  setPolicyPersistent: (value: string) => void;
-}
-
-export default function Policy({ policy, setPolicyPersistent }: Props) {
-  return (
-    <div>
-      <div className={'h-10 flex items-center justify-center '}>Policy</div>
-      <PolicyEditor text={policy} onChange={setPolicyPersistent} />
-    </div>
-  );
+export default function useCopy() {
+  function copy(cb: any, data: string): void {
+    const listener = (e: ClipboardEvent) => {
+      if (!e.clipboardData) {
+        throw new Error('Clipboard API unavailable.');
+      }
+      e.clipboardData.setData('text/plain', data);
+      e.preventDefault();
+      document.removeEventListener('copy', listener);
+    };
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    // props.cb();
+    cb();
+  }
+  return {
+    copy,
+  };
 }
