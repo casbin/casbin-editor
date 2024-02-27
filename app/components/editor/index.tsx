@@ -78,37 +78,50 @@ export const EditorScreen = () => {
     });
 
   return (
-    <div className={clsx('flex flex-row  gap-1')}>
-      <div className={'w-64'}>
+    <div className={clsx('flex flex-row')}>
+      <div
+        className={clsx(
+          open ? 'w-72' : 'w-5',
+          'relative',
+          'pl-2 pr-2 border-r border-[#dddddd]',
+        )}
+      >
         <div>
-          <div className={'h-10 flex items-center justify-center '}>
-            <span>Custom config</span>
-            <div
-              className={'h-10 w-10'}
-              onClick={() => {
-                return setOpen(!open);
+          <button
+            className={clsx(
+              'absolute top-.5 right-0 translate-x-1/2',
+              'h-7 w-7',
+              'bg-[#ffffff]',
+              'border-[1.5px] rounded-full',
+              'flex items-center justify-center',
+            )}
+            onClick={() => {
+              return setOpen(!open);
+            }}
+          >
+            <svg
+              className={clsx('h-8 w-8', '')}
+              style={{
+                transform: open ? 'rotateZ(0deg)' : 'rotateZ(180deg)',
               }}
+              viewBox="0 0 24 24"
             >
-              <svg
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  transform: open ? 'rotateZ(0deg)' : 'rotateZ(180deg)',
-                }}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill={'currentColor'}
-                  d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"
-                />
-              </svg>
-            </div>
+              <path
+                fill={'currentColor'}
+                d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"
+              />
+            </svg>
+          </button>
+
+          <div className={'pt-6 h-12 flex items-center'}>
+            {open && <div>Custom config</div>}
           </div>
           <div>
             {open && (
               <div>
                 <div style={{ height: '100%' }}>
                   <CodeMirror
+                    height={'800px'}
                     onChange={setCustomConfigPersistent}
                     theme={monokai}
                     basicSetup={{
@@ -133,11 +146,21 @@ export const EditorScreen = () => {
         </div>
       </div>
       <div className={clsx('flex flex-col grow')}>
-        <div className={clsx('flex flex-row  gap-1')}>
+        <div className={clsx('flex flex-row  gap-1', 'py-4')}>
           <div className={'flex-1'}>
             <div>
-              <div className={'flex flex-row items-center justify-center'}>
-                <div className={'h-10 flex items-center justify-center '}>
+              <div
+                className={clsx(
+                  'flex flex-row items-center justify-start gap-2',
+                )}
+              >
+                <div
+                  className={clsx(
+                    'pl-2 h-12',
+                    'flex items-center justify-center',
+                    'font-bold',
+                  )}
+                >
                   Model
                 </div>
                 <select
@@ -146,6 +169,7 @@ export const EditorScreen = () => {
                     const model = e.target.value;
                     setModelKind(model);
                   }}
+                  className={'border-[#767676] border rounded'}
                 >
                   <option value="" disabled>
                     Select your model
@@ -159,6 +183,15 @@ export const EditorScreen = () => {
                   })}
                 </select>
                 <button
+                  className={clsx(
+                    'rounded',
+                    'text-[#453d7d]',
+                    'px-1',
+                    'border border-[#453d7d]',
+                    'bg-[#efefef]',
+                    'hover:bg-[#453d7d] hover:text-white',
+                    'transition-colors duration-500',
+                  )}
                   onClick={() => {
                     const ok = window.confirm('Confirm Reset?');
                     if (ok) {
@@ -166,11 +199,12 @@ export const EditorScreen = () => {
                     }
                   }}
                 >
-                  Reset
+                  RESET
                 </button>
               </div>
               <div style={{ height: '100%' }}>
                 <CodeMirror
+                  height={'343px'}
                   theme={monokai}
                   onChange={setModelTextPersistent}
                   basicSetup={{
@@ -193,11 +227,17 @@ export const EditorScreen = () => {
           </div>
           <div className={'flex-1'}>
             <div>
-              <div className={'h-10 flex items-center justify-center '}>
+              <div
+                className={clsx(
+                  'h-12 font-bold',
+                  'flex items-center justify-start ',
+                )}
+              >
                 Policy
               </div>
               <div style={{ height: '100%' }}>
                 <CodeMirror
+                  height={'343px'}
                   extensions={[
                     basicSetup,
                     CasbinPolicySupport(),
@@ -222,11 +262,16 @@ export const EditorScreen = () => {
         <div className={'flex flex-row gap-1'}>
           <div className={'flex-1'}>
             <div>
-              <div className={'h-10 flex items-center justify-center '}>
-                <div>Request</div>
-                <div className={''}>
+              <div
+                className={clsx(
+                  'h-10 pl-2',
+                  'flex items-center justify-start gap-3',
+                )}
+              >
+                <div className={'font-bold'}>Request</div>
+                <div className={'space-x-2'}>
                   <input
-                    className={'w-10'}
+                    className={clsx('w-7 pl-1', 'border border-black rounded')}
                     value={setupEnforceContextData.get(r)}
                     placeholder={r}
                     onChange={(event) => {
@@ -237,7 +282,7 @@ export const EditorScreen = () => {
                     }}
                   />
                   <input
-                    className={'w-10'}
+                    className={clsx('w-7 pl-1', 'border border-black rounded')}
                     value={setupEnforceContextData.get(p)}
                     placeholder={p}
                     onChange={(event) => {
@@ -248,7 +293,7 @@ export const EditorScreen = () => {
                     }}
                   />
                   <input
-                    className={'w-10'}
+                    className={clsx('w-7 pl-1', 'border border-black rounded')}
                     value={setupEnforceContextData.get(e)}
                     placeholder={e}
                     onChange={(event) => {
@@ -259,7 +304,7 @@ export const EditorScreen = () => {
                     }}
                   />
                   <input
-                    className={'w-10'}
+                    className={clsx('w-7 pl-1', 'border border-black rounded')}
                     value={setupEnforceContextData.get(m)}
                     placeholder={m}
                     onChange={(event) => {
@@ -273,6 +318,7 @@ export const EditorScreen = () => {
               </div>
               <div style={{ height: '100%' }}>
                 <CodeMirror
+                  height={'343px'}
                   theme={monokai}
                   onChange={(value) => {
                     setRequestPersistent(value);
@@ -297,11 +343,17 @@ export const EditorScreen = () => {
           </div>
           <div className={'flex-1'}>
             <div>
-              <div className={'h-10 flex items-center justify-center '}>
+              <div
+                className={clsx(
+                  'h-10 font-bold',
+                  'flex items-center justify-start',
+                )}
+              >
                 Enforcement Result
               </div>
               <div>
                 <CodeMirror
+                  height={'343px'}
                   onChange={() => {
                     return;
                   }}
@@ -324,8 +376,17 @@ export const EditorScreen = () => {
             </div>
           </div>
         </div>
-        <div>
+        <div className={clsx('py-2 px-1')}>
           <button
+            className={clsx(
+              'rounded',
+              'px-2 py-1',
+              'border border-[#453d7d]',
+              'bg-[#efefef]',
+              'text-[#453d7a]',
+              'hover:bg-[#453d7d] hover:text-white',
+              'transition-colors duration-500',
+            )}
             style={{ marginRight: 8 }}
             onClick={() => {
               try {
@@ -339,6 +400,15 @@ export const EditorScreen = () => {
             SYNTAX VALIDATE
           </button>
           <button
+            className={clsx(
+              'rounded',
+              'px-2 py-1',
+              'border border-[#453d7d]',
+              'text-[#453d7a]',
+              'bg-[#efefef]',
+              'hover:bg-[#453d7d] hover:text-white',
+              'transition-colors duration-500',
+            )}
             style={{ marginRight: 8 }}
             onClick={() => {
               return enforcer({
@@ -363,6 +433,15 @@ export const EditorScreen = () => {
           {!share ? (
             <span>
               <button
+                className={clsx(
+                  'rounded',
+                  'px-2 py-1',
+                  'border border-[#453d7d]',
+                  'text-[#453d7a]',
+                  'bg-[#efefef]',
+                  'hover:bg-[#453d7d] hover:text-white',
+                  'transition-colors duration-500',
+                )}
                 style={{ marginRight: 8 }}
                 onClick={() => {
                   return shareInfo({
@@ -382,6 +461,15 @@ export const EditorScreen = () => {
             </span>
           ) : (
             <button
+              className={clsx(
+                'rounded',
+                'px-2 py-1',
+                'border border-[#453d7d]',
+                'text-[#453d7a]',
+                'bg-[#efefef]',
+                'hover:bg-[#453d7d] hover:text-white',
+                'transition-colors duration-500',
+              )}
               style={{ marginRight: 8 }}
               onClick={() => {
                 return copy(
