@@ -1,15 +1,13 @@
 {
-  "plugins": [
-  ],
-  "extends": [
-    "next/core-web-vitals"
-  ],
+  "plugins": [],
+  "extends": ["next/core-web-vitals"],
   "rules": {
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "no-empty-pattern": "off",
     "no-unused-vars": "off",
     "arrow-parens": ["error", "always"],
-    "arrow-body-style": ["error", "always"]
+    "arrow-body-style": ["error", "always"],
+    "max-len": ["error", { "code": 150 }]
   }
 }

@@ -15,7 +15,7 @@
 'use client';
 import React, { isValidElement, useState, useEffect } from 'react';
 import { example, ModelKind } from './casbin-mode/example';
-import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
+import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext'; // prettier-ignore
 import { clsx } from 'clsx';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
@@ -34,27 +34,30 @@ import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforc
 import useIndex from '@/app/components/editor/hooks/useIndex';
 
 export const EditorScreen = () => {
-  const { 
-    modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request, 
-    setRequest, echo, setEcho, requestResult,setRequestResult, customConfig, setCustomConfig, 
-    share, setShare, enforceContextData, setEnforceContextData, setPolicyPersistent,
-    setModelTextPersistent, setCustomConfigPersistent, setRequestPersistent, setEnforceContextDataPersistent,
-    handleShare,
-  } = useIndex();
+  const {
+    modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request,
+    setRequest, echo, setEcho, requestResult, setRequestResult, customConfig, setCustomConfig, share, setShare,
+    enforceContextData, setEnforceContextData, setPolicyPersistent, setModelTextPersistent,
+    setCustomConfigPersistent, setRequestPersistent, setEnforceContextDataPersistent, handleShare,
+  } = useIndex();  
   const [open, setOpen] = useState(true);
   const { enforcer } = useRunTest();
   const { shareInfo } = useShareInfo();
   const { copy } = useCopy();
-  const { setupEnforceContextData, setupHandleEnforceContextChange } =
-    useSetupEnforceContext({
-      onChange: setEnforceContextDataPersistent,
-      data: enforceContextData,
-    });
+  const { setupEnforceContextData, setupHandleEnforceContextChange } = useSetupEnforceContext({
+    onChange: setEnforceContextDataPersistent,
+    data: enforceContextData,
+  });
 
   useEffect(() => {
     if (modelKind) {
-      enforcer({ 
-        modelKind, model: modelText, policy, customConfig, request, enforceContextData,
+      enforcer({
+        modelKind,
+        model: modelText,
+        policy,
+        customConfig,
+        request,
+        enforceContextData,
         onResponse: (v) => {
           if (isValidElement(v)) {
             setEcho(v);
@@ -64,19 +67,11 @@ export const EditorScreen = () => {
         },
       });
     }
-  }, [
-    modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult,
-  ]);
+  }, [modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult]);
 
   return (
     <div className={clsx('flex flex-row')}>
-      <div
-        className={clsx(
-          open ? 'w-72' : 'w-5',
-          'relative',
-          'pl-2 pr-2 border-r border-[#dddddd]',
-        )}
-      >
+      <div className={clsx(open ? 'w-72' : 'w-5', 'relative', 'pl-2 pr-2 border-r border-[#dddddd]')}>
         <div>
           <button
             className={clsx(
@@ -97,16 +92,11 @@ export const EditorScreen = () => {
               }}
               viewBox="0 0 24 24"
             >
-              <path
-                fill={'currentColor'}
-                d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"
-              />
+              <path fill={'currentColor'} d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
             </svg>
           </button>
 
-          <div className={'pt-6 h-12 flex items-center'}>
-            {open && <div>Custom config</div>}
-          </div>
+          <div className={'pt-6 h-12 flex items-center'}>{open && <div>Custom config</div>}</div>
           <div>
             {open && (
               <div>
@@ -121,12 +111,7 @@ export const EditorScreen = () => {
                       bracketMatching: true,
                       indentOnInput: true,
                     }}
-                    extensions={[
-                      basicSetup,
-                      StreamLanguage.define(go),
-                      indentUnit.of('    '),
-                      EditorView.lineWrapping,
-                    ]}
+                    extensions={[basicSetup, StreamLanguage.define(go), indentUnit.of('    '), EditorView.lineWrapping]}
                     className={'function'}
                     value={customConfig}
                   />
@@ -140,20 +125,8 @@ export const EditorScreen = () => {
         <div className={clsx('flex flex-row  gap-1', 'py-4')}>
           <div className={'flex-1'}>
             <div>
-              <div
-                className={clsx(
-                  'flex flex-row items-center justify-start gap-2',
-                )}
-              >
-                <div
-                  className={clsx(
-                    'pl-2 h-12',
-                    'flex items-center justify-center',
-                    'font-bold',
-                  )}
-                >
-                  Model
-                </div>
+              <div className={clsx('flex flex-row items-center justify-start gap-2')}>
+                <div className={clsx('pl-2 h-12', 'flex items-center justify-center', 'font-bold')}>Model</div>
                 <select
                   defaultValue={'basic'}
                   onChange={(e) => {
@@ -203,12 +176,7 @@ export const EditorScreen = () => {
                     bracketMatching: true,
                     indentOnInput: true,
                   }}
-                  extensions={[
-                    basicSetup,
-                    CasbinConfSupport(),
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                  ]}
+                  extensions={[basicSetup, CasbinConfSupport(), indentUnit.of('    '), EditorView.lineWrapping]}
                   className={'function'}
                   value={modelText}
                 />
@@ -217,23 +185,11 @@ export const EditorScreen = () => {
           </div>
           <div className={'flex-1'}>
             <div>
-              <div
-                className={clsx(
-                  'h-12 font-bold',
-                  'flex items-center justify-start ',
-                )}
-              >
-                Policy
-              </div>
+              <div className={clsx('h-12 font-bold', 'flex items-center justify-start ')}>Policy</div>
               <div style={{ height: '100%' }}>
                 <CodeMirror
                   height={'343px'}
-                  extensions={[
-                    basicSetup,
-                    CasbinPolicySupport(),
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                  ]}
+                  extensions={[basicSetup, CasbinPolicySupport(), indentUnit.of('    '), EditorView.lineWrapping]}
                   basicSetup={{
                     lineNumbers: true,
                     highlightActiveLine: true,
@@ -252,12 +208,7 @@ export const EditorScreen = () => {
         <div className={'flex flex-row gap-1'}>
           <div className={'flex-1'}>
             <div>
-              <div
-                className={clsx(
-                  'h-10 pl-2',
-                  'flex items-center justify-start gap-3',
-                )}
-              >
+              <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
                 <div className={'font-bold'}>Request</div>
                 <div className={'space-x-2'}>
                   <input
@@ -265,10 +216,7 @@ export const EditorScreen = () => {
                     value={setupEnforceContextData.get(r)}
                     placeholder={r}
                     onChange={(event) => {
-                      return setupHandleEnforceContextChange(
-                        r,
-                        event.target.value,
-                      );
+                      return setupHandleEnforceContextChange(r, event.target.value);
                     }}
                   />
                   <input
@@ -276,10 +224,7 @@ export const EditorScreen = () => {
                     value={setupEnforceContextData.get(p)}
                     placeholder={p}
                     onChange={(event) => {
-                      return setupHandleEnforceContextChange(
-                        p,
-                        event.target.value,
-                      );
+                      return setupHandleEnforceContextChange(p, event.target.value);
                     }}
                   />
                   <input
@@ -287,10 +232,7 @@ export const EditorScreen = () => {
                     value={setupEnforceContextData.get(e)}
                     placeholder={e}
                     onChange={(event) => {
-                      return setupHandleEnforceContextChange(
-                        e,
-                        event.target.value,
-                      );
+                      return setupHandleEnforceContextChange(e, event.target.value);
                     }}
                   />
                   <input
@@ -298,10 +240,7 @@ export const EditorScreen = () => {
                     value={setupEnforceContextData.get(m)}
                     placeholder={m}
                     onChange={(event) => {
-                      return setupHandleEnforceContextChange(
-                        m,
-                        event.target.value,
-                      );
+                      return setupHandleEnforceContextChange(m, event.target.value);
                     }}
                   />
                 </div>
@@ -313,12 +252,7 @@ export const EditorScreen = () => {
                   onChange={(value) => {
                     setRequestPersistent(value);
                   }}
-                  extensions={[
-                    basicSetup,
-                    CasbinPolicySupport(),
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                  ]}
+                  extensions={[basicSetup, CasbinPolicySupport(), indentUnit.of('    '), EditorView.lineWrapping]}
                   basicSetup={{
                     lineNumbers: true,
                     highlightActiveLine: true,
@@ -333,14 +267,7 @@ export const EditorScreen = () => {
           </div>
           <div className={'flex-1'}>
             <div>
-              <div
-                className={clsx(
-                  'h-10 font-bold',
-                  'flex items-center justify-start',
-                )}
-              >
-                Enforcement Result
-              </div>
+              <div className={clsx('h-10 font-bold', 'flex items-center justify-start')}>Enforcement Result</div>
               <div>
                 <CodeMirror
                   height={'343px'}
@@ -348,12 +275,7 @@ export const EditorScreen = () => {
                     return;
                   }}
                   theme={monokai}
-                  extensions={[
-                    basicSetup,
-                    javascriptLanguage,
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                  ]}
+                  extensions={[basicSetup, javascriptLanguage, indentUnit.of('    '), EditorView.lineWrapping]}
                   basicSetup={{
                     lineNumbers: true,
                     highlightActiveLine: true,
@@ -402,7 +324,12 @@ export const EditorScreen = () => {
             style={{ marginRight: 8 }}
             onClick={() => {
               return enforcer({
-                modelKind, model: modelText, policy, customConfig, request, enforceContextData,
+                modelKind,
+                model: modelText,
+                policy,
+                customConfig,
+                request,
+                enforceContextData,
                 onResponse: (v) => {
                   if (isValidElement(v)) {
                     setEcho(v);
@@ -433,7 +360,10 @@ export const EditorScreen = () => {
                     onResponse: (v) => {
                       return handleShare(v);
                     },
-                    model: modelText, policy, customConfig, request,
+                    model: modelText,
+                    policy,
+                    customConfig,
+                    request,
                     enforceContext: Object.entries(enforceContextData),
                   });
                 }}

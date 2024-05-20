@@ -1,10 +1,5 @@
 import React, { isValidElement, ReactNode, useEffect, useState } from 'react';
-import {
-  defaultCustomConfig,
-  defaultEnforceContext,
-  example,
-  ModelKind,
-} from '@/app/components/editor/casbin-mode/example';
+import { defaultCustomConfig, defaultEnforceContext, example, ModelKind } from '@/app/components/editor/casbin-mode/example';
 import { ShareFormat } from '@/app/components/editor/hooks/useShareInfo';
 import { defaultEnforceContextData } from '@/app/components/editor/hooks/useSetupEnforceContext';
 
@@ -17,9 +12,7 @@ export default function useIndex() {
   const [requestResult, setRequestResult] = useState('');
   const [customConfig, setCustomConfig] = useState('');
   const [share, setShare] = useState('');
-  const [enforceContextData, setEnforceContextData] = useState(
-    new Map(defaultEnforceContextData),
-  );
+  const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
 
   function setPolicyPersistent(text: string): void {
     setPolicy(text);
@@ -58,9 +51,7 @@ export default function useIndex() {
           setRequestPersistent(sharedContent.request);
           setRequestPersistent(sharedContent.request);
           if (sharedContent.enforceContext) {
-            setEnforceContextDataPersistent(
-              new Map(Object.entries(sharedContent.enforceContext)),
-            );
+            setEnforceContextDataPersistent(new Map(Object.entries(sharedContent.enforceContext)));
           }
           setRequestResult('');
           window.location.hash = ''; // prevent duplicate load
@@ -77,15 +68,7 @@ export default function useIndex() {
     setModelText(example[modelKind].model);
     setRequest(example[modelKind].request);
     setCustomConfig(defaultCustomConfig);
-    setEnforceContextData(
-      new Map(
-        Object.entries(
-          JSON.parse(
-            example[modelKind].enforceContext || defaultEnforceContext,
-          ),
-        ),
-      ),
-    );
+    setEnforceContextData(new Map(Object.entries(JSON.parse(example[modelKind].enforceContext || defaultEnforceContext))));
   }, [modelKind]);
 
   function handleShare(v: ReactNode | string) {
@@ -97,11 +80,10 @@ export default function useIndex() {
       setEcho(<div>{`Shared at ${currentPath}#${v}`}</div>);
     }
   }
-  return { 
-    modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request, 
-    setRequest, echo, setEcho, requestResult,setRequestResult, customConfig, setCustomConfig, 
-    share, setShare, enforceContextData, setEnforceContextData, setPolicyPersistent,
-    setModelTextPersistent, setCustomConfigPersistent, setRequestPersistent, setEnforceContextDataPersistent,
-    handleShare,
-  };
+  return {
+    modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request,
+    setRequest, echo, setEcho, requestResult, setRequestResult, customConfig, setCustomConfig, share, setShare,
+    enforceContextData, setEnforceContextData, setPolicyPersistent, setModelTextPersistent,
+    setCustomConfigPersistent, setRequestPersistent, setEnforceContextDataPersistent, handleShare,
+  } ;
 }

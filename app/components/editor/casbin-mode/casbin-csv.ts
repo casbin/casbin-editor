@@ -12,12 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {
-  IndentContext,
-  LanguageSupport,
-  StreamLanguage,
-  StringStream,
-} from '@codemirror/language';
+import { IndentContext, LanguageSupport, StreamLanguage, StringStream } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
 
 const token = (stream: StringStream, state) => {
@@ -56,11 +51,7 @@ export const CasbinPolicyLang = StreamLanguage.define({
   token: token,
   blankLine: (state: {}, indentUnit: number): void => {},
   copyState: (state: {}) => {},
-  indent: (
-    state: {},
-    textAfter: string,
-    context: IndentContext,
-  ): number | null => {
+  indent: (state: {}, textAfter: string, context: IndentContext): number | null => {
     return 0;
   },
   languageData: {

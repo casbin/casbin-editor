@@ -13,13 +13,7 @@
 // limitations under the License.
 
 import React from 'react';
-import {
-  DefaultRoleManager,
-  newEnforcer,
-  newModel,
-  StringAdapter,
-  Util,
-} from 'casbin';
+import { DefaultRoleManager, newEnforcer, newModel, StringAdapter, Util } from 'casbin';
 import { newEnforceContext } from '@/app/components/editor/hooks/useSetupEnforceContext';
 
 interface RunTestProps {
@@ -92,10 +86,7 @@ async function enforcer(props: RunTestProps) {
   const startTime = performance.now();
   const result = [];
   try {
-    const e = await newEnforcer(
-      newModel(props.model),
-      props.policy ? new StringAdapter(props.policy) : undefined,
-    );
+    const e = await newEnforcer(newModel(props.model), props.policy ? new StringAdapter(props.policy) : undefined);
 
     const customConfigCode = props.customConfig;
     if (customConfigCode) {
@@ -133,15 +124,9 @@ async function enforcer(props: RunTestProps) {
             }
             if (typeof matchingForGFunction === 'string') {
               if (matchingForGFunction in config.functions) {
-                await rm.addMatchingFunc(
-                  config.functions[matchingForGFunction],
-                );
+                await rm.addMatchingFunc(config.functions[matchingForGFunction]);
               } else {
-                props.onResponse(
-                  <div>
-                    Must sure the {matchingForGFunction}() in config.functions
-                  </div>,
-                );
+                props.onResponse(<div>Must sure the {matchingForGFunction}() in config.functions</div>);
                 return;
               }
             }
@@ -154,27 +139,16 @@ async function enforcer(props: RunTestProps) {
             }
             if (typeof matchingDomainForGFunction === 'string') {
               if (matchingDomainForGFunction in config.functions) {
-                await rm.addDomainMatchingFunc(
-                  config.functions[matchingDomainForGFunction],
-                );
+                await rm.addDomainMatchingFunc(config.functions[matchingDomainForGFunction]);
               } else {
-                props.onResponse(
-                  <div>
-                    Must sure the {matchingDomainForGFunction}() in
-                    config.functions
-                  </div>,
-                );
+                props.onResponse(<div>Must sure the {matchingDomainForGFunction}() in config.functions</div>);
                 return;
               }
             }
           }
         }
       } catch (e) {
-        props.onResponse(
-          <div>
-            Please check syntax in Custom Function Editor: {(e as any).message}
-          </div>,
-        );
+        props.onResponse(<div>Please check syntax in Custom Function Editor: {(e as any).message}</div>);
         return;
       }
     }
@@ -204,9 +178,7 @@ async function enforcer(props: RunTestProps) {
 
     const stopTime = performance.now();
 
-    props.onResponse(
-      <div>{'Done in ' + (stopTime - startTime).toFixed(2) + 'ms'}</div>,
-    );
+    props.onResponse(<div>{'Done in ' + (stopTime - startTime).toFixed(2) + 'ms'}</div>);
     props.onResponse(result);
   } catch (e) {
     props.onResponse(<div>{(e as any).message}</div>);
