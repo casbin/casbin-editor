@@ -15,12 +15,7 @@
 'use client';
 import React, { isValidElement, useState, useEffect } from 'react';
 import { example, ModelKind } from './casbin-mode/example';
-import {
-  e,
-  m,
-  p,
-  r,
-} from '@/app/components/editor/hooks/useSetupEnforceContext';
+import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
 import { clsx } from 'clsx';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
@@ -39,33 +34,13 @@ import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforc
 import useIndex from '@/app/components/editor/hooks/useIndex';
 
 export const EditorScreen = () => {
-  const {
-    modelKind,
-    setModelKind,
-    modelText,
-    setModelText,
-    policy,
-    setPolicy,
-    request,
-    setRequest,
-    echo,
-    setEcho,
-    requestResult,
-    setRequestResult,
-    customConfig,
-    setCustomConfig,
-    share,
-    setShare,
-    enforceContextData,
-    setEnforceContextData,
-    setPolicyPersistent,
-    setModelTextPersistent,
-    setCustomConfigPersistent,
-    setRequestPersistent,
-    setEnforceContextDataPersistent,
+  const { 
+    modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request, 
+    setRequest, echo, setEcho, requestResult,setRequestResult, customConfig, setCustomConfig, 
+    share, setShare, enforceContextData, setEnforceContextData, setPolicyPersistent,
+    setModelTextPersistent, setCustomConfigPersistent, setRequestPersistent, setEnforceContextDataPersistent,
     handleShare,
   } = useIndex();
-
   const [open, setOpen] = useState(true);
   const { enforcer } = useRunTest();
   const { shareInfo } = useShareInfo();
@@ -78,13 +53,8 @@ export const EditorScreen = () => {
 
   useEffect(() => {
     if (modelKind) {
-      enforcer({
-        modelKind,
-        model: modelText,
-        policy,
-        customConfig,
-        request,
-        enforceContextData,
+      enforcer({ 
+        modelKind, model: modelText, policy, customConfig, request, enforceContextData,
         onResponse: (v) => {
           if (isValidElement(v)) {
             setEcho(v);
@@ -95,15 +65,7 @@ export const EditorScreen = () => {
       });
     }
   }, [
-    modelKind,
-    modelText,
-    policy,
-    customConfig,
-    request,
-    enforceContextData,
-    enforcer,
-    setEcho,
-    setRequestResult,
+    modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult,
   ]);
 
   return (
@@ -440,12 +402,7 @@ export const EditorScreen = () => {
             style={{ marginRight: 8 }}
             onClick={() => {
               return enforcer({
-                modelKind,
-                model: modelText,
-                policy,
-                customConfig,
-                request,
-                enforceContextData,
+                modelKind, model: modelText, policy, customConfig, request, enforceContextData,
                 onResponse: (v) => {
                   if (isValidElement(v)) {
                     setEcho(v);
@@ -476,10 +433,7 @@ export const EditorScreen = () => {
                     onResponse: (v) => {
                       return handleShare(v);
                     },
-                    model: modelText,
-                    policy,
-                    customConfig,
-                    request,
+                    model: modelText, policy, customConfig, request,
                     enforceContext: Object.entries(enforceContextData),
                   });
                 }}

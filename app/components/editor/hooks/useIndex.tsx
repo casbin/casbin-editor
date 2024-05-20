@@ -97,30 +97,11 @@ export default function useIndex() {
       setEcho(<div>{`Shared at ${currentPath}#${v}`}</div>);
     }
   }
-  return {
-    modelKind,
-    setModelKind,
-    modelText,
-    setModelText,
-    policy,
-    setPolicy,
-    request,
-    setRequest,
-    echo,
-    setEcho,
-    requestResult,
-    setRequestResult,
-    customConfig,
-    setCustomConfig,
-    share,
-    setShare,
-    enforceContextData,
-    setEnforceContextData,
-    setPolicyPersistent,
-    setModelTextPersistent,
-    setCustomConfigPersistent,
-    setRequestPersistent,
-    setEnforceContextDataPersistent,
+  return { 
+    modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request, 
+    setRequest, echo, setEcho, requestResult,setRequestResult, customConfig, setCustomConfig, 
+    share, setShare, enforceContextData, setEnforceContextData, setPolicyPersistent,
+    setModelTextPersistent, setCustomConfigPersistent, setRequestPersistent, setEnforceContextDataPersistent,
     handleShare,
   };
 }
