@@ -197,7 +197,6 @@ export const EditorScreen = () => {
                     );
                   })}
                 </select>
-
                 <button
                   className={clsx(
                     'rounded',
