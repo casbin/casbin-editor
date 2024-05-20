@@ -13,7 +13,7 @@
 // limitations under the License.
 
 'use client';
-import React, { isValidElement, useState } from 'react';
+import React, { isValidElement, useState, useEffect } from 'react';
 import { example, ModelKind } from './casbin-mode/example';
 import {
   e,
@@ -21,7 +21,6 @@ import {
   p,
   r,
 } from '@/app/components/editor/hooks/useSetupEnforceContext';
-
 import { clsx } from 'clsx';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
@@ -76,6 +75,36 @@ export const EditorScreen = () => {
       onChange: setEnforceContextDataPersistent,
       data: enforceContextData,
     });
+
+  useEffect(() => {
+    if (modelKind) {
+      enforcer({
+        modelKind,
+        model: modelText,
+        policy,
+        customConfig,
+        request,
+        enforceContextData,
+        onResponse: (v) => {
+          if (isValidElement(v)) {
+            setEcho(v);
+          } else if (Array.isArray(v)) {
+            setRequestResult(v.join('\n'));
+          }
+        },
+      });
+    }
+  }, [
+    modelKind,
+    modelText,
+    policy,
+    customConfig,
+    request,
+    enforceContextData,
+    enforcer,
+    setEcho,
+    setRequestResult,
+  ]);
 
   return (
     <div className={clsx('flex flex-row')}>
@@ -166,8 +195,7 @@ export const EditorScreen = () => {
                 <select
                   defaultValue={'basic'}
                   onChange={(e) => {
-                    const model = e.target.value;
-                    setModelKind(model);
+                    setModelKind(e.target.value);
                   }}
                   className={'border-[#767676] border rounded'}
                 >
