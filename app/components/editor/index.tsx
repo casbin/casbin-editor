@@ -168,6 +168,21 @@ export const EditorScreen = () => {
                   onChange={(e) => {
                     const model = e.target.value;
                     setModelKind(model);
+                    enforcer({
+                      modelKind: model,
+                      model: modelText,
+                      policy,
+                      customConfig,
+                      request,
+                      enforceContextData,
+                      onResponse: (v) => {
+                        if (isValidElement(v)) {
+                          setEcho(v);
+                        } else if (Array.isArray(v)) {
+                          setRequestResult(v.join('\n'));
+                        }
+                      },
+                    });
                   }}
                   className={'border-[#767676] border rounded'}
                 >
@@ -182,6 +197,7 @@ export const EditorScreen = () => {
                     );
                   })}
                 </select>
+
                 <button
                   className={clsx(
                     'rounded',
