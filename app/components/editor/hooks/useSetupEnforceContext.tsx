@@ -33,21 +33,11 @@ export const defaultEnforceContextData = new Map<string, string>([
 ]);
 
 export const newEnforceContext = (data: Map<string, string>) => {
-  return new EnforceContext(
-    data.get(r)!,
-    data.get(p)!,
-    data.get(e)!,
-    data.get(m)!,
-  );
+  return new EnforceContext(data.get(r)!, data.get(p)!, data.get(e)!, data.get(m)!);
 };
 
-export default function useSetupEnforceContext({
-  onChange,
-  data,
-}: SetupEnforceContextProps) {
-  const [enforceContextData, setEnforceContextData] = useState(
-    new Map(defaultEnforceContextData),
-  );
+export default function useSetupEnforceContext({ onChange, data }: SetupEnforceContextProps) {
+  const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
   const handleEnforceContextChange = (key: string, value: string) => {
     onChange(data.set(key, value));
   };

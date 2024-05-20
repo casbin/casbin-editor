@@ -12,12 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {
-  IndentContext,
-  LanguageSupport,
-  StreamLanguage,
-  StringStream,
-} from '@codemirror/language';
+import { IndentContext, LanguageSupport, StreamLanguage, StringStream } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
 
 const token = (stream: StringStream, state) => {
@@ -77,10 +72,7 @@ const token = (stream: StringStream, state) => {
 
   if (stream.sol()) {
     if (state.sec !== '') {
-      if (
-        (state.sec === 'g' && stream.match(new RegExp('^g[2-9]?'))) ||
-        stream.match(state.sec)
-      ) {
+      if ((state.sec === 'g' && stream.match(new RegExp('^g[2-9]?'))) || stream.match(state.sec)) {
         if (stream.peek() === ' ' || stream.peek() === '=') {
           return 'builtin';
         } else {
@@ -136,11 +128,7 @@ const token = (stream: StringStream, state) => {
     }
 
     // Match: e = [some]([where] (p.eft == allow))
-    if (
-      stream.match('some') ||
-      stream.match('where') ||
-      stream.match('priority')
-    ) {
+    if (stream.match('some') || stream.match('where') || stream.match('priority')) {
       return 'keyword';
     }
 
@@ -167,10 +155,7 @@ const token = (stream: StringStream, state) => {
     }
 
     // Match: m = [g](r.sub, p.sub) && r.obj == p.obj && r.act == p.act
-    if (
-      stream.match(new RegExp('^[_a-zA-Z][_a-zA-Z0-9]*')) &&
-      stream.peek() === '('
-    ) {
+    if (stream.match(new RegExp('^[_a-zA-Z][_a-zA-Z0-9]*')) && stream.peek() === '(') {
       return 'def';
     }
   }
@@ -187,11 +172,7 @@ export const CasbinConfLang = StreamLanguage.define({
   token: token,
   blankLine: (state: {}, indentUnit: number): void => {},
   copyState: (state: {}) => {},
-  indent: (
-    state: {},
-    textAfter: string,
-    context: IndentContext,
-  ): number | null => {
+  indent: (state: {}, textAfter: string, context: IndentContext): number | null => {
     return 0;
   },
   languageData: {
