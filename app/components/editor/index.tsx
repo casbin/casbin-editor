@@ -32,6 +32,7 @@ import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
 import useCopy from '@/app/components/editor/hooks/useCopy';
 import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforceContext';
 import useIndex from '@/app/components/editor/hooks/useIndex';
+import { getCasbinVersion } from '@/app/utils/getCasbinVersion'; 
 
 export const EditorScreen = () => {
   const {
@@ -48,6 +49,15 @@ export const EditorScreen = () => {
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
   });
+  const [casbinVersion, setCasbinVersion] = useState('');
+
+  useEffect(() => {
+    const fetchVersion = async () => {
+      const version = await getCasbinVersion();
+      setCasbinVersion(version);
+    };
+    fetchVersion();
+  }, []);
 
   useEffect(() => {
     if (modelKind) {
@@ -185,7 +195,14 @@ export const EditorScreen = () => {
           </div>
           <div className={'flex-1'}>
             <div>
-              <div className={clsx('h-12 font-bold', 'flex items-center justify-start ')}>Policy</div>
+              <div className={clsx('h-12 font-bold flex items-center justify-between')}>
+                <div>Policy</div>
+                <div className="text-right font-bold mr-4 text-sm text-[#e13c3c]">
+                <a href={`https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`} target="_blank" rel="noopener noreferrer">
+                  Node-Casbin v{casbinVersion}
+                </a>
+                </div>
+              </div>
               <div style={{ height: '100%' }}>
                 <CodeMirror
                   height={'343px'}
