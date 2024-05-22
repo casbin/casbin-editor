@@ -1,3 +1,4 @@
+import GenerateCasbinVersionPlugin from './generateCasbinVersionPlugin.js';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /**
@@ -34,6 +35,10 @@ const nextConfig = {
         Buffer: ['buffer', 'Buffer'],
       })
     );
+
+    if (!isServer) {
+      config.plugins.push(new GenerateCasbinVersionPlugin());
+    }
 
     return config;
   },

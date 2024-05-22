@@ -15,7 +15,7 @@
 'use client';
 import React, { isValidElement, useState, useEffect } from 'react';
 import { example, ModelKind } from './casbin-mode/example';
-import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext'; // prettier-ignore
+import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
 import { clsx } from 'clsx';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
@@ -48,6 +48,16 @@ export const EditorScreen = () => {
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
   });
+  const [casbinVersion, setCasbinVersion] = useState('');
+
+  useEffect(() => {
+    const fetchCasbinVersion = async () => {
+      const response = await fetch('/casbin-version.json');
+      const data = await response.json();
+      setCasbinVersion(data.casbinVersion);
+    };
+    fetchCasbinVersion();
+  }, []);
 
   useEffect(() => {
     if (modelKind) {
@@ -185,7 +195,14 @@ export const EditorScreen = () => {
           </div>
           <div className={'flex-1'}>
             <div>
-              <div className={clsx('h-12 font-bold', 'flex items-center justify-start ')}>Policy</div>
+              <div className={clsx('h-12 font-bold flex items-center justify-between')}>
+                <div>Policy</div>
+                <div className="text-right font-bold mr-4 text-sm text-[#e13c3c]">
+                <a href={`https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`} target="_blank" rel="noopener noreferrer">
+                  Node-Casbin v{casbinVersion}
+                </a>
+                </div>
+              </div>
               <div style={{ height: '100%' }}>
                 <CodeMirror
                   height={'343px'}
