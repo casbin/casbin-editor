@@ -34,7 +34,7 @@ import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforc
 import useIndex from '@/app/components/editor/hooks/useIndex';
 import { getCasbinVersion } from '@/app/utils/getCasbinVersion'; 
 
-export const EditorScreen = () => {
+export const EditorScreen = ({ casbinVersion }: { casbinVersion: string }) => {
   const {
     modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request,
     setRequest, echo, setEcho, requestResult, setRequestResult, customConfig, setCustomConfig, share, setShare,
@@ -49,15 +49,6 @@ export const EditorScreen = () => {
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
   });
-  const [casbinVersion, setCasbinVersion] = useState('');
-
-  useEffect(() => {
-    const fetchVersion = async () => {
-      const version = await getCasbinVersion();
-      setCasbinVersion(version);
-    };
-    fetchVersion();
-  }, []);
 
   useEffect(() => {
     if (modelKind) {
