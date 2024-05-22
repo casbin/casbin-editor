@@ -15,7 +15,7 @@
 'use client';
 import React, { isValidElement, useState, useEffect } from 'react';
 import { example, ModelKind } from './casbin-mode/example';
-import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext'; // prettier-ignore
+import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
 import { clsx } from 'clsx';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
@@ -32,9 +32,8 @@ import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
 import useCopy from '@/app/components/editor/hooks/useCopy';
 import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforceContext';
 import useIndex from '@/app/components/editor/hooks/useIndex';
-import { getCasbinVersion } from '@/app/utils/getCasbinVersion'; 
 
-export const EditorScreen = ({ casbinVersion }: { casbinVersion: string }) => {
+export const EditorScreen = () => {
   const {
     modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request,
     setRequest, echo, setEcho, requestResult, setRequestResult, customConfig, setCustomConfig, share, setShare,
@@ -49,6 +48,16 @@ export const EditorScreen = ({ casbinVersion }: { casbinVersion: string }) => {
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
   });
+  const [casbinVersion, setCasbinVersion] = useState('');
+
+  useEffect(() => {
+    const fetchCasbinVersion = async () => {
+      const response = await fetch('/casbin-version.json');
+      const data = await response.json();
+      setCasbinVersion(data.casbinVersion);
+    };
+    fetchCasbinVersion();
+  }, []);
 
   useEffect(() => {
     if (modelKind) {
