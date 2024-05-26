@@ -36,3 +36,14 @@ yarn start
 ```
 
 Open browser: http://localhost:3000/
+
+## Electron Build
+
+This project supports building an Electron application for Casbin-editor.
+
+```shell
+yarn install
+yarn dist
+```
+
+
