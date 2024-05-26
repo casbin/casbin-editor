@@ -1,16 +1,15 @@
 {
   "name": "casbin-editor",
   "version": "1.0.0",
-  "main": "main/main.js",
   "homepage": "https://editor.casbin.org/",
+  "main": "main.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "npx serve@latest out",
     "lint": "next lint",
     "electron": "electron .",
-    "dist": "yarn build && electron-builder",
-    "publish": "electron-forge publish"
+    "dist": "yarn build && electron-builder"
   },
   "build": {
     "appId": "com.casbin.id",
@@ -18,13 +17,15 @@
       "output": "dist"
     },
     "files": [
-      "main/**/*",
-      "out/**/*"
+      "main.js",
+      "preload.js",
+      "out/**/*",
+      "public/**/*",
+      "package.json"
     ],
-    "extraResources": [],
-    "electronDownload": {
-      "mirror": "https://github.com/electron/electron/releases/download/"
-    },
+    "extraResources": [
+      "assets"
+    ],
     "mac": {
       "identity": null,
       "hardenedRuntime": false
@@ -50,8 +51,6 @@
     "casbin": "^5.30.0",
     "clsx": "^2.1.0",
     "codemirror": "^6.0.1",
-    "electron-is-dev": "^3.0.1",
-    "electron-serve": "^2.0.0",
     "minimatch": "^9.0.0",
     "next": "14.1.0",
     "normalize.css": "^8.0.1",
@@ -63,9 +62,8 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.17",
-    "electron": "^30.0.7",
+    "electron": "^30.0.8",
     "electron-builder": "^24.13.3",
-    "electron-publish": "^25.0.0-alpha.7",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",

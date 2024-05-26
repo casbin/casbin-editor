@@ -24,6 +24,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+
+  assetPrefix: './',
+  
 //   for casbin browser
   webpack: (config, { isServer,webpack }) => {
     if (!isServer) {
