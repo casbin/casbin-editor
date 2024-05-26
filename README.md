@@ -36,3 +36,12 @@ yarn start
 ```
 
 Open browser: http://localhost:3000/
+
+## For Electron
+
+This project supports being built as an Electron app:
+
+```shell
+yarn install
+yarn dist
+```

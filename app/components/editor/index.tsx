@@ -52,7 +52,7 @@ export const EditorScreen = () => {
 
   useEffect(() => {
     const fetchCasbinVersion = async () => {
-      const response = await fetch('/casbin-version.json');
+      const response = await fetch('casbin-version.json');
       const data = await response.json();
       setCasbinVersion(data.casbinVersion);
     };
