@@ -25,9 +25,10 @@ const nextConfig = {
     unoptimized: true,
   },
 
+  // Static files will be loaded using relative paths.
   assetPrefix: './',
   
-//   for casbin browser
+  // for casbin browser
   webpack: (config, { isServer,webpack }) => {
     if (!isServer) {
       config.resolve.fallback = { fs: false, ...config.resolve.fallback };
