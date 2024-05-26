@@ -12,7 +12,7 @@
     "dist": "yarn build && electron-builder"
   },
   "build": {
-    "appId": "com.casbin.id",
+    "appId": "org.casbin.editor",
     "directories": {
       "output": "dist"
     },
