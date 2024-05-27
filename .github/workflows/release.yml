@@ -1,0 +1,104 @@
+name: Build and Release Electron App
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: yarn install
+      - name: Build Electron app for macOS
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: yarn dist --mac
+      - name: Upload macOS build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: electron-app-macos
+          path: dist/*.dmg
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: yarn install
+      - name: Build Electron app for Windows
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: yarn dist --win
+      - name: Upload Windows build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: electron-app-windows
+          path: dist/*.exe
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: yarn install
+      - name: Build Electron app for Linux
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: yarn dist --linux
+      - name: Upload Linux build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: electron-app-linux
+          path: dist/*.AppImage
+
+  release:
+    needs: [build-macos, build-windows, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Download macOS build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: electron-app-macos
+          path: dist/macos
+      - name: Download Windows build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: electron-app-windows
+          path: dist/windows
+      - name: Download Linux build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: electron-app-linux
+          path: dist/linux
+      - name: Create GitHub Release and Upload Assets
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          artifacts: |
+            dist/macos/*.dmg
+            dist/windows/*.exe
+            dist/linux/*.AppImage
+          token: ${{ secrets.GH_TOKEN }}
