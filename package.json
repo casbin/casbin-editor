@@ -9,7 +9,8 @@
     "start": "npx serve@latest out",
     "lint": "next lint",
     "electron": "electron .",
-    "dist": "yarn build && electron-builder"
+    "dist": "yarn build && electron-builder",
+    "release": "npx -p semantic-release -p @semantic-release/git -p @semantic-release/changelog -p @semantic-release/exec semantic-release"
   },
   "build": {
     "appId": "org.casbin.editor",
@@ -45,6 +46,34 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
     }
+  },
+  "release": {
+    "branches": [
+      "master"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            {
+              "path": "dist/macos/*.dmg",
+              "label": "macOS"
+            },
+            {
+              "path": "dist/windows/*.exe",
+              "label": "Windows"
+            },
+            {
+              "path": "dist/linux/*.AppImage",
+              "label": "Linux"
+            }
+          ]
+        }
+      ]
+    ]
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.12.0",
