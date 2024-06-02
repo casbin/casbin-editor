@@ -17,20 +17,7 @@ const path = require('path');
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
-let appServe;
-let isDev;
-
-const loadModules = async () => {
-  isDev = (await import('electron-is-dev')).default;
-  if (!isDev) {
-    const serve = (await import('electron-serve')).default;
-    appServe = serve({
-      directory: path.join(__dirname, 'out'),
-    });
-  }
-};
-
-const createWindow = async () => {
+const createWindow = () => {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -39,33 +26,22 @@ const createWindow = async () => {
     },
   });
 
-  if (!isDev && appServe) {
-    try {
-      await appServe(win);
-      win.loadURL('app://-');
-    } catch (err) {
-      console.error('Failed to serve app:', err);
-      win.loadFile(path.join(__dirname, 'out/index.html'));
-    }
-  } else {
-    win.loadFile(path.join(__dirname, 'out/index.html')).catch((err) => {
-      console.error('Failed to load local file:', err);
-      win.loadURL('http://editor.casbin.org');
-    });
+  win.loadFile(path.join(__dirname, 'out/index.html')).catch((err) => {
+    console.error('Failed to load local file:', err);
+    win.loadURL('http://editor.casbin.org');
+  });
 
-    win.webContents.on('did-fail-load', async () => {
-      try {
-        await win.loadFile(path.join(__dirname, 'out/index.html'));
-      } catch (err) {
-        console.error('Retry loading local file failed:', err);
-        win.loadURL('http://editor.casbin.org');
-      }
-    });
-  }
+  win.webContents.on('did-fail-load', async () => {
+    try {
+      await win.loadFile(path.join(__dirname, 'out/index.html'));
+    } catch (err) {
+      console.error('Retry loading local file failed:', err);
+      win.loadURL('http://editor.casbin.org');
+    }
+  });
 };
 
-app.whenReady().then(async () => {
-  await loadModules();
+app.whenReady().then(() => {
   createWindow();
 });
 
