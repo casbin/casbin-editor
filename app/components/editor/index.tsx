@@ -292,13 +292,20 @@ export const EditorScreen = () => {
                     return;
                   }}
                   theme={monokai}
-                  extensions={[basicSetup, javascriptLanguage, indentUnit.of('    '), EditorView.lineWrapping]}
+                  extensions={[
+                    basicSetup,
+                    javascriptLanguage,
+                    indentUnit.of('    '),
+                    EditorView.lineWrapping,
+                    EditorView.editable.of(false) 
+                  ]}
                   basicSetup={{
                     lineNumbers: true,
                     highlightActiveLine: true,
                     bracketMatching: true,
                     indentOnInput: true,
                   }}
+                  className={'cursor-not-allowed'}
                   value={requestResult}
                 />
               </div>
