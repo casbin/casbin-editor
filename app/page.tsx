@@ -15,30 +15,19 @@
 'use client';
 import { EditorScreen } from '@/app/components/editor';
 import { clsx } from 'clsx';
+
 export default function Home() {
   return (
-    <main>
-      <EditorScreen />
-      <div
-        className={clsx(
-          'bg-[#222222] px-2 py-3 mb-3',
-          'flex flex-row items-center',
-        )}
-      >
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/casbin/casbin-editor"
-        >
-          <img
-            alt="GitHub stars"
-            src="https://img.shields.io/github/stars/casbin/casbin-editor?style=social"
-          />
+    <main className="flex flex-col h-screen">
+      <div className="flex-grow overflow-hidden">
+        <EditorScreen />
+      </div>
+      <div className={clsx('bg-[#222222] px-2 py-3 mt-2', 'flex flex-row items-center')}>
+        <a target="_blank" rel="noopener noreferrer" href="https://github.com/casbin/casbin-editor">
+          <img alt="GitHub stars" src="https://img.shields.io/github/stars/casbin/casbin-editor?style=social" />
         </a>
         <div className={'grow'}></div>
-        <span style={{ color: '#FFFFFF', float: 'right', fontSize: 14 }}>
-          Copyright © {new Date().getFullYear()} Casbin contributors.
-        </span>
+        <span style={{ color: '#FFFFFF', float: 'right', fontSize: 14 }}>Copyright © {new Date().getFullYear()} Casbin contributors.</span>
       </div>
     </main>
   );

@@ -80,9 +80,9 @@ export const EditorScreen = () => {
   }, [modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult]);
 
   return (
-    <div className={clsx('flex flex-row')}>
+    <div className="flex flex-row h-full">
       <div className={clsx(open ? 'w-72' : 'w-5', 'relative', 'pl-2 pr-2 border-r border-[#dddddd]')}>
-        <div>
+        <div className="flex flex-col h-full">
           <button
             className={clsx(
               'absolute top-.5 right-0 translate-x-1/2',
@@ -107,77 +107,75 @@ export const EditorScreen = () => {
           </button>
 
           <div className={'pt-6 h-12 flex items-center'}>{open && <div>Custom config</div>}</div>
-          <div>
+          <div className="flex-grow overflow-auto h-full">
             {open && (
-              <div>
-                <div style={{ height: '100%' }}>
-                  <CodeMirror
-                    height={'800px'}
-                    onChange={setCustomConfigPersistent}
-                    theme={monokai}
-                    basicSetup={{
-                      lineNumbers: true,
-                      highlightActiveLine: true,
-                      bracketMatching: true,
-                      indentOnInput: true,
-                    }}
-                    extensions={[basicSetup, StreamLanguage.define(go), indentUnit.of('    '), EditorView.lineWrapping]}
-                    className={'function'}
-                    value={customConfig}
-                  />
-                </div>
+              <div className="flex flex-col h-full">
+                <CodeMirror
+                  height="100%"
+                  onChange={setCustomConfigPersistent}
+                  theme={monokai}
+                  basicSetup={{
+                    lineNumbers: true,
+                    highlightActiveLine: true,
+                    bracketMatching: true,
+                    indentOnInput: true,
+                  }}
+                  extensions={[basicSetup, StreamLanguage.define(go), indentUnit.of('    '), EditorView.lineWrapping]}
+                  className="function flex-grow"
+                  value={customConfig}
+                />
               </div>
             )}
           </div>
         </div>
       </div>
-      <div className={clsx('flex flex-col grow')}>
-        <div className={clsx('flex flex-row  gap-1', 'py-4')}>
-          <div className={'flex-1'}>
-            <div>
-              <div className={clsx('flex flex-row items-center justify-start gap-2')}>
-                <div className={clsx('pl-2 h-12', 'flex items-center justify-center', 'font-bold')}>Model</div>
-                <select
-                  defaultValue={'basic'}
-                  onChange={(e) => {
-                    setModelKind(e.target.value);
-                  }}
-                  className={'border-[#767676] border rounded'}
-                >
-                  <option value="" disabled>
-                    Select your model
-                  </option>
-                  {Object.keys(example).map((n) => {
-                    return (
-                      <option key={n} value={n}>
-                        {example[n as ModelKind].name}
-                      </option>
-                    );
-                  })}
-                </select>
-                <button
-                  className={clsx(
-                    'rounded',
-                    'text-[#453d7d]',
-                    'px-1',
-                    'border border-[#453d7d]',
-                    'bg-[#efefef]',
-                    'hover:bg-[#453d7d] hover:text-white',
-                    'transition-colors duration-500',
-                  )}
-                  onClick={() => {
-                    const ok = window.confirm('Confirm Reset?');
-                    if (ok) {
-                      window.location.reload();
-                    }
-                  }}
-                >
-                  RESET
-                </button>
-              </div>
-              <div style={{ height: '100%' }}>
+      <div className={clsx('flex flex-col grow h-full')}>
+        <div className="flex flex-row gap-1 pt-4 flex-1 overflow-hidden">
+          <div className="flex-1 flex flex-col h-full overflow-hidden">
+            <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
+              <div className={'font-bold'}>Model</div>
+              <select
+                defaultValue={'basic'}
+                onChange={(e) => {
+                  setModelKind(e.target.value);
+                }}
+                className={'border-[#767676] border rounded'}
+              >
+                <option value="" disabled>
+                  Select your model
+                </option>
+                {Object.keys(example).map((n) => {
+                  return (
+                    <option key={n} value={n}>
+                      {example[n as ModelKind].name}
+                    </option>
+                  );
+                })}
+              </select>
+              <button
+                className={clsx(
+                  'rounded',
+                  'text-[#453d7d]',
+                  'px-1',
+                  'border border-[#453d7d]',
+                  'bg-[#efefef]',
+                  'hover:bg-[#453d7d] hover:text-white',
+                  'transition-colors duration-500',
+                )}
+                onClick={() => {
+                  const ok = window.confirm('Confirm Reset?');
+                  if (ok) {
+                    window.location.reload();
+                  }
+                }}
+              >
+                RESET
+              </button>
+            </div>
+            <div className="flex-grow overflow-auto h-full">
+              <div className="flex flex-col h-full">
                 <CodeMirror
-                  height={'343px'}
+                  height="100%"
                   theme={monokai}
                   onChange={setModelTextPersistent}
                   basicSetup={{
@@ -187,25 +185,25 @@ export const EditorScreen = () => {
                     indentOnInput: true,
                   }}
                   extensions={[basicSetup, CasbinConfSupport(), indentUnit.of('    '), EditorView.lineWrapping]}
-                  className={'function'}
+                  className={'function flex-grow'}
                   value={modelText}
                 />
               </div>
             </div>
           </div>
-          <div className={'flex-1'}>
-            <div>
-              <div className={clsx('h-12 font-bold flex items-center justify-between')}>
-                <div>Policy</div>
-                <div className="text-right font-bold mr-4 text-sm text-[#e13c3c]">
+          <div className="flex-1 flex flex-col h-full overflow-hidden">
+            <div className="h-10 font-bold flex items-center justify-between">
+              <div>Policy</div>
+              <div className="text-right font-bold mr-4 text-sm text-[#e13c3c]">
                 <a href={`https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`} target="_blank" rel="noopener noreferrer">
                   Node-Casbin v{casbinVersion}
                 </a>
-                </div>
               </div>
-              <div style={{ height: '100%' }}>
+            </div>
+            <div className="flex-grow overflow-auto h-full">
+              <div className="flex flex-col h-full">
                 <CodeMirror
-                  height={'343px'}
+                  height="100%"
                   extensions={[basicSetup, CasbinPolicySupport(), indentUnit.of('    '), EditorView.lineWrapping]}
                   basicSetup={{
                     lineNumbers: true,
@@ -215,56 +213,56 @@ export const EditorScreen = () => {
                   }}
                   theme={monokai}
                   onChange={setPolicyPersistent}
-                  className={'function'}
+                  className={'function flex-grow '}
                   value={policy}
                 />
               </div>
             </div>
           </div>
         </div>
-        <div className={'flex flex-row gap-1'}>
-          <div className={'flex-1'}>
-            <div>
-              <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
-                <div className={'font-bold'}>Request</div>
-                <div className={'space-x-2'}>
-                  <input
-                    className={clsx('w-7 pl-1', 'border border-black rounded')}
-                    value={setupEnforceContextData.get(r)}
-                    placeholder={r}
-                    onChange={(event) => {
-                      return setupHandleEnforceContextChange(r, event.target.value);
-                    }}
-                  />
-                  <input
-                    className={clsx('w-7 pl-1', 'border border-black rounded')}
-                    value={setupEnforceContextData.get(p)}
-                    placeholder={p}
-                    onChange={(event) => {
-                      return setupHandleEnforceContextChange(p, event.target.value);
-                    }}
-                  />
-                  <input
-                    className={clsx('w-7 pl-1', 'border border-black rounded')}
-                    value={setupEnforceContextData.get(e)}
-                    placeholder={e}
-                    onChange={(event) => {
-                      return setupHandleEnforceContextChange(e, event.target.value);
-                    }}
-                  />
-                  <input
-                    className={clsx('w-7 pl-1', 'border border-black rounded')}
-                    value={setupEnforceContextData.get(m)}
-                    placeholder={m}
-                    onChange={(event) => {
-                      return setupHandleEnforceContextChange(m, event.target.value);
-                    }}
-                  />
-                </div>
+        <div className="flex flex-row gap-1 pt-2 flex-1 overflow-hidden">
+          <div className="flex-1 flex flex-col h-full overflow-hidden">
+            <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
+              <div className={'font-bold'}>Request</div>
+              <div className={'space-x-2'}>
+                <input
+                  className={clsx('w-7 pl-1', 'border border-black rounded')}
+                  value={setupEnforceContextData.get(r)}
+                  placeholder={r}
+                  onChange={(event) => {
+                    return setupHandleEnforceContextChange(r, event.target.value);
+                  }}
+                />
+                <input
+                  className={clsx('w-7 pl-1', 'border border-black rounded')}
+                  value={setupEnforceContextData.get(p)}
+                  placeholder={p}
+                  onChange={(event) => {
+                    return setupHandleEnforceContextChange(p, event.target.value);
+                  }}
+                />
+                <input
+                  className={clsx('w-7 pl-1', 'border border-black rounded')}
+                  value={setupEnforceContextData.get(e)}
+                  placeholder={e}
+                  onChange={(event) => {
+                    return setupHandleEnforceContextChange(e, event.target.value);
+                  }}
+                />
+                <input
+                  className={clsx('w-7 pl-1', 'border border-black rounded')}
+                  value={setupEnforceContextData.get(m)}
+                  placeholder={m}
+                  onChange={(event) => {
+                    return setupHandleEnforceContextChange(m, event.target.value);
+                  }}
+                />
               </div>
-              <div style={{ height: '100%' }}>
+            </div>
+            <div className="flex-grow overflow-auto h-full">
+              <div className="flex flex-col h-full">
                 <CodeMirror
-                  height={'343px'}
+                  height="100%"
                   theme={monokai}
                   onChange={(value) => {
                     setRequestPersistent(value);
@@ -276,43 +274,37 @@ export const EditorScreen = () => {
                     bracketMatching: true,
                     indentOnInput: true,
                   }}
-                  className={'function'}
+                  className={'function flex-grow '}
                   value={request}
                 />
               </div>
             </div>
           </div>
-          <div className={'flex-1'}>
-            <div>
-              <div className={clsx('h-10 font-bold', 'flex items-center justify-start')}>Enforcement Result</div>
-              <div>
+          <div className="flex-1 flex flex-col h-full overflow-hidden">
+            <div className={clsx('h-10 font-bold', 'flex items-center justify-start')}>Enforcement Result</div>
+            <div className="flex-grow overflow-auto h-full">
+              <div className="flex flex-col h-full">
                 <CodeMirror
-                  height={'343px'}
+                  height="100%"
                   onChange={() => {
                     return;
                   }}
                   theme={monokai}
-                  extensions={[
-                    basicSetup,
-                    javascriptLanguage,
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                    EditorView.editable.of(false) 
-                  ]}
+                  extensions={[basicSetup, javascriptLanguage, indentUnit.of('    '), EditorView.lineWrapping, EditorView.editable.of(false)]}
                   basicSetup={{
                     lineNumbers: true,
                     highlightActiveLine: true,
                     bracketMatching: true,
                     indentOnInput: true,
                   }}
-                  className={'cursor-not-allowed'}
+                  className={'cursor-not-allowed flex-grow'}
                   value={requestResult}
                 />
               </div>
             </div>
           </div>
         </div>
-        <div className={clsx('py-2 px-1')}>
+        <div className={clsx('pt-2 px-1')}>
           <button
             className={clsx(
               'rounded',
