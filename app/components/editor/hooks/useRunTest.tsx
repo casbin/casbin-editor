@@ -84,7 +84,7 @@ function parseABACRequest(line: string): any[] {
 
 async function enforcer(props: RunTestProps) {
   const startTime = performance.now();
-  const result = [];
+  const result: { request: string; okEx: boolean; reason: string[]; }[] = []; 
   try {
     const e = await newEnforcer(newModel(props.model), props.policy ? new StringAdapter(props.policy) : undefined);
 
@@ -172,8 +172,8 @@ async function enforcer(props: RunTestProps) {
       const rvals = parseABACRequest(n);
       const ctx = newEnforceContext(props.enforceContextData);
 
-      // @ts-ignore
-      result.push(await e.enforce(ctx, ...rvals));
+      const [okEx, reason] = await e.enforceEx(ctx, ...rvals);
+      result.push({ request: n, okEx, reason });
     }
 
     const stopTime = performance.now();
