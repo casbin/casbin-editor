@@ -72,7 +72,16 @@ export const EditorScreen = () => {
           if (isValidElement(v)) {
             setEcho(v);
           } else if (Array.isArray(v)) {
-            setRequestResult(v.join('\n'));
+            const formattedResults = v.map((res) => {
+              if (typeof res === 'object') {
+                const reasonString = Array.isArray(res.reason) && res.reason.length > 0 
+                  ? ` Reason: ${JSON.stringify(res.reason)}` 
+                  : '';
+                return `${res.okEx}${reasonString}`;
+              }
+              return res;
+            });
+            setRequestResult(formattedResults.join('\n'));
           }
         },
       });
@@ -350,7 +359,16 @@ export const EditorScreen = () => {
                   if (isValidElement(v)) {
                     setEcho(v);
                   } else if (Array.isArray(v)) {
-                    setRequestResult(v.join('\n'));
+                    const formattedResults = v.map((res) => {
+                      if (typeof res === 'object') {
+                        const reasonString = Array.isArray(res.reason) && res.reason.length > 0 
+                          ? ` Reason: ${JSON.stringify(res.reason)}` 
+                          : '';
+                        return `${res.okEx}${reasonString}`;
+                      }
+                      return res;
+                    });
+                    setRequestResult(formattedResults.join('\n'));
                   }
                 },
               });
