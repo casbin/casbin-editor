@@ -130,11 +130,14 @@ const ChatWindow: React.FC = () => {
             messages: [
               {
                 role: 'system',
-                content: '请仔细阅读以下关于Casbin策略模型的描述，并根据其内容提供有帮助和准确的回答',
+                content:
+                  'Please carefully read the description of the ' +
+                  'Casbin policy model below and provide helpful ' +
+                  'and accurate answers based on its content.',
               },
               {
                 role: 'system',
-                content: `网页链接：CURRENT_PAGE_URL\n\n${currentFileContent}`,
+                content: `CURRENT_PAGE_URL\n\n${currentFileContent}`,
               },
               ...history,
             ],
@@ -150,7 +153,7 @@ const ChatWindow: React.FC = () => {
             setState((prevState) => {
               return {
                 ...prevState,
-                messages: [...prevState.messages, { sender: 'assistant', text: '请求过多，请稍后重试。' }],
+                messages: [...prevState.messages, { sender: 'assistant', text: 'Too many requests, please try again later.' }],
               };
             });
           }
@@ -207,7 +210,7 @@ const ChatWindow: React.FC = () => {
 
   useEffect(() => {
     if (!initialMessageSentRef.current) {
-      sendMessage('为什么Enforcement Result的结果是这样？', true);
+      sendMessage('Why is the result of the Enforcement Result like this?', true);
       initialMessageSentRef.current = true;
     }
   }, [sendMessage]);
