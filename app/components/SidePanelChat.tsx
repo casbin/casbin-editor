@@ -7,10 +7,10 @@ export function SidePanelChat() {
   return (
     <Drawer.Root direction="right">
       <Drawer.Trigger asChild>
-        <button className='text-red-600'>Why this result?</button>
+        <button className="text-red-600">Why this result?</button>
       </Drawer.Trigger>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+        <Drawer.Overlay className="fixed inset-0" />
         <Drawer.Content className="bg-white flex flex-col rounded-t-[10px] h-full w-[500px] fixed bottom-0 right-0">
           <div className="p-4 bg-white flex-1 flex flex-col h-full">
             <Drawer.Title className="font-medium mb-4">
