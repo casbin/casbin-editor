@@ -32,6 +32,7 @@ import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
 import useCopy from '@/app/components/editor/hooks/useCopy';
 import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforceContext';
 import useIndex from '@/app/components/editor/hooks/useIndex';
+import { SidePanelChat } from '@/app/components/SidePanelChat';
 
 export const EditorScreen = () => {
   const {
@@ -290,7 +291,10 @@ export const EditorScreen = () => {
             </div>
           </div>
           <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className={clsx('h-10 font-bold', 'flex items-center justify-start')}>Enforcement Result</div>
+            <div className={clsx('h-10 font-bold', 'flex items-center justify-between')}>
+              <div>Enforcement Result</div>
+              <div className='mr-4'><SidePanelChat /></div>
+            </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
                 <CodeMirror
