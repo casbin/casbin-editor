@@ -85,6 +85,7 @@
     "@lezer/highlight": "^1.2.0",
     "@uiw/codemirror-theme-monokai": "^4.21.22",
     "@uiw/react-codemirror": "^4.21.22",
+    "antd": "^5.18.2",
     "casbin": "^5.30.0",
     "clsx": "^2.1.0",
     "codemirror": "^6.0.1",
@@ -92,8 +93,7 @@
     "next": "14.1.0",
     "normalize.css": "^8.0.1",
     "react": "^18",
-    "react-dom": "^18",
-    "vaul": "^0.9.1"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "@types/node": "^20",
