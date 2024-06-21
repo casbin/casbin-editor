@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Drawer } from 'antd';
-import ChatWindow from './ChatWindow';
 
 export const SidePanelChat: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -35,7 +34,15 @@ export const SidePanelChat: React.FC = () => {
         }}
       >
         <div className="flex-1 flex flex-col">
-          <ChatWindow />
+          <iframe
+            id="iframeHelper"
+            title={'iframeHelper'}
+            src={'https://ai.casbin.com/?isRaw=1'}
+            width="100%"
+            height="100%"
+            scrolling="no"
+            frameBorder="no"
+          />
         </div>
       </Drawer>
     </>
