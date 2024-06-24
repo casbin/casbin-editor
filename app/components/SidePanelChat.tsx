@@ -54,7 +54,7 @@ export const SidePanelChat: React.FC = () => {
           <iframe
             id="iframeHelper"
             title="iframeHelper"
-            src={`https://ai.casbin.com/?newMessage=${encodeURIComponent(message)}`}
+            src={`https://ai.casbin.com/?isRaw=1&newMessage=${encodeURIComponent(message)}`}
             className="w-full h-full"
             scrolling="no"
             frameBorder="0"
