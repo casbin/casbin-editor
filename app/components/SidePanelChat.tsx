@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { extractPageContent } from '../utils/contentExtractor';
 
 export const SidePanelChat: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [pageContent, setPageContent] = useState('');
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      const { extractedContent, message } = extractPageContent();
+      setPageContent(extractedContent);
+      setMessage(message);
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -33,7 +44,7 @@ export const SidePanelChat: React.FC = () => {
           <iframe
             id="iframeHelper"
             title="iframeHelper"
-            src="https://ai.casbin.com/?isRaw=1"
+            src={`https://ai.casbin.com/?newMessage=${encodeURIComponent(message)}`}
             className="w-full h-full"
             scrolling="no"
             frameBorder="0"
