@@ -20,9 +20,19 @@ export const SidePanelChat: React.FC = () => {
 
   return (
     <>
-      <button className="text-red-600" onClick={toggleDrawer}>
-        Why this result?
-      </button>
+      <div className="text-red-600 flex items-center">
+        <span className="mr-1">Why this result?</span>
+        <button
+          onClick={toggleDrawer}
+          className="flex items-center rounded text-[#453d7d] px-1 border border-[#453d7d] bg-[#efefef] 
+        hover:bg-[#453d7d] hover:text-white transition-colors duration-500 font-medium
+        whitespace-nowrap overflow-hidden
+        "
+        >
+          <img src="/openai.svg" alt="" className="w-4 h-4 mr-1" />
+          Ask AI
+        </button>
+      </div>
       {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleDrawer}></div>}
       <div
         className={`fixed top-0 right-0 w-[500px] h-full bg-white z-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
