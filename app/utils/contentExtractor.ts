@@ -29,6 +29,6 @@ export const extractPageContent = () => {
 
   return {
     extractedContent,
-    message: `Why this result?\n${extractedContent}`,
+    message: `Why this result? please provide a brief summary. no need to repeat the content of the question.\n${extractedContent}`,
   };
 };
