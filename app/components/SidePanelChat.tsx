@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import { extractPageContent } from '../utils/contentExtractor';
 
-export const SidePanelChat: React.FC = () => {
+const SidePanelChat = forwardRef((props, ref) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [pageContent, setPageContent] = useState('');
+  const [boxType, setBoxType] = useState('');
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
   };
 
+  const openDrawer = (message, boxType) => {
+    setMessage(message);
+    setBoxType(boxType);
+    setIsOpen(true);
+  };
+
+  useImperativeHandle(ref, () => {
+    return {
+      openDrawer,
+    };
+  });
+
+  useEffect(() => {
+    if (isOpen && boxType) {
+      const { extractedContent } = extractPageContent(boxType);
+      setPageContent(extractedContent);
+    }
+  }, [isOpen, boxType]);
+
   return (
     <>
-      <button className="text-red-600" onClick={toggleDrawer}>
-        Why this result?
-      </button>
+      <div className="text-red-600 flex items-center">
+        <span>Why this result?</span>
+      </div>
       {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleDrawer}></div>}
       <div
         className={`fixed top-0 right-0 w-[500px] h-full bg-white z-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
@@ -33,7 +56,7 @@ export const SidePanelChat: React.FC = () => {
           <iframe
             id="iframeHelper"
             title="iframeHelper"
-            src="https://ai.casbin.com/?isRaw=1"
+            src={`https://ai.casbin.com/?isRaw=1&newMessage=${encodeURIComponent(message)}`}
             className="w-full h-full"
             scrolling="no"
             frameBorder="0"
@@ -42,4 +65,8 @@ export const SidePanelChat: React.FC = () => {
       </div>
     </>
   );
-};
+});
+
+SidePanelChat.displayName = 'SidePanelChat';
+
+export default SidePanelChat;
