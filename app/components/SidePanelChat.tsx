@@ -1,37 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { extractPageContent } from '../utils/contentExtractor';
 
-export const SidePanelChat: React.FC = () => {
+const SidePanelChat = forwardRef((props, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [pageContent, setPageContent] = useState('');
+  const [boxType, setBoxType] = useState('');
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
   };
 
+  const openDrawer = (message, boxType) => {
+    setMessage(message);
+    setBoxType(boxType);
+    setIsOpen(true);
+  };
+
+  useImperativeHandle(ref, () => {
+    return {
+      openDrawer,
+    };
+  });
+
   useEffect(() => {
-    if (isOpen) {
-      const { extractedContent, message } = extractPageContent();
+    if (isOpen && boxType) {
+      const { extractedContent } = extractPageContent(boxType);
       setPageContent(extractedContent);
-      setMessage(message);
     }
-  }, [isOpen]);
+  }, [isOpen, boxType]);
 
   return (
     <>
       <div className="text-red-600 flex items-center">
-        <span className="mr-1">Why this result?</span>
-        <button
-          onClick={toggleDrawer}
-          className="flex items-center rounded text-[#453d7d] px-1 border border-[#453d7d] bg-[#efefef] 
-        hover:bg-[#453d7d] hover:text-white transition-colors duration-500 font-medium
-        whitespace-nowrap overflow-hidden
-        "
-        >
-          <img src="/openai.svg" alt="" className="w-4 h-4 mr-1" />
-          Ask AI
-        </button>
+        <span>Why this result?</span>
       </div>
       {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleDrawer}></div>}
       <div
@@ -63,4 +65,8 @@ export const SidePanelChat: React.FC = () => {
       </div>
     </>
   );
-};
+});
+
+SidePanelChat.displayName = 'SidePanelChat';
+
+export default SidePanelChat;

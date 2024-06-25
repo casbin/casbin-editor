@@ -2,7 +2,7 @@ const cleanContent = (content: string) => {
   return content.replace(/^\d+\s+/gm, '').trim();
 };
 
-export const extractPageContent = () => {
+export const extractPageContent = (boxType: string) => {
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
   const customConfigMatch = mainContent.match(/Custom config\s+([\s\S]*?)\s+Model/);
@@ -20,15 +20,37 @@ export const extractPageContent = () => {
     : 'No enforcement result found';
 
   const extractedContent = `
-      Custom Config: ${customConfig}
-      Model: ${model}
-      Policy: ${policy}
-      Request: ${request}
-      Enforcement Result: ${enforcementResult}
-    `;
+    Custom Config: ${customConfig}
+    Model: ${model}
+    Policy: ${policy}
+    Request: ${request}
+    Enforcement Result: ${enforcementResult}
+  `;
+
+  let message = '';
+  switch (boxType) {
+    case 'model':
+      message = `Briefly explain the Model content. 
+      no need to repeat the content of the question.\n${extractedContent}`;
+      break;
+    case 'policy':
+      message = `Briefly explain the Policy content.
+      no need to repeat the content of the question.\n${extractedContent}`;
+      break;
+    case 'request':
+      message = `Briefly explain the Request content. 
+      no need to repeat the content of the question.\n${extractedContent}`;
+      break;
+    case 'enforcementResult':
+      message = `Why this result? please provide a brief summary. 
+      no need to repeat the content of the question.\n${extractedContent}`;
+      break;
+    default:
+      message = extractedContent;
+  }
 
   return {
     extractedContent,
-    message: `Why this result? please provide a brief summary. no need to repeat the content of the question.\n${extractedContent}`,
+    message,
   };
 };

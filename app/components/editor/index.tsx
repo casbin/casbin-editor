@@ -1,19 +1,5 @@
-// Copyright 2024 The casbin Authors. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 'use client';
-import React, { isValidElement, useState, useEffect } from 'react';
+import React, { isValidElement, useState, useEffect, useRef } from 'react';
 import { example, ModelKind } from './casbin-mode/example';
 import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
 import { clsx } from 'clsx';
@@ -32,7 +18,9 @@ import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
 import useCopy from '@/app/components/editor/hooks/useCopy';
 import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforceContext';
 import useIndex from '@/app/components/editor/hooks/useIndex';
-import { SidePanelChat } from '@/app/components/SidePanelChat';
+import SidePanelChat from '@/app/components/SidePanelChat';
+import { extractPageContent } from '../../utils/contentExtractor';
+import { buttonPlugin } from './ButtonPlugin';
 
 export const EditorScreen = () => {
   const {
@@ -50,6 +38,16 @@ export const EditorScreen = () => {
     data: enforceContextData,
   });
   const [casbinVersion, setCasbinVersion] = useState('');
+  const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
+  const openDrawerWithMessage = (message: string) => {
+    if (sidePanelChatRef.current) {
+      sidePanelChatRef.current.openDrawer(message);
+    }
+  };
+  const extractContent = (boxType: string) => {
+    const { message } = extractPageContent(boxType);
+    return message;
+  };
 
   useEffect(() => {
     const fetchCasbinVersion = async () => {
@@ -75,9 +73,7 @@ export const EditorScreen = () => {
           } else if (Array.isArray(v)) {
             const formattedResults = v.map((res) => {
               if (typeof res === 'object') {
-                const reasonString = Array.isArray(res.reason) && res.reason.length > 0 
-                  ? ` Reason: ${JSON.stringify(res.reason)}` 
-                  : '';
+                const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
                 return `${res.okEx}${reasonString}`;
               }
               return res;
@@ -194,7 +190,13 @@ export const EditorScreen = () => {
                     bracketMatching: true,
                     indentOnInput: true,
                   }}
-                  extensions={[basicSetup, CasbinConfSupport(), indentUnit.of('    '), EditorView.lineWrapping]}
+                  extensions={[
+                    basicSetup,
+                    CasbinConfSupport(),
+                    indentUnit.of('    '),
+                    EditorView.lineWrapping,
+                    buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
+                  ]}
                   className={'function flex-grow'}
                   value={modelText}
                 />
@@ -214,7 +216,13 @@ export const EditorScreen = () => {
               <div className="flex flex-col h-full">
                 <CodeMirror
                   height="100%"
-                  extensions={[basicSetup, CasbinPolicySupport(), indentUnit.of('    '), EditorView.lineWrapping]}
+                  extensions={[
+                    basicSetup,
+                    CasbinPolicySupport(),
+                    indentUnit.of('    '),
+                    EditorView.lineWrapping,
+                    buttonPlugin(openDrawerWithMessage, extractContent, 'policy'),
+                  ]}
                   basicSetup={{
                     lineNumbers: true,
                     highlightActiveLine: true,
@@ -277,7 +285,13 @@ export const EditorScreen = () => {
                   onChange={(value) => {
                     setRequestPersistent(value);
                   }}
-                  extensions={[basicSetup, CasbinPolicySupport(), indentUnit.of('    '), EditorView.lineWrapping]}
+                  extensions={[
+                    basicSetup,
+                    CasbinPolicySupport(),
+                    indentUnit.of('    '),
+                    EditorView.lineWrapping,
+                    buttonPlugin(openDrawerWithMessage, extractContent, 'request'),
+                  ]}
                   basicSetup={{
                     lineNumbers: true,
                     highlightActiveLine: true,
@@ -293,7 +307,9 @@ export const EditorScreen = () => {
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 font-bold', 'flex items-center justify-between')}>
               <div>Enforcement Result</div>
-              <div className='mr-4'><SidePanelChat /></div>
+              <div className="mr-4">
+                <SidePanelChat ref={sidePanelChatRef} />
+              </div>
             </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
@@ -303,7 +319,14 @@ export const EditorScreen = () => {
                     return;
                   }}
                   theme={monokai}
-                  extensions={[basicSetup, javascriptLanguage, indentUnit.of('    '), EditorView.lineWrapping, EditorView.editable.of(false)]}
+                  extensions={[
+                    basicSetup,
+                    javascriptLanguage,
+                    indentUnit.of('    '),
+                    EditorView.lineWrapping,
+                    EditorView.editable.of(false),
+                    buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult'),
+                  ]}
                   basicSetup={{
                     lineNumbers: true,
                     highlightActiveLine: true,
@@ -365,9 +388,7 @@ export const EditorScreen = () => {
                   } else if (Array.isArray(v)) {
                     const formattedResults = v.map((res) => {
                       if (typeof res === 'object') {
-                        const reasonString = Array.isArray(res.reason) && res.reason.length > 0 
-                          ? ` Reason: ${JSON.stringify(res.reason)}` 
-                          : '';
+                        const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
                         return `${res.okEx}${reasonString}`;
                       }
                       return res;
