@@ -20,7 +20,7 @@ class ButtonWidget extends WidgetType {
     button.className = `flex items-center rounded text-[#453d7d] px-1 border border-[#453d7d] 
       bg-[#efefef] hover:bg-[#453d7d] hover:text-white transition-colors duration-500 
       font-medium whitespace-nowrap overflow-hidden`;
-    button.innerHTML = '<img src="/openai.svg" alt="" class="w-4 h-4 mr-1" /> Ask AI';
+    button.innerHTML = '<img src="openai.svg" alt="" class="w-4 h-4 mr-1" /> Ask AI';
     button.style.position = 'absolute';
     button.style.right = '1px';
     button.style.top = '1px';
