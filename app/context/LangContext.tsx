@@ -31,7 +31,6 @@ export const LangProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.clear();
     const savedLang = localStorage.getItem('lang');
 
     if (savedLang) {
