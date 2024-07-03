@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 const translations = {
   en: require('../../messages/en.json'),
   zh: require('../../messages/zh.json'),
-  zhHant: require('../../messages/zh-Hant.json'),
+  hant: require('../../messages/zh-Hant.json'),
   ja: require('../../messages/ja.json'),
   fr: require('../../messages/fr.json'),
   de: require('../../messages/de.json'),
@@ -18,26 +18,17 @@ type LangContextType = {
 
 const LangContext = createContext<LangContextType | undefined>(undefined);
 
-const langMapping = {
-  'zh-Hant': 'zhHant',
-};
-
-const getTranslationKey = (lang) => {
-  return langMapping[lang] || lang;
-};
-
 export const LangProvider = ({ children }: { children: ReactNode }) => {
   const [lang, setLangState] = useState('en');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const savedLang = localStorage.getItem('lang');
-
     if (savedLang) {
       setLangState(savedLang);
     } else {
       const browserLang = navigator.language.split('-')[0];
-      const supportedLangs = ['en', 'zh', 'zh-Hant', 'ja', 'fr', 'de'];
+      const supportedLangs = ['en', 'zh', 'hant', 'ja', 'fr', 'de'];
       const defaultLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
       setLangState(defaultLang);
       localStorage.setItem('lang', defaultLang);
@@ -51,8 +42,7 @@ export const LangProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const t = (key: string) => {
-    const langKey = getTranslationKey(lang);
-    const value = translations[langKey][key];
+    const value = translations[lang][key];
     return value || key;
   };
 
