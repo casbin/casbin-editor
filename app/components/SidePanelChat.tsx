@@ -1,11 +1,13 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { extractPageContent } from '../utils/contentExtractor';
+import { useLang } from '@/app/context/LangContext';
 
 const SidePanelChat = forwardRef((props, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [pageContent, setPageContent] = useState('');
   const [boxType, setBoxType] = useState('');
+  const { t } = useLang();
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -33,7 +35,7 @@ const SidePanelChat = forwardRef((props, ref) => {
   return (
     <>
       <div className="text-red-600 flex items-center">
-        <span>Why this result?</span>
+        <span>{t('Why this result')}</span>
       </div>
       {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleDrawer}></div>}
       <div
