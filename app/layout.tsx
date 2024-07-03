@@ -14,6 +14,7 @@
 
 import type { Metadata } from 'next';
 import './globals.css';
+import { LangProvider } from './context/LangContext';
 
 export const metadata: Metadata = {
   title: 'casbin-editor',
@@ -27,7 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <LangProvider>{children}</LangProvider>
+      </body>
     </html>
   );
 }

@@ -21,6 +21,8 @@ import useIndex from '@/app/components/editor/hooks/useIndex';
 import SidePanelChat from '@/app/components/SidePanelChat';
 import { extractPageContent } from '../../utils/contentExtractor';
 import { buttonPlugin } from './ButtonPlugin';
+import { useLang } from '@/app/context/LangContext';
+import LanguageMenu from '@/app/components/LanguageMenu';
 
 export const EditorScreen = () => {
   const {
@@ -48,6 +50,7 @@ export const EditorScreen = () => {
     const { message } = extractPageContent(boxType);
     return message;
   };
+  const { t } = useLang();
 
   useEffect(() => {
     const fetchCasbinVersion = async () => {
@@ -112,7 +115,7 @@ export const EditorScreen = () => {
             </svg>
           </button>
 
-          <div className={'pt-6 h-12 flex items-center'}>{open && <div>Custom config</div>}</div>
+          <div className={'pt-6 h-12 flex items-center font-bold'}>{open && <div>{t('Custom config')}</div>}</div>
           <div className="flex-grow overflow-auto h-full">
             {open && (
               <div className="flex flex-col h-full">
@@ -139,7 +142,7 @@ export const EditorScreen = () => {
         <div className="flex flex-row gap-1 pt-4 flex-1 overflow-hidden">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
-              <div className={'font-bold'}>Model</div>
+              <div className={'font-bold'}>{t('Model')}</div>
               <select
                 defaultValue={'basic'}
                 onChange={(e) => {
@@ -148,7 +151,7 @@ export const EditorScreen = () => {
                 className={'border-[#767676] border rounded'}
               >
                 <option value="" disabled>
-                  Select your model
+                  {t('Select your model')}
                 </option>
                 {Object.keys(example).map((n) => {
                   return (
@@ -175,7 +178,7 @@ export const EditorScreen = () => {
                   }
                 }}
               >
-                RESET
+                {t('RESET')}
               </button>
             </div>
             <div className="flex-grow overflow-auto h-full">
@@ -205,7 +208,7 @@ export const EditorScreen = () => {
           </div>
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className="h-10 font-bold flex items-center justify-between">
-              <div>Policy</div>
+              <div>{t('Policy')}</div>
               <div className="text-right font-bold mr-4 text-sm text-[#e13c3c]">
                 <a href={`https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`} target="_blank" rel="noopener noreferrer">
                   Node-Casbin v{casbinVersion}
@@ -241,7 +244,7 @@ export const EditorScreen = () => {
         <div className="flex flex-row gap-1 pt-2 flex-1 overflow-hidden">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
-              <div className={'font-bold'}>Request</div>
+              <div className={'font-bold'}>{t('Request')}</div>
               <div className={'space-x-2'}>
                 <input
                   className={clsx('w-7 pl-1', 'border border-black rounded')}
@@ -306,7 +309,7 @@ export const EditorScreen = () => {
           </div>
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 font-bold', 'flex items-center justify-between')}>
-              <div>Enforcement Result</div>
+              <div>{t('Enforcement Result')}</div>
               <div className="mr-4">
                 <SidePanelChat ref={sidePanelChatRef} />
               </div>
@@ -340,7 +343,7 @@ export const EditorScreen = () => {
             </div>
           </div>
         </div>
-        <div className={clsx('pt-2 px-1')}>
+        <div className={clsx('pt-2 px-1 flex items-center')}>
           <button
             className={clsx(
               'rounded',
@@ -361,7 +364,7 @@ export const EditorScreen = () => {
               }
             }}
           >
-            SYNTAX VALIDATE
+            {t('SYNTAX VALIDATE')}
           </button>
           <button
             className={clsx(
@@ -399,7 +402,7 @@ export const EditorScreen = () => {
               });
             }}
           >
-            RUN THE TEST
+            {t('RUN THE TEST')}
           </button>
           {!share ? (
             <span>
@@ -427,7 +430,7 @@ export const EditorScreen = () => {
                   });
                 }}
               >
-                SHARE
+                {t('SHARE')}
               </button>
             </span>
           ) : (
@@ -446,16 +449,19 @@ export const EditorScreen = () => {
                 return copy(
                   () => {
                     setShare('');
-                    setEcho(<div>Copied.</div>);
+                    setEcho(<div>{t('Copied')}</div>);
                   },
                   `${window.location.origin + window.location.pathname}#${share}`,
                 );
               }}
             >
-              COPY
+              {t('COPY')}
             </button>
           )}
-          <div style={{ display: 'inline-block' }}>{echo}</div>
+          <div style={{ display: 'inline-block', marginRight: 'auto' }}>{echo}</div>
+          <div className="mr-3">
+            <LanguageMenu />
+          </div>
         </div>
       </div>
     </div>
