@@ -41,6 +41,9 @@ export default function useIndex() {
       setEcho(<div>Loading Shared Content...</div>);
       fetch(`https://dpaste.com/${hash}.txt`)
         .then((resp) => {
+          if (!resp.ok) {
+            throw new Error(`HTTP error! status: ${resp.status}`);
+          }
           return resp.text();
         })
         .then((content) => {
@@ -49,11 +52,7 @@ export default function useIndex() {
           setModelTextPersistent(sharedContent.model);
           setCustomConfigPersistent(sharedContent.customConfig);
           setRequestPersistent(sharedContent.request);
-          setRequestPersistent(sharedContent.request);
-          if (sharedContent.enforceContext) {
-            setEnforceContextDataPersistent(new Map(Object.entries(sharedContent.enforceContext)));
-          }
-          setRequestResult('');
+          setModelKind(sharedContent.modelKind);
           window.location.hash = ''; // prevent duplicate load
           setEcho(<div>Shared Content Loaded.</div>);
         })
