@@ -422,11 +422,12 @@ export const EditorScreen = () => {
                     onResponse: (v) => {
                       return handleShare(v);
                     },
+                    modelKind,
                     model: modelText,
                     policy,
                     customConfig,
                     request,
-                    enforceContext: Object.entries(enforceContextData),
+                    requestResult: Array.from(enforceContextData.entries()),
                   });
                 }}
               >

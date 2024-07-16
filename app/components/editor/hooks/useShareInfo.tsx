@@ -19,11 +19,12 @@ interface ShareProps extends ShareFormat {
 }
 
 export interface ShareFormat {
+  modelKind: string;
   model: string;
   policy: string;
   customConfig: string;
   request: string;
-  enforceContext: object;
+  requestResult: object;
 }
 
 async function dpaste(content: string) {
@@ -43,11 +44,12 @@ export default function useShareInfo() {
     setSharing(true);
     props.onResponse(<div>Sharing...</div>);
     const shareContent: ShareFormat = {
+      modelKind: props.modelKind,
       model: props.model,
       policy: props.policy,
       customConfig: props.customConfig,
       request: props.request,
-      enforceContext: props.enforceContext,
+      requestResult: props.requestResult,
     };
     dpaste(JSON.stringify(shareContent)).then((url: string) => {
       setSharing(false);
