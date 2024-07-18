@@ -48,11 +48,17 @@ export default function useIndex() {
         })
         .then((content) => {
           const sharedContent = JSON.parse(content) as ShareFormat;
-          setPolicyPersistent(sharedContent.policy);
-          setModelTextPersistent(sharedContent.model);
-          setCustomConfigPersistent(sharedContent.customConfig);
-          setRequestPersistent(sharedContent.request);
-          setModelKind(sharedContent.modelKind);
+          // Use empty string as default value with type checking
+          setPolicyPersistent(sharedContent.policy ?? '');
+          setModelTextPersistent(sharedContent.model ?? '');
+          setCustomConfigPersistent(sharedContent.customConfig ?? '');
+          setRequestPersistent(sharedContent.request ?? '');
+          // Make sure it's a valid ModelKind type
+          if (sharedContent.modelKind && example[sharedContent.modelKind]) {
+            setModelKind(sharedContent.modelKind as ModelKind);
+          } else {
+            setModelKind('basic'); // Use Default
+          }
           window.location.hash = ''; // prevent duplicate load
           setEcho(<div>Shared Content Loaded.</div>);
         })

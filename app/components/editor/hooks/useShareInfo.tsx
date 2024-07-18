@@ -19,12 +19,12 @@ interface ShareProps extends ShareFormat {
 }
 
 export interface ShareFormat {
-  modelKind: string;
-  model: string;
-  policy: string;
-  customConfig: string;
-  request: string;
-  requestResult: object;
+  modelKind?: string;
+  model?: string;
+  policy?: string;
+  customConfig?: string;
+  request?: string;
+  requestResult?: object;
 }
 
 async function dpaste(content: string) {
@@ -43,19 +43,32 @@ export default function useShareInfo() {
     if (sharing) return;
     setSharing(true);
     props.onResponse(<div>Sharing...</div>);
-    const shareContent: ShareFormat = {
-      modelKind: props.modelKind,
-      model: props.model,
-      policy: props.policy,
-      customConfig: props.customConfig,
-      request: props.request,
-      requestResult: props.requestResult,
-    };
-    dpaste(JSON.stringify(shareContent)).then((url: string) => {
+
+    // Create an object that contains only non-null values
+    const shareContent: ShareFormat = Object.entries(props).reduce((acc, [key, value]) => {
+      if (key !== 'onResponse' && value != null && value !== '') {
+        acc[key as keyof ShareFormat] = value;
+      }
+      return acc;
+    }, {} as ShareFormat);
+
+    // Check if there are any non-null values to share
+    if (Object.keys(shareContent).length === 0) {
       setSharing(false);
-      const hash = url.split('/')[3];
-      props.onResponse(hash);
-    });
+      props.onResponse(<div>No content to share</div>);
+      return;
+    }
+
+    dpaste(JSON.stringify(shareContent))
+      .then((url: string) => {
+        setSharing(false);
+        const hash = url.split('/')[3];
+        props.onResponse(hash);
+      })
+      .catch((error) => {
+        setSharing(false);
+        props.onResponse(<div>Error sharing content: {error.message}</div>);
+      });
   }
 
   return {

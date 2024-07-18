@@ -1,7 +1,7 @@
 import GenerateCasbinVersionPlugin from './generateCasbinVersionPlugin.js';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // reactStrictMode: false,
+  reactStrictMode: false,
   /**
    * Enable static exports for the App Router.
    *
