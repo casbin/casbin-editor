@@ -144,7 +144,7 @@ export const EditorScreen = () => {
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
               <div className={'font-bold'}>{t('Model')}</div>
               <select
-                defaultValue={'basic'}
+                value={modelKind}
                 onChange={(e) => {
                   setModelKind(e.target.value);
                 }}
