@@ -54,7 +54,7 @@ export default function useIndex() {
           setCustomConfigPersistent(sharedContent.customConfig ?? '');
           setRequestPersistent(sharedContent.request ?? '');
           // Make sure it's a valid ModelKind type
-          if (sharedContent.modelKind && example[sharedContent.modelKind]) {
+          if (sharedContent.modelKind && example[sharedContent.modelKind as ModelKind]) {
             setModelKind(sharedContent.modelKind as ModelKind);
           } else {
             setModelKind('basic'); // Use Default
@@ -86,9 +86,29 @@ export default function useIndex() {
     }
   }
   return {
-    modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request,
-    setRequest, echo, setEcho, requestResult, setRequestResult, customConfig, setCustomConfig, share, setShare,
-    enforceContextData, setEnforceContextData, setPolicyPersistent, setModelTextPersistent,
-    setCustomConfigPersistent, setRequestPersistent, setEnforceContextDataPersistent, handleShare,
-  } ;
+    modelKind,
+    setModelKind,
+    modelText,
+    setModelText,
+    policy,
+    setPolicy,
+    request,
+    setRequest,
+    echo,
+    setEcho,
+    requestResult,
+    setRequestResult,
+    customConfig,
+    setCustomConfig,
+    share,
+    setShare,
+    enforceContextData,
+    setEnforceContextData,
+    setPolicyPersistent,
+    setModelTextPersistent,
+    setCustomConfigPersistent,
+    setRequestPersistent,
+    setEnforceContextDataPersistent,
+    handleShare,
+  };
 }

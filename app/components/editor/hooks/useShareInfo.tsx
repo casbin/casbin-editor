@@ -45,12 +45,15 @@ export default function useShareInfo() {
     props.onResponse(<div>Sharing...</div>);
 
     // Create an object that contains only non-null values
-    const shareContent: ShareFormat = Object.entries(props).reduce((acc, [key, value]) => {
-      if (key !== 'onResponse' && value != null && value !== '') {
-        acc[key as keyof ShareFormat] = value;
-      }
-      return acc;
-    }, {} as ShareFormat);
+    const shareContent: ShareFormat = {
+      ...Object.entries(props).reduce((acc, [key, value]) => {
+        if (key !== 'onResponse' && value != null && value !== '') {
+          acc[key as keyof ShareFormat] = value;
+        }
+        return acc;
+      }, {} as ShareFormat),
+      modelKind: props.modelKind,
+    };
 
     // Check if there are any non-null values to share
     if (Object.keys(shareContent).length === 0) {
