@@ -86,29 +86,9 @@ export default function useIndex() {
     }
   }
   return {
-    modelKind,
-    setModelKind,
-    modelText,
-    setModelText,
-    policy,
-    setPolicy,
-    request,
-    setRequest,
-    echo,
-    setEcho,
-    requestResult,
-    setRequestResult,
-    customConfig,
-    setCustomConfig,
-    share,
-    setShare,
-    enforceContextData,
-    setEnforceContextData,
-    setPolicyPersistent,
-    setModelTextPersistent,
-    setCustomConfigPersistent,
-    setRequestPersistent,
-    setEnforceContextDataPersistent,
-    handleShare,
-  };
+    modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request,
+    setRequest, echo, setEcho, requestResult, setRequestResult, customConfig, setCustomConfig, share, setShare,
+    enforceContextData, setEnforceContextData, setPolicyPersistent, setModelTextPersistent,
+    setCustomConfigPersistent, setRequestPersistent, setEnforceContextDataPersistent, handleShare,
+  } ;
 }
