@@ -3,12 +3,20 @@
   "Model": "モデル",
   "Select your model": "モデルを選択",
   "RESET": "リセット",
-  "Policy": "戦略",
+  "Policy": "ポリシー",
   "Request": "リクエスト",
   "Enforcement Result": "実行結果",
   "Why this result": "なぜこの結果？",
   "SYNTAX VALIDATE": "構文検証",
-  "RUN THE TEST": "テストを実行",
+  "RUN THE TEST": "テスト実行",
   "SHARE": "共有",
-  "COPY": "コピー"
+  "Copied": "コピー完了",
+  "COPY": "コピー",
+
+  "explainModel": "モデルの内容を簡単に説明してください。",
+  "explainPolicy": "ポリシーの内容を簡単に説明してください。",
+  "explainRequest": "リクエストの内容を簡単に説明してください。",
+  "whyThisResult": "なぜこの結果になったのですか？",
+  "provideBriefSummary": "簡単な要約を提供してください。",
+  "noRepeatContent": "質問の内容を繰り返す必要はありません。"
 }

@@ -27,10 +27,10 @@ const SidePanelChat = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (isOpen && boxType) {
-      const { extractedContent } = extractPageContent(boxType);
+      const { extractedContent } = extractPageContent(boxType, t);
       setPageContent(extractedContent);
     }
-  }, [isOpen, boxType]);
+  }, [isOpen, boxType, t]);
 
   return (
     <>

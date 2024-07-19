@@ -11,5 +11,12 @@
   "RUN THE TEST": "运行",
   "SHARE": "分享",
   "Copied": "已复制",
-  "COPY": "复制"
+  "COPY": "复制",
+
+  "explainModel": "请简要解释模型内容。",
+  "explainPolicy": "请简要解释策略内容。",
+  "explainRequest": "请简要解释请求内容。",
+  "whyThisResult": "为什么会得到这个结果？",
+  "provideBriefSummary": "请提供一个简短的总结。",
+  "noRepeatContent": "无需重复问题中的内容。"
 }

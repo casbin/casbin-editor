@@ -1,49 +1,59 @@
 const cleanContent = (content: string) => {
-  return content.replace(/^\d+\s+/gm, '').trim();
+  return content
+    .replace(/^\d+\s+/gm, '')
+    .replace(/Ask AI/g, '')
+    .replace(/AI Assistant/g, '')
+    .trim();
 };
 
-export const extractPageContent = (boxType: string) => {
+export const extractPageContent = (boxType: string, t: (key: string) => string) => {
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
-  const customConfigMatch = mainContent.match(/Custom config\s+([\s\S]*?)\s+Model/);
-  const modelMatch = mainContent.match(/Model\s+([\s\S]*?)\s+Policy/);
-  const policyMatch = mainContent.match(/Policy\s+([\s\S]*?)\s+Request/);
-  const requestMatch = mainContent.match(/Request\s+([\s\S]*?)\s+Enforcement Result/);
-  const enforcementResultMatch = mainContent.match(/Enforcement Result\s+([\s\S]*?)\s+SYNTAX VALIDATE/);
+  const customConfigMatch = mainContent.match(new RegExp(`${t('Custom config')}\\s+([\\s\\S]*?)\\s+${t('Model')}`));
+  const modelMatch = mainContent.match(new RegExp(`${t('Model')}\\s+([\\s\\S]*?)\\s+${t('Policy')}`));
+  const policyMatch = mainContent.match(new RegExp(`${t('Policy')}\\s+([\\s\\S]*?)\\s+${t('Request')}`));
+  const requestMatch = mainContent.match(new RegExp(`${t('Request')}\\s+([\\s\\S]*?)\\s+${t('Enforcement Result')}`));
+  const enforcementResultMatch = mainContent.match(new RegExp(`${t('Enforcement Result')}\\s+([\\s\\S]*?)\\s+${t('SYNTAX VALIDATE')}`));
 
   const customConfig = customConfigMatch ? cleanContent(customConfigMatch[1]) : 'No custom config found';
-  const model = modelMatch ? cleanContent(modelMatch[1].replace(/Select your model[\s\S]*?RESET/, '')) : 'No model found';
+  const model = modelMatch
+    ? cleanContent(modelMatch[1].replace(new RegExp(`${t('Select your model')}[\\s\\S]*?${t('RESET')}`, 'i'), ''))
+    : 'No model found';
   const policy = policyMatch ? cleanContent(policyMatch[1].replace(/Node-Casbin v[\d.]+/, '')) : 'No policy found';
   const request = requestMatch ? cleanContent(requestMatch[1]) : 'No request found';
   const enforcementResult = enforcementResultMatch
     ? cleanContent(enforcementResultMatch[1].replace(/Why this result\?[\s\S]*?AI Assistant/, ''))
     : 'No enforcement result found';
 
-  const extractedContent = `
-    Custom Config: ${customConfig}
-    Model: ${model}
-    Policy: ${policy}
-    Request: ${request}
-    Enforcement Result: ${enforcementResult}
-  `;
+  const removeEmptyLines = (content: string) => {
+    return content
+      .split('\n')
+      .filter((line) => {
+        return line.trim() !== '';
+      })
+      .join('\n');
+  };
+  const extractedContent = removeEmptyLines(`
+    ${t('Custom config')}: ${cleanContent(customConfig)}
+    ${t('Model')}: ${cleanContent(model)}
+    ${t('Policy')}: ${cleanContent(policy)}
+    ${t('Request')}: ${cleanContent(request)}
+    ${t('Enforcement Result')}: ${cleanContent(enforcementResult)}
+  `);
 
   let message = '';
   switch (boxType) {
     case 'model':
-      message = `Briefly explain the Model content. 
-      no need to repeat the content of the question.\n${extractedContent}`;
+      message = `${t('explainModel')}${t('noRepeatContent')}\n${extractedContent}`;
       break;
     case 'policy':
-      message = `Briefly explain the Policy content.
-      no need to repeat the content of the question.\n${extractedContent}`;
+      message = `${t('explainPolicy')}${t('noRepeatContent')}\n${extractedContent}`;
       break;
     case 'request':
-      message = `Briefly explain the Request content. 
-      no need to repeat the content of the question.\n${extractedContent}`;
+      message = `${t('explainRequest')}${t('noRepeatContent')}\n${extractedContent}`;
       break;
     case 'enforcementResult':
-      message = `Why this result? please provide a brief summary. 
-      no need to repeat the content of the question.\n${extractedContent}`;
+      message = `${t('whyThisResult')}${t('provideBriefSummary')}${t('noRepeatContent')}\n${extractedContent}`;
       break;
     default:
       message = extractedContent;

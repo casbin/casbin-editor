@@ -1,14 +1,22 @@
 {
-  "Custom config": "自訂設定",
+  "Custom config": "自定義配置",
   "Model": "模型",
-  "Select your model": "選擇您的模型",
+  "Select your model": "選擇模型",
   "RESET": "重置",
   "Policy": "策略",
   "Request": "請求",
   "Enforcement Result": "執行結果",
-  "Why this result": "為什麼這個結果？",
-  "SYNTAX VALIDATE": "語法驗證",
-  "RUN THE TEST": "運行測試",
+  "Why this result": "為何此結果？",
+  "SYNTAX VALIDATE": "驗證語法",
+  "RUN THE TEST": "運行",
   "SHARE": "分享",
-  "COPY": "複製"
+  "Copied": "已複製",
+  "COPY": "複製",
+
+  "explainModel": "請簡要解釋模型內容。",
+  "explainPolicy": "請簡要解釋策略內容。",
+  "explainRequest": "請簡要解釋請求內容。",
+  "whyThisResult": "為什麼會得到這個結果？",
+  "provideBriefSummary": "請提供一個簡短的總結。",
+  "noRepeatContent": "無需重複問題中的內容。"
 }

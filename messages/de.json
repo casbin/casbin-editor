@@ -2,13 +2,21 @@
   "Custom config": "Benutzerdefinierte Konfiguration",
   "Model": "Modell",
   "Select your model": "Wählen Sie Ihr Modell",
-  "RESET": "ZURÜCKSETZEN",
-  "Policy": "Strategie",
+  "RESET": "Zurücksetzen",
+  "Policy": "Richtlinie",
   "Request": "Anfrage",
   "Enforcement Result": "Durchsetzungsergebnis",
   "Why this result": "Warum dieses Ergebnis?",
-  "SYNTAX VALIDATE": "SYNTAX VALIDIEREN",
-  "RUN THE TEST": "DEN TEST AUSFÜHREN",
-  "SHARE": "TEILEN",
-  "COPY": "KOPIEREN"
+  "SYNTAX VALIDATE": "Syntax validieren",
+  "RUN THE TEST": "Test ausführen",
+  "SHARE": "Teilen",
+  "Copied": "Kopiert",
+  "COPY": "Kopieren",
+  
+  "explainModel": "Erklären Sie kurz den Inhalt des Modells.",
+  "explainPolicy": "Erklären Sie kurz den Inhalt der Richtlinie.",
+  "explainRequest": "Erklären Sie kurz den Inhalt der Anfrage.",
+  "whyThisResult": "Warum wurde dieses Ergebnis erzielt?",
+  "provideBriefSummary": "Bitte geben Sie eine kurze Zusammenfassung.",
+  "noRepeatContent": "Der Inhalt der Frage muss nicht wiederholt werden."
 }

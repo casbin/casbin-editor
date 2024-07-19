@@ -47,7 +47,7 @@ export const EditorScreen = () => {
     }
   };
   const extractContent = (boxType: string) => {
-    const { message } = extractPageContent(boxType);
+    const { message } = extractPageContent(boxType, t);
     return message;
   };
   const { t } = useLang();
