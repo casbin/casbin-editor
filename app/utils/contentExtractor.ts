@@ -2,11 +2,10 @@ const cleanContent = (content: string) => {
   return content
     .replace(/^\d+\s+/gm, '')
     .replace(/Ask AI/g, '')
-    .replace(/AI Assistant/g, '')
     .trim();
 };
 
-export const extractPageContent = (boxType: string, t: (key: string) => string) => {
+export const extractPageContent = (boxType: string, t: (key: string) => string, lang: string) => {
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
   const customConfigMatch = mainContent.match(new RegExp(`${t('Custom config')}\\s+([\\s\\S]*?)\\s+${t('Model')}`));
@@ -22,7 +21,7 @@ export const extractPageContent = (boxType: string, t: (key: string) => string) 
   const policy = policyMatch ? cleanContent(policyMatch[1].replace(/Node-Casbin v[\d.]+/, '')) : 'No policy found';
   const request = requestMatch ? cleanContent(requestMatch[1]) : 'No request found';
   const enforcementResult = enforcementResultMatch
-    ? cleanContent(enforcementResultMatch[1].replace(/Why this result\?[\s\S]*?AI Assistant/, ''))
+    ? cleanContent(enforcementResultMatch[1].replace(new RegExp(`${t('Why this result')}[\\s\\S]*?AI Assistant`, 'i'), ''))
     : 'No enforcement result found';
 
   const removeEmptyLines = (content: string) => {
@@ -34,29 +33,33 @@ export const extractPageContent = (boxType: string, t: (key: string) => string) 
       .join('\n');
   };
   const extractedContent = removeEmptyLines(`
-    ${t('Custom config')}: ${cleanContent(customConfig)}
-    ${t('Model')}: ${cleanContent(model)}
-    ${t('Policy')}: ${cleanContent(policy)}
-    ${t('Request')}: ${cleanContent(request)}
-    ${t('Enforcement Result')}: ${cleanContent(enforcementResult)}
+    Custom config: ${cleanContent(customConfig)}
+    Model: ${cleanContent(model)}
+    Policy: ${cleanContent(policy)}
+    Request: ${cleanContent(request)}
+    Enforcement Result: ${cleanContent(enforcementResult)}
   `);
 
-  let message = '';
+  let message = `Please explain in ${lang} language.：\n`;
   switch (boxType) {
     case 'model':
-      message = `${t('explainModel')}${t('noRepeatContent')}\n${extractedContent}`;
+      message += `Briefly explain the Model content. 
+      no need to repeat the content of the question.\n${extractedContent}`;
       break;
     case 'policy':
-      message = `${t('explainPolicy')}${t('noRepeatContent')}\n${extractedContent}`;
+      message += `Briefly explain the Policy content.
+      no need to repeat the content of the question.\n${extractedContent}`;
       break;
     case 'request':
-      message = `${t('explainRequest')}${t('noRepeatContent')}\n${extractedContent}`;
+      message += `Briefly explain the Request content. 
+      no need to repeat the content of the question.\n${extractedContent}`;
       break;
     case 'enforcementResult':
-      message = `${t('whyThisResult')}${t('provideBriefSummary')}${t('noRepeatContent')}\n${extractedContent}`;
+      message += `Why this result? please provide a brief summary. 
+      no need to repeat the content of the question.\n${extractedContent}`;
       break;
     default:
-      message = extractedContent;
+      message += extractedContent;
   }
 
   return {

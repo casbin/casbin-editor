@@ -11,12 +11,5 @@
   "RUN THE TEST": "運行",
   "SHARE": "分享",
   "Copied": "已複製",
-  "COPY": "複製",
-
-  "explainModel": "請簡要解釋模型內容。",
-  "explainPolicy": "請簡要解釋策略內容。",
-  "explainRequest": "請簡要解釋請求內容。",
-  "whyThisResult": "為什麼會得到這個結果？",
-  "provideBriefSummary": "請提供一個簡短的總結。",
-  "noRepeatContent": "無需重複問題中的內容。"
+  "COPY": "複製"
 }

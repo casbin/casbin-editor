@@ -11,12 +11,5 @@
   "RUN THE TEST": "RUN THE TEST",
   "SHARE": "SHARE",
   "Copied": "Copied",
-  "COPY": "COPY",
-
-  "explainModel": "Briefly explain the Model content.",
-  "explainPolicy": "Briefly explain the Policy content.",
-  "explainRequest": "Briefly explain the Request content.",
-  "whyThisResult": "Why this result?",
-  "provideBriefSummary": "Please provide a brief summary.",
-  "noRepeatContent": "No need to repeat the content of the question."
+  "COPY": "COPY"
 }

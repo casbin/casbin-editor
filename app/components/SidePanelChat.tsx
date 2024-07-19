@@ -7,7 +7,7 @@ const SidePanelChat = forwardRef((props, ref) => {
   const [message, setMessage] = useState('');
   const [pageContent, setPageContent] = useState('');
   const [boxType, setBoxType] = useState('');
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -27,10 +27,11 @@ const SidePanelChat = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (isOpen && boxType) {
-      const { extractedContent } = extractPageContent(boxType, t);
+      const { extractedContent, message } = extractPageContent(boxType, t, lang);
       setPageContent(extractedContent);
+      setMessage(message);
     }
-  }, [isOpen, boxType, t]);
+  }, [isOpen, boxType, t, lang]);
 
   return (
     <>

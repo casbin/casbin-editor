@@ -11,12 +11,5 @@
   "RUN THE TEST": "Test ausführen",
   "SHARE": "Teilen",
   "Copied": "Kopiert",
-  "COPY": "Kopieren",
-  
-  "explainModel": "Erklären Sie kurz den Inhalt des Modells.",
-  "explainPolicy": "Erklären Sie kurz den Inhalt der Richtlinie.",
-  "explainRequest": "Erklären Sie kurz den Inhalt der Anfrage.",
-  "whyThisResult": "Warum wurde dieses Ergebnis erzielt?",
-  "provideBriefSummary": "Bitte geben Sie eine kurze Zusammenfassung.",
-  "noRepeatContent": "Der Inhalt der Frage muss nicht wiederholt werden."
+  "COPY": "Kopieren"
 }
