@@ -6,9 +6,10 @@
   "Policy": "Policy",
   "Request": "Request",
   "Enforcement Result": "Enforcement Result",
-  "Why this result": "Why this result?",
+  "Why this result": "Why this result",
   "SYNTAX VALIDATE": "SYNTAX VALIDATE",
   "RUN THE TEST": "RUN THE TEST",
   "SHARE": "SHARE",
+  "Copied": "Copied",
   "COPY": "COPY"
 }

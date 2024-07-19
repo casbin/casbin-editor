@@ -47,10 +47,10 @@ export const EditorScreen = () => {
     }
   };
   const extractContent = (boxType: string) => {
-    const { message } = extractPageContent(boxType);
+    const { message } = extractPageContent(boxType, t, lang);
     return message;
   };
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   useEffect(() => {
     const fetchCasbinVersion = async () => {
