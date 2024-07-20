@@ -15,6 +15,16 @@ const LanguageMenu = () => {
     ja: '日本語',
     fr: 'Français',
     de: 'Deutsch',
+    es: 'Español',
+    id: 'Indonesia',
+    ko: '한국어',
+    ru: 'Русский',
+    vi: 'Việt Nam',
+    pt: 'Português',
+    it: 'Italiano',
+    ms: 'Malay',
+    tr: 'Turkish',
+    ar: 'العربية',
   };
 
   const handleLangChange = (newLang) => {
@@ -59,7 +69,7 @@ const LanguageMenu = () => {
           {currentLanguage}
         </button>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content sideOffset={5} className="bg-white rounded-md p-2 z-10">
+      <DropdownMenu.Content sideOffset={5} className="bg-white rounded-md p-2 z-10 dropdown-content">
         {Object.keys(languageNames).map((code) => {
           return (
             <DropdownMenu.Item
