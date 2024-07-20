@@ -5,3 +5,8 @@
 button:hover img {
   filter: brightness(0) invert(1);
 }
+
+.dropdown-content {
+  max-height: var(--radix-dropdown-menu-content-available-height);
+  overflow-y: auto;
+}

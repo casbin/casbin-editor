@@ -8,6 +8,16 @@ const translations = {
   ja: require('../../messages/ja.json'),
   fr: require('../../messages/fr.json'),
   de: require('../../messages/de.json'),
+  es: require('../../messages/es.json'),
+  id: require('../../messages/id.json'),
+  ko: require('../../messages/ko.json'),
+  ru: require('../../messages/ru.json'),
+  vi: require('../../messages/vi.json'),
+  pt: require('../../messages/pt.json'),
+  it: require('../../messages/it.json'),
+  ms: require('../../messages/ms.json'),
+  tr: require('../../messages/tr.json'),
+  ar: require('../../messages/ar.json'),
 };
 
 type LangContextType = {
