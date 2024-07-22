@@ -39,12 +39,13 @@ export const LangProvider = ({ children }: { children: ReactNode }) => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlTheme = urlParams.get('theme');
     const savedLang = localStorage.getItem('lang');
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
 
     if (savedLang) {
       setLangState(savedLang);
     } else {
       const browserLang = navigator.language.split('-')[0];
-      const supportedLangs = ['en', 'zh', 'hant', 'ja', 'fr', 'de'];
+      const supportedLangs = ['en', 'zh', 'hant', 'ja', 'fr', 'de', 'es', 'id', 'ko', 'ru', 'vi', 'pt', 'it', 'ms', 'tr', 'ar'];
       const defaultLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
       setLangState(defaultLang);
       localStorage.setItem('lang', defaultLang);
@@ -53,6 +54,8 @@ export const LangProvider = ({ children }: { children: ReactNode }) => {
     if (urlTheme === 'dark' || urlTheme === 'light') {
       setTheme(urlTheme);
       localStorage.setItem('theme', urlTheme);
+    } else if (savedTheme) {
+      setTheme(savedTheme);
     } else {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setTheme(prefersDark ? 'dark' : 'light');
@@ -61,6 +64,14 @@ export const LangProvider = ({ children }: { children: ReactNode }) => {
 
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
 
   const setLang = (newLang: string) => {
     setLangState(newLang);

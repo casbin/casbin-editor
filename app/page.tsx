@@ -15,10 +15,12 @@
 'use client';
 import { EditorScreen } from '@/app/components/editor';
 import { clsx } from 'clsx';
+import { useLang } from '@/app/context/LangContext';
 
 export default function Home() {
+  const { theme } = useLang();
   return (
-    <main className="flex flex-col h-screen">
+    <main className={`flex flex-col h-screen ${theme === 'dark' ? 'bg-customDark' : 'bg-white'}`}>
       <div className="flex-grow overflow-hidden">
         <EditorScreen />
       </div>
