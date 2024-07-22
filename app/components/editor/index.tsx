@@ -50,7 +50,7 @@ export const EditorScreen = () => {
     const { message } = extractPageContent(boxType, t, lang);
     return message;
   };
-  const { t, lang } = useLang();
+  const { t, lang, theme } = useLang();
 
   useEffect(() => {
     const fetchCasbinVersion = async () => {
@@ -87,6 +87,7 @@ export const EditorScreen = () => {
       });
     }
   }, [modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult]);
+  const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
   return (
     <div className="flex flex-row h-full">
@@ -115,7 +116,7 @@ export const EditorScreen = () => {
             </svg>
           </button>
 
-          <div className={'pt-6 h-12 flex items-center font-bold'}>{open && <div>{t('Custom config')}</div>}</div>
+          <div className={'pt-6 h-12 flex items-center font-bold'}>{open && <div className={textClass}>{t('Custom config')}</div>}</div>
           <div className="flex-grow overflow-auto h-full">
             {open && (
               <div className="flex flex-col h-full">
@@ -142,7 +143,7 @@ export const EditorScreen = () => {
         <div className="flex flex-row gap-1 pt-4 flex-1 overflow-hidden">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
-              <div className={'font-bold'}>{t('Model')}</div>
+              <div className={clsx(textClass, 'font-bold')}>{t('Model')}</div>
               <select
                 value={modelKind}
                 onChange={(e) => {
@@ -208,7 +209,7 @@ export const EditorScreen = () => {
           </div>
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className="h-10 font-bold flex items-center justify-between">
-              <div>{t('Policy')}</div>
+              <div className={textClass}>{t('Policy')}</div>
               <div className="text-right font-bold mr-4 text-sm text-[#e13c3c]">
                 <a href={`https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`} target="_blank" rel="noopener noreferrer">
                   Node-Casbin v{casbinVersion}
@@ -244,7 +245,7 @@ export const EditorScreen = () => {
         <div className="flex flex-row gap-1 pt-2 flex-1 overflow-hidden">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
-              <div className={'font-bold'}>{t('Request')}</div>
+              <div className={clsx(textClass, 'font-bold')}>{t('Request')}</div>
               <div className={'space-x-2'}>
                 <input
                   className={clsx('w-7 pl-1', 'border border-black rounded')}
@@ -309,7 +310,7 @@ export const EditorScreen = () => {
           </div>
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 font-bold', 'flex items-center justify-between')}>
-              <div>{t('Enforcement Result')}</div>
+              <div className={textClass}>{t('Enforcement Result')}</div>
               <div className="mr-4">
                 <SidePanelChat ref={sidePanelChatRef} />
               </div>
@@ -459,7 +460,9 @@ export const EditorScreen = () => {
               {t('COPY')}
             </button>
           )}
-          <div style={{ display: 'inline-block', marginRight: 'auto' }}>{echo}</div>
+          <div style={{ display: 'inline-block', marginRight: 'auto' }} className={textClass}>
+            {echo}
+          </div>
           <div className="mr-3">
             <LanguageMenu />
           </div>

@@ -24,16 +24,22 @@ type LangContextType = {
   lang: string;
   setLang: (lang: string) => void;
   t: (key: string) => string;
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
 };
 
 const LangContext = createContext<LangContextType | undefined>(undefined);
 
 export const LangProvider = ({ children }: { children: ReactNode }) => {
   const [lang, setLangState] = useState('en');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlTheme = urlParams.get('theme');
     const savedLang = localStorage.getItem('lang');
+
     if (savedLang) {
       setLangState(savedLang);
     } else {
@@ -43,12 +49,28 @@ export const LangProvider = ({ children }: { children: ReactNode }) => {
       setLangState(defaultLang);
       localStorage.setItem('lang', defaultLang);
     }
+
+    if (urlTheme === 'dark' || urlTheme === 'light') {
+      setTheme(urlTheme);
+      localStorage.setItem('theme', urlTheme);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark ? 'dark' : 'light');
+      localStorage.setItem('theme', prefersDark ? 'dark' : 'light');
+    }
+
     setIsLoading(false);
   }, []);
 
   const setLang = (newLang: string) => {
     setLangState(newLang);
     localStorage.setItem('lang', newLang);
+  };
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
   };
 
   const t = (key: string) => {
@@ -60,7 +82,7 @@ export const LangProvider = ({ children }: { children: ReactNode }) => {
     return null;
   }
 
-  return <LangContext.Provider value={{ lang, setLang, t }}>{children}</LangContext.Provider>;
+  return <LangContext.Provider value={{ lang, setLang, t, theme, toggleTheme }}>{children}</LangContext.Provider>;
 };
 
 export const useLang = () => {

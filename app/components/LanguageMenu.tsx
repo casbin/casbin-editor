@@ -5,7 +5,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useLang } from '@/app/context/LangContext';
 
 const LanguageMenu = () => {
-  const { lang, setLang } = useLang();
+  const { lang, setLang, theme } = useLang();
   const [mounted, setMounted] = useState(false);
 
   const languageNames = {
@@ -32,6 +32,8 @@ const LanguageMenu = () => {
   };
 
   const currentLanguage = languageNames[lang] || 'Unknown';
+  const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
+  const iconFilterClass = clsx(theme === 'dark' ? 'filter invert' : '');
 
   useEffect(() => {
     setMounted(true);
@@ -56,12 +58,13 @@ const LanguageMenu = () => {
             'text-[#453d7a]',
             'bg-[#efefef]',
             'hover:bg-[#453d7d] hover:text-white',
+            textClass,
           )}
         >
           <img
             src="LanguageSwitching.svg"
             alt="Language"
-            className="w-6 h-6 mr-1"
+            className={clsx('w-6 h-6 mr-1', iconFilterClass)}
             style={{
               transition: 'filter 0.5s',
             }}
