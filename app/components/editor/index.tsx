@@ -50,7 +50,7 @@ export const EditorScreen = () => {
     const { message } = extractPageContent(boxType, t, lang);
     return message;
   };
-  const { t, lang, theme } = useLang();
+  const { t, lang, theme, toggleTheme } = useLang();
 
   useEffect(() => {
     const fetchCasbinVersion = async () => {
@@ -464,6 +464,20 @@ export const EditorScreen = () => {
             {echo}
           </div>
           <div className="mr-3">
+            <button
+              onClick={toggleTheme}
+              aria-label={theme !== 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="theme-toggle-button mr-2"
+            >
+              <img
+                src={theme !== 'dark' ? 'sun.svg' : 'moon.svg'}
+                alt={theme !== 'dark' ? 'Light mode' : 'Dark mode'}
+                className="w-6 h-6 transition-opacity duration-300"
+                style={{
+                  filter: theme === 'dark' ? 'invert(1)' : 'invert(0)',
+                }}
+              />
+            </button>
             <LanguageMenu />
           </div>
         </div>
