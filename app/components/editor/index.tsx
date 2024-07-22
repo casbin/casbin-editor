@@ -90,8 +90,8 @@ export const EditorScreen = () => {
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
   return (
-    <div className="flex flex-row h-full">
-      <div className={clsx(open ? 'w-72' : 'w-5', 'relative', 'pl-2 pr-2 border-r border-[#dddddd]')}>
+    <div className="flex flex-col sm:flex-row h-full">
+      <div className={clsx(open ? 'w-full sm:w-72' : 'w-5', 'relative', 'pl-2 pr-2 border-r border-[#dddddd]', 'hidden sm:block')}>
         <div className="flex flex-col h-full">
           <button
             className={clsx(
@@ -139,8 +139,8 @@ export const EditorScreen = () => {
           </div>
         </div>
       </div>
-      <div className={clsx('flex flex-col grow h-full')}>
-        <div className="flex flex-row gap-1 pt-4 flex-1 overflow-hidden">
+      <div className={clsx('flex flex-col grow h-full w-full')}>
+        <div className="flex flex-col sm:flex-row gap-1 pt-4 flex-1 overflow-hidden">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
               <div className={clsx(textClass, 'font-bold')}>{t('Model')}</div>
@@ -201,7 +201,7 @@ export const EditorScreen = () => {
                     EditorView.lineWrapping,
                     buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
                   ]}
-                  className={'function flex-grow'}
+                  className={'function flex-grow h-[300px]'}
                   value={modelText}
                 />
               </div>
@@ -235,14 +235,14 @@ export const EditorScreen = () => {
                   }}
                   theme={monokai}
                   onChange={setPolicyPersistent}
-                  className={'function flex-grow '}
+                  className={'function flex-grow h-[300px]'}
                   value={policy}
                 />
               </div>
             </div>
           </div>
         </div>
-        <div className="flex flex-row gap-1 pt-2 flex-1 overflow-hidden">
+        <div className="flex flex-col sm:flex-row gap-1 pt-2 flex-1 overflow-hidden">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
               <div className={clsx(textClass, 'font-bold')}>{t('Request')}</div>
@@ -302,7 +302,7 @@ export const EditorScreen = () => {
                     bracketMatching: true,
                     indentOnInput: true,
                   }}
-                  className={'function flex-grow '}
+                  className={'function flex-grow h-[300px]'}
                   value={request}
                 />
               </div>
@@ -315,6 +315,7 @@ export const EditorScreen = () => {
                 <SidePanelChat ref={sidePanelChatRef} />
               </div>
             </div>
+            {/* <div className="flex-grow overflow-auto h-[300px] sm:h-auto"> */}
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
                 <CodeMirror
@@ -337,76 +338,74 @@ export const EditorScreen = () => {
                     bracketMatching: true,
                     indentOnInput: true,
                   }}
-                  className={'cursor-not-allowed flex-grow'}
+                  className={'cursor-not-allowed flex-grow h-[300px]'}
                   value={requestResult}
                 />
               </div>
             </div>
           </div>
         </div>
-        <div className={clsx('pt-2 px-1 flex items-center')}>
-          <button
-            className={clsx(
-              'rounded',
-              'px-2 py-1',
-              'border border-[#453d7d]',
-              'bg-[#efefef]',
-              'text-[#453d7a]',
-              'hover:bg-[#453d7d] hover:text-white',
-              'transition-colors duration-500',
-            )}
-            style={{ marginRight: 8 }}
-            onClick={() => {
-              try {
-                Config.newConfigFromText(modelText);
-                setEcho(<div>Passed</div>);
-              } catch (e) {
-                setEcho(<div>{(e as any).message}</div>);
-              }
-            }}
-          >
-            {t('SYNTAX VALIDATE')}
-          </button>
-          <button
-            className={clsx(
-              'rounded',
-              'px-2 py-1',
-              'border border-[#453d7d]',
-              'text-[#453d7a]',
-              'bg-[#efefef]',
-              'hover:bg-[#453d7d] hover:text-white',
-              'transition-colors duration-500',
-            )}
-            style={{ marginRight: 8 }}
-            onClick={() => {
-              return enforcer({
-                modelKind,
-                model: modelText,
-                policy,
-                customConfig,
-                request,
-                enforceContextData,
-                onResponse: (v) => {
-                  if (isValidElement(v)) {
-                    setEcho(v);
-                  } else if (Array.isArray(v)) {
-                    const formattedResults = v.map((res) => {
-                      if (typeof res === 'object') {
-                        const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
-                        return `${res.okEx}${reasonString}`;
-                      }
-                      return res;
-                    });
-                    setRequestResult(formattedResults.join('\n'));
-                  }
-                },
-              });
-            }}
-          >
-            {t('RUN THE TEST')}
-          </button>
-          {!share ? (
-            <span>
+        <div className={clsx('pt-2 px-1 flex flex-col sm:flex-row items-start sm:items-center')}>
+          <div className="flex flex-row flex-wrap gap-2 mb-2 sm:mb-0 w-full sm:w-auto">
+            <button
+              className={clsx(
+                'rounded',
+                'px-2 py-1',
+                'border border-[#453d7d]',
+                'bg-[#efefef]',
+                'text-[#453d7a]',
+                'hover:bg-[#453d7d] hover:text-white',
+                'transition-colors duration-500',
+              )}
+              onClick={() => {
+                try {
+                  Config.newConfigFromText(modelText);
+                  setEcho(<div>Passed</div>);
+                } catch (e) {
+                  setEcho(<div>{(e as any).message}</div>);
+                }
+              }}
+            >
+              {t('SYNTAX VALIDATE')}
+            </button>
+            <button
+              className={clsx(
+                'rounded',
+                'px-2 py-1',
+                'border border-[#453d7d]',
+                'text-[#453d7a]',
+                'bg-[#efefef]',
+                'hover:bg-[#453d7d] hover:text-white',
+                'transition-colors duration-500',
+              )}
+              onClick={() => {
+                return enforcer({
+                  modelKind,
+                  model: modelText,
+                  policy,
+                  customConfig,
+                  request,
+                  enforceContextData,
+                  onResponse: (v) => {
+                    if (isValidElement(v)) {
+                      setEcho(v);
+                    } else if (Array.isArray(v)) {
+                      const formattedResults = v.map((res) => {
+                        if (typeof res === 'object') {
+                          const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
+                          return `${res.okEx}${reasonString}`;
+                        }
+                        return res;
+                      });
+                      setRequestResult(formattedResults.join('\n'));
+                    }
+                  },
+                });
+              }}
+            >
+              {t('RUN THE TEST')}
+            </button>
+            {!share ? (
               <button
                 className={clsx(
                   'rounded',
@@ -417,7 +416,6 @@ export const EditorScreen = () => {
                   'hover:bg-[#453d7d] hover:text-white',
                   'transition-colors duration-500',
                 )}
-                style={{ marginRight: 8 }}
                 onClick={() => {
                   return shareInfo({
                     onResponse: (v) => {
@@ -434,51 +432,52 @@ export const EditorScreen = () => {
               >
                 {t('SHARE')}
               </button>
-            </span>
-          ) : (
-            <button
-              className={clsx(
-                'rounded',
-                'px-2 py-1',
-                'border border-[#453d7d]',
-                'text-[#453d7a]',
-                'bg-[#efefef]',
-                'hover:bg-[#453d7d] hover:text-white',
-                'transition-colors duration-500',
-              )}
-              style={{ marginRight: 8 }}
-              onClick={() => {
-                return copy(
-                  () => {
-                    setShare('');
-                    setEcho(<div>{t('Copied')}</div>);
-                  },
-                  `${window.location.origin + window.location.pathname}#${share}`,
-                );
-              }}
-            >
-              {t('COPY')}
-            </button>
-          )}
-          <div style={{ display: 'inline-block', marginRight: 'auto' }} className={textClass}>
-            {echo}
-          </div>
-          <div className="mr-3">
-            <button
-              onClick={toggleTheme}
-              aria-label={theme !== 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="theme-toggle-button mr-2"
-            >
-              <img
-                src={theme !== 'dark' ? 'sun.svg' : 'moon.svg'}
-                alt={theme !== 'dark' ? 'Light mode' : 'Dark mode'}
-                className="w-6 h-6 transition-opacity duration-300"
-                style={{
-                  filter: theme === 'dark' ? 'invert(1)' : 'invert(0)',
+            ) : (
+              <button
+                className={clsx(
+                  'rounded',
+                  'px-2 py-1',
+                  'border border-[#453d7d]',
+                  'text-[#453d7a]',
+                  'bg-[#efefef]',
+                  'hover:bg-[#453d7d] hover:text-white',
+                  'transition-colors duration-500',
+                )}
+                onClick={() => {
+                  return copy(
+                    () => {
+                      setShare('');
+                      setEcho(<div>{t('Copied')}</div>);
+                    },
+                    `${window.location.origin + window.location.pathname}#${share}`,
+                  );
                 }}
-              />
-            </button>
-            <LanguageMenu />
+              >
+                {t('COPY')}
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-row justify-between items-center w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
+            <div className={clsx(textClass)}>{echo}</div>
+
+            <div className="flex flex-row items-center ml-auto sm:ml-3">
+              <button
+                onClick={toggleTheme}
+                aria-label={theme !== 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                className="theme-toggle-button mr-2"
+              >
+                <img
+                  src={theme !== 'dark' ? 'sun.svg' : 'moon.svg'}
+                  alt={theme !== 'dark' ? 'Light mode' : 'Dark mode'}
+                  className="w-6 h-6 transition-opacity duration-300"
+                  style={{
+                    filter: theme === 'dark' ? 'invert(1)' : 'invert(0)',
+                  }}
+                />
+              </button>
+              <LanguageMenu />
+            </div>
           </div>
         </div>
       </div>
