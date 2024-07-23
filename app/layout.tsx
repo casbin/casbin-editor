@@ -17,7 +17,7 @@ import './globals.css';
 import { LangProvider } from './context/LangContext';
 
 export const metadata: Metadata = {
-  title: 'casbin-editor',
+  title: 'Casbin Policy Editor',
   description: 'web playground for casbin',
 };
 
