@@ -125,7 +125,7 @@ export const EditorScreen = () => {
             </svg>
           </button>
 
-          <div className={'pt-6 h-12 flex items-center font-bold'}>
+          <div className={'pt-6 h-12 pl-2 flex items-center font-bold'}>
             {(showCustomConfig || open) && <div className={textClass}>{t('Custom config')}</div>}
           </div>
           <div className="flex-grow overflow-auto h-full">
@@ -246,7 +246,7 @@ export const EditorScreen = () => {
             </div>
           </div>
           <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className="h-10 font-bold flex items-center justify-between">
+            <div className="h-10 pl-2 font-bold flex items-center justify-between">
               <div className={textClass}>{t('Policy')}</div>
               <div className="text-right font-bold mr-4 text-sm text-[#e13c3c]">
                 <a href={`https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`} target="_blank" rel="noopener noreferrer">
@@ -347,7 +347,7 @@ export const EditorScreen = () => {
             </div>
           </div>
           <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className={clsx('h-10 font-bold', 'flex items-center justify-between')}>
+            <div className={clsx('h-10 pl-2 font-bold', 'flex items-center justify-between')}>
               <div className={textClass}>{t('Enforcement Result')}</div>
               <div className="mr-4">
                 <SidePanelChat ref={sidePanelChatRef} />
