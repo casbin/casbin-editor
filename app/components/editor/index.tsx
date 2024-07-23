@@ -353,7 +353,6 @@ export const EditorScreen = () => {
                 <SidePanelChat ref={sidePanelChatRef} />
               </div>
             </div>
-            {/* <div className="flex-grow overflow-auto h-[300px] sm:h-auto"> */}
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
                 <CodeMirror
