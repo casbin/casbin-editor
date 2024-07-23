@@ -19,18 +19,16 @@ import { useLang } from '@/app/context/LangContext';
 
 export default function Home() {
   const { theme } = useLang();
-
   return (
     <main className={clsx('flex flex-col sm:h-screen', 'min-h-screen sm:min-h-0', theme === 'dark' ? 'bg-customDark' : 'bg-white')}>
       <div className={clsx('flex-grow', 'overflow-auto sm:overflow-hidden')}>
         <EditorScreen />
       </div>
-      <div className={clsx('bg-[#222222] px-2 py-3 mt-2', 'flex flex-col sm:flex-row items-center')}>
-        <a target="_blank" rel="noopener noreferrer" href="https://github.com/casbin/casbin-editor" className="mb-2 sm:mb-0">
+      <div className={clsx('bg-[#222222] px-2 py-3 mt-2', 'flex flex-row items-center justify-between')}>
+        <a target="_blank" rel="noopener noreferrer" href="https://github.com/casbin/casbin-editor" className="mr-2">
           <img alt="GitHub stars" src="https://img.shields.io/github/stars/casbin/casbin-editor?style=social" />
         </a>
-        <div className={'grow hidden sm:block'}></div>
-        <span className="text-white text-xs sm:text-sm">Copyright © {new Date().getFullYear()} Casbin contributors.</span>
+        <span className="text-white text-sm">Copyright © {new Date().getFullYear()} Casbin contributors.</span>
       </div>
     </main>
   );

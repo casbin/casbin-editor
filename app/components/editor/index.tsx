@@ -40,6 +40,7 @@ export const EditorScreen = () => {
     data: enforceContextData,
   });
   const [casbinVersion, setCasbinVersion] = useState('');
+  const [showCustomConfig, setShowCustomConfig] = useState(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
   const openDrawerWithMessage = (message: string) => {
     if (sidePanelChatRef.current) {
@@ -91,7 +92,14 @@ export const EditorScreen = () => {
 
   return (
     <div className="flex flex-col sm:flex-row h-full">
-      <div className={clsx(open ? 'w-full sm:w-72' : 'w-5', 'relative', 'pl-2 pr-2 border-r border-[#dddddd]', 'hidden sm:block')}>
+      <div
+        className={clsx('sm:relative', 'pl-0 sm:pl-2 pr-0 sm:pr-2 border-r border-[#dddddd]', 'transition-all duration-300', {
+          'hidden sm:block': !showCustomConfig,
+          block: showCustomConfig,
+          'sm:w-72': open,
+          'sm:w-5': !open,
+        })}
+      >
         <div className="flex flex-col h-full">
           <button
             className={clsx(
@@ -99,14 +107,15 @@ export const EditorScreen = () => {
               'h-7 w-7',
               'bg-[#ffffff]',
               'border-[1.5px] rounded-full',
-              'flex items-center justify-center',
+              'items-center justify-center',
+              'hidden sm:flex',
             )}
             onClick={() => {
               return setOpen(!open);
             }}
           >
             <svg
-              className={clsx('h-8 w-8', '')}
+              className={clsx('h-8 w-8')}
               style={{
                 transform: open ? 'rotateZ(0deg)' : 'rotateZ(180deg)',
               }}
@@ -116,9 +125,11 @@ export const EditorScreen = () => {
             </svg>
           </button>
 
-          <div className={'pt-6 h-12 flex items-center font-bold'}>{open && <div className={textClass}>{t('Custom config')}</div>}</div>
+          <div className={'pt-6 h-12 flex items-center font-bold'}>
+            {(showCustomConfig || open) && <div className={textClass}>{t('Custom config')}</div>}
+          </div>
           <div className="flex-grow overflow-auto h-full">
-            {open && (
+            {(showCustomConfig || open) && (
               <div className="flex flex-col h-full">
                 <CodeMirror
                   height="100%"
@@ -181,7 +192,34 @@ export const EditorScreen = () => {
               >
                 {t('RESET')}
               </button>
+              <div className="sm:hidden ml-auto mr-2">
+                <button
+                  className={clsx(
+                    'rounded',
+                    'flex items-center justify-center',
+                    'border border-[#453d7d]',
+                    'text-[#453d7a]',
+                    'bg-[#efefef]',
+                    'hover:bg-[#453d7d] hover:text-white',
+                    'transition-colors duration-500',
+                  )}
+                  onClick={() => {
+                    return setShowCustomConfig(!showCustomConfig);
+                  }}
+                >
+                  <svg
+                    className={clsx('h-6 w-6')}
+                    style={{
+                      transform: showCustomConfig ? 'rotateZ(90deg)' : 'rotateZ(-90deg)',
+                    }}
+                    viewBox="0 0 24 24"
+                  >
+                    <path fill={'currentColor'} d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+                  </svg>
+                </button>
+              </div>
             </div>
+
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
                 <CodeMirror
