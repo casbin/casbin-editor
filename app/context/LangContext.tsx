@@ -20,6 +20,8 @@ const translations = {
   ar: require('../../messages/ar.json'),
 };
 
+const supportedLangs = Object.keys(translations);
+
 type LangContextType = {
   lang: string;
   setLang: (lang: string) => void;
@@ -37,15 +39,18 @@ export const LangProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    const urlLang = urlParams.get('lang');
     const urlTheme = urlParams.get('theme');
     const savedLang = localStorage.getItem('lang');
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
 
-    if (savedLang) {
+    if (urlLang && supportedLangs.includes(urlLang)) {
+      setLangState(urlLang);
+      localStorage.setItem('lang', urlLang);
+    } else if (savedLang && supportedLangs.includes(savedLang)) {
       setLangState(savedLang);
     } else {
       const browserLang = navigator.language.split('-')[0];
-      const supportedLangs = ['en', 'zh', 'hant', 'ja', 'fr', 'de', 'es', 'id', 'ko', 'ru', 'vi', 'pt', 'it', 'ms', 'tr', 'ar'];
       const defaultLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
       setLangState(defaultLang);
       localStorage.setItem('lang', defaultLang);
@@ -74,14 +79,22 @@ export const LangProvider = ({ children }: { children: ReactNode }) => {
   }, [theme]);
 
   const setLang = (newLang: string) => {
-    setLangState(newLang);
-    localStorage.setItem('lang', newLang);
+    if (supportedLangs.includes(newLang)) {
+      setLangState(newLang);
+      localStorage.setItem('lang', newLang);
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', newLang);
+      window.history.pushState({}, '', url);
+    }
   };
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
+    const url = new URL(window.location.href);
+    url.searchParams.set('theme', newTheme);
+    window.history.pushState({}, '', url);
   };
 
   const t = (key: string) => {
