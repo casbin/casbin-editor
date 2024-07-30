@@ -40,7 +40,7 @@ const SidePanelChat = forwardRef((props, ref) => {
       </div>
       {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleDrawer}></div>}
       <div
-        className={`fixed top-0 right-0 w-[500px] h-full bg-white z-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 w-full sm:w-[500px] h-full bg-white z-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
