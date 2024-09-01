@@ -92,6 +92,11 @@ export const EditorScreen = () => {
   }, [modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult]);
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
+  const modelLinter = linter((view) => {
+    const isRBACOrPriority = modelKind.toLowerCase().includes('rbac') || modelKind.toLowerCase().includes('priority');
+    return casbinLinter(view, isRBACOrPriority);
+  });
+
   return (
     <div className="flex flex-col sm:flex-row h-full">
       <div
@@ -240,7 +245,7 @@ export const EditorScreen = () => {
                     indentUnit.of('    '),
                     EditorView.lineWrapping,
                     buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
-                    linter(casbinLinter)
+                    modelLinter
                   ]}
                   className={'function flex-grow h-[300px]'}
                   value={modelText}

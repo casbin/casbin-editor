@@ -2,7 +2,7 @@ import { Diagnostic } from '@codemirror/lint';
 import { EditorView } from '@codemirror/view';
 import { Config } from 'casbin';
 
-export const casbinLinter = (view: EditorView): Diagnostic[] => {
+export const casbinLinter = (view: EditorView, requiresRoleDefinition: boolean): Diagnostic[] => {
   const diagnostics: Diagnostic[] = [];
   const content = view.state.doc.toString();
 
@@ -33,7 +33,16 @@ export const casbinLinter = (view: EditorView): Diagnostic[] => {
       from: 0,
       to: view.state.doc.length,
       severity: 'error',
-      message: `missing required sections: ${missingSections.join(',')}`,
+      message: `Missing required sections: ${missingSections.join(', ')}`,
+    });
+  }
+
+  if (requiresRoleDefinition && !content.includes('[role_definition]')) {
+    diagnostics.push({
+      from: 0,
+      to: view.state.doc.length,
+      severity: 'error',
+      message: 'Missing [role_definition] section. matcher result should only be of type boolean, number, or string',
     });
   }
 
