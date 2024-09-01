@@ -4,8 +4,10 @@ import { Config } from 'casbin';
 
 export const casbinLinter = (view: EditorView): Diagnostic[] => {
   const diagnostics: Diagnostic[] = [];
+  const content = view.state.doc.toString();
+
   try {
-    Config.newConfigFromText(view.state.doc.toString());
+    Config.newConfigFromText(content);
   } catch (e) {
     const error = e as Error;
     const lineMatch = error.message.match(/line (\d+)/);
@@ -20,5 +22,20 @@ export const casbinLinter = (view: EditorView): Diagnostic[] => {
       });
     }
   }
+
+  const requiredSections = ['request_definition', 'policy_definition', 'policy_effect', 'matchers'];
+  const missingSections = requiredSections.filter((section) => {
+    return !content.includes(section);
+  });
+
+  if (missingSections.length > 0) {
+    diagnostics.push({
+      from: 0,
+      to: view.state.doc.length,
+      severity: 'error',
+      message: `missing required sections: ${missingSections.join(',')}`,
+    });
+  }
+
   return diagnostics;
 };
