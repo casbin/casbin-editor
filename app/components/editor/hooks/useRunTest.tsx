@@ -15,6 +15,7 @@
 import React from 'react';
 import { DefaultRoleManager, newEnforcer, newModel, StringAdapter, Util } from 'casbin';
 import { newEnforceContext } from '@/app/components/editor/hooks/useSetupEnforceContext';
+import { setError } from '@/app/utils/errorManager';
 
 interface RunTestProps {
   model: string;
@@ -178,11 +179,15 @@ async function enforcer(props: RunTestProps) {
 
     const stopTime = performance.now();
 
+    setError(null);
+
     props.onResponse(<div>{'Done in ' + (stopTime - startTime).toFixed(2) + 'ms'}</div>);
     props.onResponse(result);
   } catch (e) {
-    props.onResponse(<div>{(e as any).message}</div>);
+    const errorMessage = (e as any).message;
+    props.onResponse(<div>{errorMessage}</div>);
     props.onResponse([]);
+    setError(errorMessage);
   }
 }
 
