@@ -23,8 +23,8 @@ import { extractPageContent } from '../../utils/contentExtractor';
 import { buttonPlugin } from './ButtonPlugin';
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/components/LanguageMenu';
-import { linter } from "@codemirror/lint";
-import { casbinLinter } from "@/app/utils/casbinLinter";
+import { linter } from '@codemirror/lint';
+import { casbinLinter } from '@/app/utils/casbinLinter';
 
 export const EditorScreen = () => {
   const {
@@ -91,11 +91,6 @@ export const EditorScreen = () => {
     }
   }, [modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult]);
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
-
-  const modelLinter = linter((view) => {
-    const isRBACOrPriority = modelKind.toLowerCase().includes('rbac') || modelKind.toLowerCase().includes('priority');
-    return casbinLinter(view, isRBACOrPriority);
-  });
 
   return (
     <div className="flex flex-col sm:flex-row h-full">
@@ -245,7 +240,7 @@ export const EditorScreen = () => {
                     indentUnit.of('    '),
                     EditorView.lineWrapping,
                     buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
-                    modelLinter
+                    linter(casbinLinter),
                   ]}
                   className={'function flex-grow h-[300px]'}
                   value={modelText}
