@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
 import { basicSetup } from 'codemirror';
@@ -14,23 +14,34 @@ import { setError } from '@/app/utils/errorManager';
 export const ModelEditor = ({ initialValue = '' }: { initialValue: string }) => {
   const [modelText, setModelText] = useState(initialValue);
 
+  const validateModel = useCallback(async (text: string) => {
+    try {
+      await newModel(text);
+      setError(null);
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  }, []);
+
   useEffect(() => {
-    const validateModel = async () => {
-      try {
-        await newModel(modelText);
-        setError(null);
-      } catch (e) {
-        setError((e as Error).message);
+    validateModel(modelText);
+  }, [modelText, validateModel]);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'getModelText') {
+        window.parent.postMessage({
+          type: 'modelUpdate',
+          modelText: modelText
+        }, '*');
       }
     };
 
-    validateModel();
+    window.addEventListener('message', handleMessage);
 
-    // Send message to parent window
-    window.parent.postMessage({
-      type: 'modelUpdate',
-      modelText: modelText
-    }, '*');
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
   }, [modelText]);
 
   const handleModelTextChange = (value: string) => {
