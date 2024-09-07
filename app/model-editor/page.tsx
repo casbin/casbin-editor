@@ -1,16 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ModelEditor } from '../components/ModelEditor';
 
-const ModelEditorPage = ({ searchParams }: { searchParams: { model?: string } }) => {
-  const initialValue = searchParams.model ? decodeURIComponent(searchParams.model) : '';
+export default function ModelEditorPage() {
+  const [initialValue, setInitialValue] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const modelParam = params.get('model');
+    if (modelParam) {
+      setInitialValue(decodeURIComponent(modelParam));
+    }
+  }, []);
 
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <ModelEditor initialValue={initialValue} />
     </div>
   );
-};
-
-export default ModelEditorPage;
+}
