@@ -12,7 +12,13 @@ import { newModel } from 'casbin';
 import { setError } from '@/app/utils/errorManager';
 
 export const ModelEditor = ({ initialValue = '' }: { initialValue: string }) => {
-  const [modelText, setModelText] = useState(initialValue);
+  const [modelText, setModelText] = useState('');
+
+  useEffect(() => {
+    if (initialValue) {
+      setModelText(initialValue);
+    }
+  }, [initialValue]);
 
   const validateModel = useCallback(async (text: string) => {
     try {
