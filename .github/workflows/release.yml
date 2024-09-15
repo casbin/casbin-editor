@@ -13,9 +13,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '20.8.1'
       - name: Install dependencies
@@ -25,7 +25,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: yarn dist --mac
       - name: Upload macOS build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: electron-app-macos
           path: dist/*.dmg
@@ -34,9 +34,9 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '20.8.1'
       - name: Install dependencies
@@ -46,7 +46,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: yarn dist --win
       - name: Upload Windows build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: electron-app-windows
           path: dist/*.exe
@@ -55,9 +55,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '20.8.1'
       - name: Install dependencies
@@ -67,7 +67,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: yarn dist --linux
       - name: Upload Linux build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: electron-app-linux
           path: dist/*.AppImage
@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -85,17 +85,17 @@ jobs:
       - name: Clear npm cache
         run: npm cache clean --force
       - name: Download macOS build artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: electron-app-macos
           path: dist/macos
       - name: Download Windows build artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: electron-app-windows
           path: dist/windows
       - name: Download Linux build artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: electron-app-linux
           path: dist/linux

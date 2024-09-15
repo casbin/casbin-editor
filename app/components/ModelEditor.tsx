@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
 import { basicSetup } from 'codemirror';
@@ -11,14 +11,10 @@ import { casbinLinter } from '@/app/utils/casbinLinter';
 import { newModel } from 'casbin';
 import { setError } from '@/app/utils/errorManager';
 
-export const ModelEditor = ({ initialValue = '' }: { initialValue: string }) => {
+export const ModelEditor = () => {
   const [modelText, setModelText] = useState('');
-
-  useEffect(() => {
-    if (initialValue) {
-      setModelText(initialValue);
-    }
-  }, [initialValue]);
+  const editorRef = useRef<EditorView | null>(null);
+  const cursorPosRef = useRef<{ from: number; to: number } | null>(null);
 
   const validateModel = useCallback(async (text: string) => {
     try {
@@ -33,26 +29,49 @@ export const ModelEditor = ({ initialValue = '' }: { initialValue: string }) => 
     validateModel(modelText);
   }, [modelText, validateModel]);
 
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data.type === 'getModelText') {
-        window.parent.postMessage({
-          type: 'modelUpdate',
-          modelText: modelText
-        }, '*');
-      }
-    };
+  const handleMessage = useCallback((event: MessageEvent) => {
+    if (event.data.type === 'initializeModel') {
+      setModelText(event.data.modelText);
+    } else if (event.data.type === 'getModelText') {
+      window.parent.postMessage({
+        type: 'modelUpdate',
+        modelText: modelText
+      }, '*');
+    } else if (event.data.type === 'updateModelText') {
+      setModelText(event.data.modelText);
+    }
+  }, [modelText]);
 
+  useEffect(() => {
     window.addEventListener('message', handleMessage);
+    window.parent.postMessage({ type: 'iframeReady' }, '*');
 
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [modelText]);
+  }, [handleMessage]);
 
-  const handleModelTextChange = (value: string) => {
+  const handleModelTextChange = useCallback((value: string, viewUpdate: any) => {
     setModelText(value);
-  };
+    cursorPosRef.current = viewUpdate.state.selection.main;
+    window.parent.postMessage({
+      type: 'modelUpdate',
+      modelText: value
+    }, '*');
+  }, []);
+
+  useEffect(() => {
+    if (editorRef.current && cursorPosRef.current) {
+      const { from, to } = cursorPosRef.current;
+      const docLength = editorRef.current.state.doc.length;
+      editorRef.current.dispatch({
+        selection: { 
+          anchor: Math.min(from, docLength), 
+          head: Math.min(to, docLength) 
+        }
+      });
+    }
+  }, [modelText]);
 
   return (
     <div className="flex-grow overflow-auto h-full">
@@ -73,6 +92,11 @@ export const ModelEditor = ({ initialValue = '' }: { initialValue: string }) => 
             indentUnit.of('    '),
             EditorView.lineWrapping,
             linter(casbinLinter),
+            EditorView.updateListener.of((update) => {
+              if (update.docChanged) {
+                editorRef.current = update.view;
+              }
+            }),
           ]}
           className={'function flex-grow h-[300px]'}
           value={modelText}
