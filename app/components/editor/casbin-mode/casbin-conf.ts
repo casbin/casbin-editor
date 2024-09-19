@@ -16,147 +16,58 @@ import { IndentContext, LanguageSupport, StreamLanguage, StringStream } from '@c
 import { tags as t } from '@lezer/highlight';
 
 const token = (stream: StringStream, state) => {
-  const ch = stream.peek();
-  if (ch === '[') {
-    if (stream.match('[request_definition')) {
-      state.sec = 'r';
-      stream.skipTo(']');
-      stream.eat(']');
-      return 'header';
-    } else if (stream.match('[policy_definition')) {
-      state.sec = 'p';
-      stream.skipTo(']');
-      stream.eat(']');
-      return 'header';
-    } else if (stream.match('[role_definition')) {
-      state.sec = 'g';
-      stream.skipTo(']');
-      stream.eat(']');
-      return 'header';
-    } else if (stream.match('[policy_effect')) {
-      state.sec = 'e';
-      stream.skipTo(']');
-      stream.eat(']');
-      return 'header';
-    } else if (stream.match('[matchers')) {
-      state.sec = 'm';
-      stream.skipTo(']');
-      stream.eat(']');
-      return 'header';
-    } else {
-      state.sec = '';
-      stream.skipToEnd();
-      return '';
+  if (stream.sol()) {
+    state.afterEqual = false;
+
+    if (stream.match(/[rpgem]\s*=/)) {
+      stream.backUp(1);
+      return 'builtin';
     }
-  } else if (ch === '#') {
-    stream.skipToEnd();
+
+    if (state.sec === 'matchers' && stream.match(/[rpgem]\./)) {
+      return 'builtin';
+    }
+  }
+
+  if (stream.match(/^\[.*?\]/)) {
+    state.sec = stream.current().slice(1, -1);
+    return 'header';
+  }
+
+  if (stream.match(/#.*/)) {
     return 'comment';
-  } else if (ch === '"') {
-    stream.skipToEnd();
-    stream.skipTo('"');
-    stream.eat('"');
-    return 'string';
-  } else if (ch === '=') {
-    state.after_equal = true;
-    stream.eat('=');
   }
 
-  if (stream.sol()) {
-    state.after_equal = false;
-  }
-
-  if (state.sec === '') {
-    stream.skipToEnd();
-    return '';
-  }
-
-  if (stream.sol()) {
-    if (state.sec !== '') {
-      if ((state.sec === 'g' && stream.match(new RegExp('^g[2-9]?'))) || stream.match(state.sec)) {
-        if (stream.peek() === ' ' || stream.peek() === '=') {
-          return 'builtin';
-        } else {
-          state.sec = '';
-          stream.next();
-          return null;
-        }
-      } else {
-        state.sec = '';
-        stream.next();
-        return null;
-      }
-    } else {
-      stream.next();
-      return null;
-    }
-  }
-
-  if (!state.after_equal) {
-    stream.next();
+  if (stream.eat('=')) {
+    state.afterEqual = true;
     return null;
   }
 
-  if (state.sec === 'r' || state.sec === 'p') {
-    // Match: r = [sub], [obj], [act]
-    //        p = [sub], [obj], [act]
-    if (state.comma) {
-      state.comma = false;
-      if (stream.match(new RegExp('^[_a-zA-Z][_a-zA-Z0-9]*'))) {
-        return 'property';
+  if (state.afterEqual || state.sec === 'matchers') {
+    if (state.sec === 'request_definition' || state.sec === 'policy_definition' || state.sec === 'role_definition') {
+      if (stream.match(/[a-zA-Z][a-zA-Z0-9]*/)) return 'property';
+    } else if (state.sec === 'policy_effect') {
+      if (stream.match(/some|where/)) return 'keyword';
+      if (stream.match(/allow|deny/)) return 'string';
+      if (stream.match(/p\./)) return 'builtin';
+      if (stream.match(/[a-zA-Z][a-zA-Z0-9]*/)) return 'property';
+    } else if (state.sec === 'matchers') {
+      if (stream.match(/[a-zA-Z_][a-zA-Z0-9_]*\(/)) {
+        return 'def';
       }
-    }
-    if (stream.eat(',') || stream.eat(' ')) {
-      state.comma = true;
-      return '';
-    }
-  } else if (state.sec === 'e') {
-    // Match: e = some(where (p.[eft] == allow))
-    if (state.dot) {
-      state.dot = false;
-      if (stream.match(new RegExp('^[_a-zA-Z][_a-zA-Z0-9]*'))) {
-        return 'property';
+      if (stream.match(/[rpgem](?=\.)/)) {
+        return 'builtin';
       }
-    }
-    if (stream.eat('.')) {
-      state.dot = true;
-      return '';
-    }
-
-    // Match: e = some(where ([p].eft == allow))
-    if (stream.match('p') && stream.peek() === '.') {
-      return 'builtin';
-    }
-
-    // Match: e = [some]([where] (p.eft == allow))
-    if (stream.match('some') || stream.match('where') || stream.match('priority')) {
-      return 'keyword';
-    }
-
-    // Match: e = some(where (p.eft == [allow]))
-    if (stream.match('allow') || stream.match('deny')) {
-      return 'string';
-    }
-  } else if (state.sec === 'm') {
-    // Match: m = r.[sub] == p.[sub] && r.[obj] == p.[obj] && r.[act] == p.[act]
-    if (state.dot) {
-      state.dot = false;
-      if (stream.match(new RegExp('^[_a-zA-Z][_a-zA-Z0-9]*'))) {
-        return 'property';
+      if (stream.eat('.')) {
+        return null;
       }
-    }
-    if (stream.eat('.')) {
-      state.dot = true;
-      return '';
-    }
-
-    // Match: m = [r].sub == [p].sub && [r].obj == [p].obj && [r].act == [p].act
-    if ((stream.match('r') || stream.match('p')) && stream.peek() === '.') {
-      return 'builtin';
-    }
-
-    // Match: m = [g](r.sub, p.sub) && r.obj == p.obj && r.act == p.act
-    if (stream.match(new RegExp('^[_a-zA-Z][_a-zA-Z0-9]*')) && stream.peek() === '(') {
-      return 'def';
+      if (stream.match(/[a-zA-Z][a-zA-Z0-9]*/)) return 'property';
+      if (stream.match(/==|!=|&&|\|\|/)) return 'operator';
+      if (stream.match(/"/)) {
+        stream.skipTo('"');
+        stream.next();
+        return 'string';
+      }
     }
   }
 
@@ -166,22 +77,28 @@ const token = (stream: StringStream, state) => {
 
 export const CasbinConfLang = StreamLanguage.define({
   name: 'firestore',
-  startState: (indentUnit: number) => {
-    return {};
+  startState: () => {
+    return { sec: '', afterEqual: false };
   },
   token: token,
-  blankLine: (state: {}, indentUnit: number): void => {},
-  copyState: (state: {}) => {},
-  indent: (state: {}, textAfter: string, context: IndentContext): number | null => {
-    return 0;
+  blankLine: (_state: {}, _indentUnit: number): void => {},
+  copyState: (state: {}) => {
+    return { ...state };
+  },
+  indent: (_state: {}, _textAfter: string, _context: IndentContext): number | null => {
+    return null;
   },
   languageData: {
     commentTokens: { line: ';' },
   },
   tokenTable: {
-    p: t.keyword,
-    read: t.keyword,
-    write: t.keyword,
+    header: t.heading,
+    comment: t.lineComment,
+    builtin: t.variableName,
+    property: t.propertyName,
+    keyword: t.keyword,
+    string: t.string,
+    operator: t.operator,
   },
 });
 
