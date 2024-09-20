@@ -6,7 +6,7 @@ import { basicSetup } from 'codemirror';
 import { indentUnit } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
-import { linter } from '@codemirror/lint';
+import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
 import { newModel } from 'casbin';
 import { setError } from '@/app/utils/errorManager';
@@ -92,6 +92,7 @@ export const ModelEditor = () => {
             indentUnit.of('    '),
             EditorView.lineWrapping,
             linter(casbinLinter),
+            lintGutter(),
             EditorView.updateListener.of((update) => {
               if (update.docChanged) {
                 editorRef.current = update.view;
