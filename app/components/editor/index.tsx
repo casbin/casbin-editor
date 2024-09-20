@@ -23,7 +23,7 @@ import { extractPageContent } from '../../utils/contentExtractor';
 import { buttonPlugin } from './ButtonPlugin';
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/components/LanguageMenu';
-import { linter } from '@codemirror/lint';
+import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
 
 export const EditorScreen = () => {
@@ -241,6 +241,7 @@ export const EditorScreen = () => {
                     EditorView.lineWrapping,
                     buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
                     linter(casbinLinter),
+                    lintGutter(),
                   ]}
                   className={'function flex-grow h-[300px]'}
                   value={modelText}
