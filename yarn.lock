@@ -1354,10 +1354,10 @@ caniuse-lite@^1.0.30001579, caniuse-lite@^1.0.30001587, caniuse-lite@^1.0.300015
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001621.tgz#4adcb443c8b9c8303e04498318f987616b8fea2e"
   integrity sha512-+NLXZiviFFKX0fk8Piwv3PfLPGtRqJeq2TiNoUff/qB5KJgwecJTvCXDpmlyP/eCI/GUEmp/h/y5j0yckiiZrA==
 
-casbin@^5.30.0:
-  version "5.30.0"
-  resolved "https://registry.yarnpkg.com/casbin/-/casbin-5.30.0.tgz#819019348ead1cfd923fbab93772ad188da342cd"
-  integrity sha512-GDc8sImStd+ddBVBfLpe5fJPBWRjeEaz7fkiAGuw0+LTHF2TVvVsMALIMOx+ofzQhm+EHCH7mfiJsrS1Kgef2w==
+casbin@^5.31.0:
+  version "5.31.0"
+  resolved "https://registry.yarnpkg.com/casbin/-/casbin-5.31.0.tgz#bcd76061192956acf07c1e5a224e93ed23322a87"
+  integrity sha512-hA3be1bCfZEg4/uNOBw/fAJghEzU1YKODT9lIP5y50puyQwzRF5re1wztSP/fPdv8602z3sWBCdAcMZpkQuYAw==
   dependencies:
     await-lock "^2.0.1"
     buffer "^6.0.3"
