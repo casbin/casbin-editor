@@ -1,4 +1,4 @@
-import React, { isValidElement, ReactNode, useEffect, useState } from 'react';
+import React, { isValidElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { defaultCustomConfig, defaultEnforceContext, example, ModelKind } from '@/app/components/editor/casbin-mode/example';
 import { ShareFormat } from '@/app/components/editor/hooks/useShareInfo';
 import { defaultEnforceContextData } from '@/app/components/editor/hooks/useSetupEnforceContext';
@@ -13,6 +13,7 @@ export default function useIndex() {
   const [customConfig, setCustomConfig] = useState('');
   const [share, setShare] = useState('');
   const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
+  const lastHash = useRef<string>();
 
   function setPolicyPersistent(text: string): void {
     setPolicy(text);
@@ -37,7 +38,8 @@ export default function useIndex() {
 
   useEffect(() => {
     const hash = window.location.hash.slice(1);
-    if (hash) {
+    if (hash && lastHash.current != hash) {
+      lastHash.current = hash;
       setEcho(<div>Loading Shared Content...</div>);
       fetch(`https://dpaste.com/${hash}.txt`)
         .then((resp) => {
@@ -62,8 +64,8 @@ export default function useIndex() {
           window.location.hash = ''; // prevent duplicate load
           setEcho(<div>Shared Content Loaded.</div>);
         })
-        .catch(() => {
-          setEcho(<div>Failed to load Shared Content.</div>);
+        .catch((error) => {
+          setEcho(<div>`Failed to load Shared Content.${error.message}`</div>);
         });
     }
   }, []);
