@@ -14,6 +14,7 @@ export default function useIndex() {
   const [share, setShare] = useState('');
   const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
   const lastHash = useRef<string>();
+  const sharedContent = useRef<ShareFormat>();
 
   function setPolicyPersistent(text: string): void {
     setPolicy(text);
@@ -49,19 +50,14 @@ export default function useIndex() {
           return resp.text();
         })
         .then((content) => {
-          const sharedContent = JSON.parse(content) as ShareFormat;
-          // Use empty string as default value with type checking
-          setPolicyPersistent(sharedContent.policy ?? '');
-          setModelTextPersistent(sharedContent.model ?? '');
-          setCustomConfigPersistent(sharedContent.customConfig ?? '');
-          setRequestPersistent(sharedContent.request ?? '');
+          sharedContent.current = JSON.parse(content) as ShareFormat;
           // Make sure it's a valid ModelKind type
-          if (sharedContent.modelKind && example[sharedContent.modelKind as ModelKind]) {
-            setModelKind(sharedContent.modelKind as ModelKind);
+          if (sharedContent.current.modelKind && example[sharedContent.current.modelKind as ModelKind]) {
+            setModelKind(sharedContent.current.modelKind as ModelKind);
           } else {
             setModelKind('basic'); // Use Default
           }
-          window.location.hash = ''; // prevent duplicate load
+          // shared content is loaded by modelKind side effect below
           setEcho(<div>Shared Content Loaded.</div>);
         })
         .catch((error) => {
@@ -71,11 +67,12 @@ export default function useIndex() {
   }, []);
 
   useEffect(() => {
-    setPolicy(example[modelKind].policy);
-    setModelText(example[modelKind].model);
-    setRequest(example[modelKind].request);
-    setCustomConfig(defaultCustomConfig);
+    setPolicy(sharedContent.current?.policy ?? example[modelKind].policy);
+    setModelText(sharedContent.current?.model ?? example[modelKind].model);
+    setRequest(sharedContent.current?.request ?? example[modelKind].request);
+    setCustomConfig(sharedContent.current?.customConfig ?? defaultCustomConfig);
     setEnforceContextData(new Map(Object.entries(JSON.parse(example[modelKind].enforceContext || defaultEnforceContext))));
+    sharedContent.current = undefined; // clear out the shared content so that selecting a different modelKind loads the associated example.
   }, [modelKind]);
 
   function handleShare(v: ReactNode | string) {
