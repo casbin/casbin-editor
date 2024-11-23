@@ -1,4 +1,4 @@
-import React, { isValidElement, ReactNode, useEffect, useState } from 'react';
+import React, { isValidElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { defaultCustomConfig, defaultEnforceContext, example, ModelKind } from '@/app/components/editor/casbin-mode/example';
 import { ShareFormat } from '@/app/components/editor/hooks/useShareInfo';
 import { defaultEnforceContextData } from '@/app/components/editor/hooks/useSetupEnforceContext';
@@ -13,6 +13,10 @@ export default function useIndex() {
   const [customConfig, setCustomConfig] = useState('');
   const [share, setShare] = useState('');
   const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
+  const loadState = useRef<{
+    loadedHash?: string;
+    content?: ShareFormat;
+  }>({});
 
   function setPolicyPersistent(text: string): void {
     setPolicy(text);
@@ -35,45 +39,38 @@ export default function useIndex() {
     setEnforceContextData(new Map(map));
   }
 
+  // Load shared content from dpaste.com
   useEffect(() => {
     const hash = window.location.hash.slice(1);
-    if (hash) {
+    if (hash && hash !== loadState.current.loadedHash) {
+      loadState.current.loadedHash = hash;
       setEcho(<div>Loading Shared Content...</div>);
       fetch(`https://dpaste.com/${hash}.txt`)
         .then((resp) => {
-          if (!resp.ok) {
-            throw new Error(`HTTP error! status: ${resp.status}`);
-          }
-          return resp.text();
+          return resp.ok ? resp.text() : Promise.reject(`HTTP error: ${resp.status}`);
         })
         .then((content) => {
-          const sharedContent = JSON.parse(content) as ShareFormat;
-          // Use empty string as default value with type checking
-          setPolicyPersistent(sharedContent.policy ?? '');
-          setModelTextPersistent(sharedContent.model ?? '');
-          setCustomConfigPersistent(sharedContent.customConfig ?? '');
-          setRequestPersistent(sharedContent.request ?? '');
-          // Make sure it's a valid ModelKind type
-          if (sharedContent.modelKind && example[sharedContent.modelKind as ModelKind]) {
-            setModelKind(sharedContent.modelKind as ModelKind);
-          } else {
-            setModelKind('basic'); // Use Default
-          }
-          window.location.hash = ''; // prevent duplicate load
+          const parsed = JSON.parse(content) as ShareFormat;
+          loadState.current.content = parsed;
+          const newModelKind = parsed?.modelKind && parsed.modelKind in example ? (parsed.modelKind as ModelKind) : 'basic';
+          setModelKind(newModelKind);
           setEcho(<div>Shared Content Loaded.</div>);
         })
-        .catch(() => {
-          setEcho(<div>Failed to load Shared Content.</div>);
+        .catch((error) => {
+          return setEcho(<div>Failed to load: {error}</div>);
         });
     }
   }, []);
 
+  // Set the editor content based on the shared content
   useEffect(() => {
-    setPolicy(example[modelKind].policy);
-    setModelText(example[modelKind].model);
-    setRequest(example[modelKind].request);
-    setCustomConfig(defaultCustomConfig);
+    const shared = loadState.current.content;
+    setPolicy(shared?.policy ?? example[modelKind].policy);
+    setModelText(shared?.model ?? example[modelKind].model);
+    setRequest(shared?.request ?? example[modelKind].request);
+    setCustomConfig(shared?.customConfig ?? defaultCustomConfig);
     setEnforceContextData(new Map(Object.entries(JSON.parse(example[modelKind].enforceContext || defaultEnforceContext))));
+    loadState.current.content = undefined;
   }, [modelKind]);
 
   function handleShare(v: ReactNode | string) {
@@ -85,6 +82,7 @@ export default function useIndex() {
       setEcho(<div>{`Shared at ${currentPath}#${v}`}</div>);
     }
   }
+
   return {
     modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request,
     setRequest, echo, setEcho, requestResult, setRequestResult, customConfig, setCustomConfig, share, setShare,
