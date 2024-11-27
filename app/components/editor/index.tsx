@@ -58,6 +58,7 @@ export const EditorScreen = () => {
   const [lastValidResult, setLastValidResult] = useState<React.ReactNode>(null);
   const [lastRunClickTime, setLastRunClickTime] = useState(0);
   const [lastRunResult, setLastRunResult] = useState<React.ReactNode>(null);
+  const [isContentLoaded, setIsContentLoaded] = useState(false);
 
   useEffect(() => {
     const fetchCasbinVersion = async () => {
@@ -69,7 +70,8 @@ export const EditorScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (modelKind) {
+    if (modelKind && modelText) {
+      setIsContentLoaded(true);
       enforcer({
         modelKind,
         model: modelText,
@@ -403,6 +405,10 @@ export const EditorScreen = () => {
                 'transition-colors duration-500',
               )}
               onClick={() => {
+                if (!isContentLoaded) {
+                  setEcho(<div className="text-orange-500">Waiting for content loading</div>);
+                  return;
+                }
                 const now = Date.now();
                 if (now - lastClickTime < 2000) {
                   setEcho(<div className="text-orange-500">Repeated clicks</div>);
