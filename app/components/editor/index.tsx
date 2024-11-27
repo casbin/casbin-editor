@@ -54,6 +54,10 @@ export const EditorScreen = () => {
     return message;
   };
   const { t, lang, theme, toggleTheme } = useLang();
+  const [lastClickTime, setLastClickTime] = useState(0);
+  const [lastValidResult, setLastValidResult] = useState<React.ReactNode>(null);
+  const [lastRunClickTime, setLastRunClickTime] = useState(0);
+  const [lastRunResult, setLastRunResult] = useState<React.ReactNode>(null);
 
   useEffect(() => {
     const fetchCasbinVersion = async () => {
@@ -399,11 +403,25 @@ export const EditorScreen = () => {
                 'transition-colors duration-500',
               )}
               onClick={() => {
+                const now = Date.now();
+                if (now - lastClickTime < 2000) {
+                  setEcho(<div className="text-orange-500">Repeated clicks</div>);
+                  setTimeout(() => {
+                    setEcho(lastValidResult);
+                  }, 2000);
+                  return;
+                }
+                setLastClickTime(now);
+                
                 try {
                   Config.newConfigFromText(modelText);
-                  setEcho(<div>Passed</div>);
+                  const result = <div className="text-green-500">Passed</div>;
+                  setEcho(result);
+                  setLastValidResult(result);
                 } catch (e) {
-                  setEcho(<div>{(e as any).message}</div>);
+                  const result = <div className="text-red-500">{(e as any).message}</div>;
+                  setEcho(result);
+                  setLastValidResult(result);
                 }
               }}
             >
@@ -420,6 +438,16 @@ export const EditorScreen = () => {
                 'transition-colors duration-500',
               )}
               onClick={() => {
+                const now = Date.now();
+                if (now - lastRunClickTime < 2000) {
+                  setEcho(<div className="text-orange-500">Repeated clicks</div>);
+                  setTimeout(() => {
+                    setEcho(lastRunResult);
+                  }, 2000);
+                  return;
+                }
+                setLastRunClickTime(now);
+
                 return enforcer({
                   modelKind,
                   model: modelText,
@@ -430,15 +458,19 @@ export const EditorScreen = () => {
                   onResponse: (v) => {
                     if (isValidElement(v)) {
                       setEcho(v);
+                      setLastRunResult(v);
                     } else if (Array.isArray(v)) {
                       const formattedResults = v.map((res) => {
                         if (typeof res === 'object') {
-                          const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
+                          const reasonString = Array.isArray(res.reason) && res.reason.length > 0 
+                            ? ` Reason: ${JSON.stringify(res.reason)}` 
+                            : '';
                           return `${res.okEx}${reasonString}`;
                         }
                         return res;
                       });
-                      setRequestResult(formattedResults.join('\n'));
+                      const result = formattedResults.join('\n');
+                      setRequestResult(result);
                     }
                   },
                 });
@@ -488,7 +520,7 @@ export const EditorScreen = () => {
                   return copy(
                     () => {
                       setShare('');
-                      setEcho(<div>{t('Copied')}</div>);
+                      setEcho(<div className="text-green-500">{t('Copied')}</div>);
                     },
                     `${window.location.origin + window.location.pathname}#${share}`,
                   );

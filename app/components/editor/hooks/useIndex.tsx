@@ -44,7 +44,7 @@ export default function useIndex() {
     const hash = window.location.hash.slice(1);
     if (hash && hash !== loadState.current.loadedHash) {
       loadState.current.loadedHash = hash;
-      setEcho(<div>Loading Shared Content...</div>);
+      setEcho(<div className="text-orange-500">Loading Shared Content...</div>);
       fetch(`https://dpaste.com/${hash}.txt`)
         .then((resp) => {
           return resp.ok ? resp.text() : Promise.reject(`HTTP error: ${resp.status}`);
@@ -54,10 +54,10 @@ export default function useIndex() {
           loadState.current.content = parsed;
           const newModelKind = parsed?.modelKind && parsed.modelKind in example ? (parsed.modelKind as ModelKind) : 'basic';
           setModelKind(newModelKind);
-          setEcho(<div>Shared Content Loaded.</div>);
+          setEcho(<div className="text-green-500">Shared Content Loaded.</div>);
         })
         .catch((error) => {
-          return setEcho(<div>Failed to load: {error}</div>);
+          return setEcho(<div className="text-red-500">Failed to load: {error}</div>);
         });
     }
   }, []);
@@ -79,7 +79,7 @@ export default function useIndex() {
     } else {
       const currentPath = window.location.origin + window.location.pathname;
       setShare(v as string);
-      setEcho(<div>{`Shared at ${currentPath}#${v}`}</div>);
+      setEcho(<div className="text-green-500">{`Shared at ${currentPath}#${v}`}</div>);
     }
   }
 

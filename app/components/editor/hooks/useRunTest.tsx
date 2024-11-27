@@ -181,11 +181,11 @@ async function enforcer(props: RunTestProps) {
 
     setError(null);
 
-    props.onResponse(<div>{'Done in ' + (stopTime - startTime).toFixed(2) + 'ms'}</div>);
+    props.onResponse(<div className="text-green-500">{'Done in ' + (stopTime - startTime).toFixed(2) + 'ms'}</div>);
     props.onResponse(result);
   } catch (e) {
     const errorMessage = (e as any).message;
-    props.onResponse(<div>{errorMessage}</div>);
+    props.onResponse(<div className="text-red-500">{errorMessage}</div>);
     props.onResponse([]);
     setError(errorMessage);
   }

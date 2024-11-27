@@ -42,7 +42,7 @@ export default function useShareInfo() {
   function shareInfo(props: ShareProps) {
     if (sharing) return;
     setSharing(true);
-    props.onResponse(<div>Sharing...</div>);
+    props.onResponse(<div className="text-orange-500">Sharing...</div>);
 
     // Create an object that contains only non-null values
     const shareContent: ShareFormat = {
@@ -58,7 +58,7 @@ export default function useShareInfo() {
     // Check if there are any non-null values to share
     if (Object.keys(shareContent).length === 0) {
       setSharing(false);
-      props.onResponse(<div>No content to share</div>);
+      props.onResponse(<div className="text-red-500">No content to share</div>);
       return;
     }
 
@@ -70,7 +70,7 @@ export default function useShareInfo() {
       })
       .catch((error) => {
         setSharing(false);
-        props.onResponse(<div>Error sharing content: {error.message}</div>);
+        props.onResponse(<div className="text-red-500">Error sharing content: {error.message}</div>);
       });
   }
 
