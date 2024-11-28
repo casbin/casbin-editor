@@ -25,6 +25,7 @@ import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/components/LanguageMenu';
 import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
+import { toast, Toaster } from 'react-hot-toast';
 
 export const EditorScreen = () => {
   const {
@@ -54,10 +55,6 @@ export const EditorScreen = () => {
     return message;
   };
   const { t, lang, theme, toggleTheme } = useLang();
-  const [lastClickTime, setLastClickTime] = useState(0);
-  const [lastValidResult, setLastValidResult] = useState<React.ReactNode>(null);
-  const [lastRunClickTime, setLastRunClickTime] = useState(0);
-  const [lastRunResult, setLastRunResult] = useState<React.ReactNode>(null);
   const [isContentLoaded, setIsContentLoaded] = useState(false);
 
   useEffect(() => {
@@ -100,6 +97,7 @@ export const EditorScreen = () => {
 
   return (
     <div className="flex flex-col sm:flex-row h-full">
+      <Toaster position="top-center" />
       <div
         className={clsx('sm:relative', 'pl-0 sm:pl-2 pr-0 sm:pr-2 border-r border-[#dddddd]', 'transition-all duration-300', {
           'hidden sm:block': !showCustomConfig,
@@ -407,27 +405,17 @@ export const EditorScreen = () => {
               onClick={() => {
                 if (!isContentLoaded) {
                   setEcho(<div className="text-orange-500">Waiting for content loading</div>);
+                  toast.error('Waiting for content loading');
                   return;
                 }
-                const now = Date.now();
-                if (now - lastClickTime < 2000) {
-                  setEcho(<div className="text-orange-500">Repeated clicks</div>);
-                  setTimeout(() => {
-                    setEcho(lastValidResult);
-                  }, 2000);
-                  return;
-                }
-                setLastClickTime(now);
                 
                 try {
                   Config.newConfigFromText(modelText);
-                  const result = <div className="text-green-500">Passed</div>;
-                  setEcho(result);
-                  setLastValidResult(result);
+                  setEcho(<div className="text-green-500">Passed</div>);
+                  toast.success('Syntax validation passed');
                 } catch (e) {
-                  const result = <div className="text-red-500">{(e as any).message}</div>;
-                  setEcho(result);
-                  setLastValidResult(result);
+                  setEcho(<div className="text-red-500">{(e as any).message}</div>);
+                  toast.error((e as any).message);
                 }
               }}
             >
@@ -444,16 +432,6 @@ export const EditorScreen = () => {
                 'transition-colors duration-500',
               )}
               onClick={() => {
-                const now = Date.now();
-                if (now - lastRunClickTime < 2000) {
-                  setEcho(<div className="text-orange-500">Repeated clicks</div>);
-                  setTimeout(() => {
-                    setEcho(lastRunResult);
-                  }, 2000);
-                  return;
-                }
-                setLastRunClickTime(now);
-
                 return enforcer({
                   modelKind,
                   model: modelText,
@@ -464,7 +442,6 @@ export const EditorScreen = () => {
                   onResponse: (v) => {
                     if (isValidElement(v)) {
                       setEcho(v);
-                      setLastRunResult(v);
                     } else if (Array.isArray(v)) {
                       const formattedResults = v.map((res) => {
                         if (typeof res === 'object') {
@@ -477,6 +454,7 @@ export const EditorScreen = () => {
                       });
                       const result = formattedResults.join('\n');
                       setRequestResult(result);
+                      toast.success(`Test completed`);
                     }
                   },
                 });
@@ -527,6 +505,7 @@ export const EditorScreen = () => {
                     () => {
                       setShare('');
                       setEcho(<div className="text-green-500">{t('Copied')}</div>);
+                      toast.success(t('Link copied to clipboard'));
                     },
                     `${window.location.origin + window.location.pathname}#${share}`,
                   );
