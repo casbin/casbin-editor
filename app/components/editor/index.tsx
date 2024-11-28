@@ -439,9 +439,15 @@ export const EditorScreen = () => {
                   customConfig,
                   request,
                   enforceContextData,
-                  onResponse: (v) => {
+                  onResponse: (v: JSX.Element | any[]) => {
                     if (isValidElement(v)) {
                       setEcho(v);
+                      const props = (v as any).props;
+                      if (props.className?.includes('text-red-500')) {
+                        const errorMessage = props.children;
+                        toast.error(errorMessage);
+                        setRequestResult(errorMessage);
+                      }
                     } else if (Array.isArray(v)) {
                       const formattedResults = v.map((res) => {
                         if (typeof res === 'object') {
@@ -454,7 +460,9 @@ export const EditorScreen = () => {
                       });
                       const result = formattedResults.join('\n');
                       setRequestResult(result);
-                      toast.success(`Test completed`);
+                      if (result && !result.includes('error')) {
+                        toast.success('Test completed successfully');
+                      }
                     }
                   },
                 });
