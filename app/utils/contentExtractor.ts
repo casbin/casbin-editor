@@ -12,7 +12,7 @@ export const extractPageContent = (boxType: string, t: (key: string) => string, 
   const modelMatch = mainContent.match(new RegExp(`${t('Model')}\\s+([\\s\\S]*?)\\s+${t('Policy')}`));
   const policyMatch = mainContent.match(new RegExp(`${t('Policy')}\\s+([\\s\\S]*?)\\s+${t('Request')}`));
   const requestMatch = mainContent.match(new RegExp(`${t('Request')}\\s+([\\s\\S]*?)\\s+${t('Enforcement Result')}`));
-  const enforcementResultMatch = mainContent.match(new RegExp(`${t('Enforcement Result')}\\s+([\\s\\S]*?)\\s+${t('SYNTAX VALIDATE')}`));
+  const enforcementResultMatch = mainContent.match(new RegExp(`${t('Enforcement Result')}\\s+([\\s\\S]*?)\\s+${t('RUN THE TEST')}`));
 
   const customConfig = customConfigMatch ? cleanContent(customConfigMatch[1]) : 'No custom config found';
   const model = modelMatch

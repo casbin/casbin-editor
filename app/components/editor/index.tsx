@@ -11,7 +11,6 @@ import { go } from '@codemirror/legacy-modes/mode/go';
 import { EditorView } from '@codemirror/view';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
-import { Config } from 'casbin';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
 import useRunTest from '@/app/components/editor/hooks/useRunTest';
 import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
@@ -392,35 +391,6 @@ export const EditorScreen = () => {
         </div>
         <div className={clsx('pt-2 px-1 flex flex-col sm:flex-row items-start sm:items-center')}>
           <div className="flex flex-row flex-wrap gap-2 mb-2 sm:mb-0 w-full sm:w-auto">
-            <button
-              className={clsx(
-                'rounded',
-                'px-2 py-1',
-                'border border-[#453d7d]',
-                'bg-[#efefef]',
-                'text-[#453d7a]',
-                'hover:bg-[#453d7d] hover:text-white',
-                'transition-colors duration-500',
-              )}
-              onClick={() => {
-                if (!isContentLoaded) {
-                  setEcho(<div className="text-orange-500">Waiting for content loading</div>);
-                  toast.error('Waiting for content loading');
-                  return;
-                }
-                
-                try {
-                  Config.newConfigFromText(modelText);
-                  setEcho(<div className="text-green-500">Passed</div>);
-                  toast.success('Syntax validation passed');
-                } catch (e) {
-                  setEcho(<div className="text-red-500">{(e as any).message}</div>);
-                  toast.error((e as any).message);
-                }
-              }}
-            >
-              {t('SYNTAX VALIDATE')}
-            </button>
             <button
               className={clsx(
                 'rounded',
