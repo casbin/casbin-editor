@@ -11,7 +11,6 @@ import { go } from '@codemirror/legacy-modes/mode/go';
 import { EditorView } from '@codemirror/view';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
-import { Config } from 'casbin';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
 import useRunTest from '@/app/components/editor/hooks/useRunTest';
 import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
@@ -25,6 +24,7 @@ import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/components/LanguageMenu';
 import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
+import { toast, Toaster } from 'react-hot-toast';
 
 export const EditorScreen = () => {
   const {
@@ -54,6 +54,7 @@ export const EditorScreen = () => {
     return message;
   };
   const { t, lang, theme, toggleTheme } = useLang();
+  const [isContentLoaded, setIsContentLoaded] = useState(false);
 
   useEffect(() => {
     const fetchCasbinVersion = async () => {
@@ -65,7 +66,8 @@ export const EditorScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (modelKind) {
+    if (modelKind && modelText) {
+      setIsContentLoaded(true);
       enforcer({
         modelKind,
         model: modelText,
@@ -94,6 +96,7 @@ export const EditorScreen = () => {
 
   return (
     <div className="flex flex-col sm:flex-row h-full">
+      <Toaster position="top-center" />
       <div
         className={clsx('sm:relative', 'pl-0 sm:pl-2 pr-0 sm:pr-2 border-r border-[#dddddd]', 'transition-all duration-300', {
           'hidden sm:block': !showCustomConfig,
@@ -393,27 +396,6 @@ export const EditorScreen = () => {
                 'rounded',
                 'px-2 py-1',
                 'border border-[#453d7d]',
-                'bg-[#efefef]',
-                'text-[#453d7a]',
-                'hover:bg-[#453d7d] hover:text-white',
-                'transition-colors duration-500',
-              )}
-              onClick={() => {
-                try {
-                  Config.newConfigFromText(modelText);
-                  setEcho(<div>Passed</div>);
-                } catch (e) {
-                  setEcho(<div>{(e as any).message}</div>);
-                }
-              }}
-            >
-              {t('SYNTAX VALIDATE')}
-            </button>
-            <button
-              className={clsx(
-                'rounded',
-                'px-2 py-1',
-                'border border-[#453d7d]',
                 'text-[#453d7a]',
                 'bg-[#efefef]',
                 'hover:bg-[#453d7d] hover:text-white',
@@ -427,18 +409,30 @@ export const EditorScreen = () => {
                   customConfig,
                   request,
                   enforceContextData,
-                  onResponse: (v) => {
+                  onResponse: (v: JSX.Element | any[]) => {
                     if (isValidElement(v)) {
                       setEcho(v);
+                      const props = (v as any).props;
+                      if (props.className?.includes('text-red-500')) {
+                        const errorMessage = props.children;
+                        toast.error(errorMessage);
+                        setRequestResult(errorMessage);
+                      }
                     } else if (Array.isArray(v)) {
                       const formattedResults = v.map((res) => {
                         if (typeof res === 'object') {
-                          const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
+                          const reasonString = Array.isArray(res.reason) && res.reason.length > 0 
+                            ? ` Reason: ${JSON.stringify(res.reason)}` 
+                            : '';
                           return `${res.okEx}${reasonString}`;
                         }
                         return res;
                       });
-                      setRequestResult(formattedResults.join('\n'));
+                      const result = formattedResults.join('\n');
+                      setRequestResult(result);
+                      if (result && !result.includes('error')) {
+                        toast.success('Test completed successfully');
+                      }
                     }
                   },
                 });
@@ -488,7 +482,8 @@ export const EditorScreen = () => {
                   return copy(
                     () => {
                       setShare('');
-                      setEcho(<div>{t('Copied')}</div>);
+                      setEcho(<div className="text-green-500">{t('Copied')}</div>);
+                      toast.success(t('Link copied to clipboard'));
                     },
                     `${window.location.origin + window.location.pathname}#${share}`,
                   );
