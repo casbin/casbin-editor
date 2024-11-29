@@ -25,6 +25,7 @@ export interface ShareFormat {
   customConfig?: string;
   request?: string;
   requestResult?: object;
+  enforceContext?: string;
 }
 
 async function dpaste(content: string) {

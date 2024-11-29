@@ -12,6 +12,7 @@ export default function useIndex() {
   const [requestResult, setRequestResult] = useState('');
   const [customConfig, setCustomConfig] = useState('');
   const [share, setShare] = useState('');
+  const [triggerUpdate, setTriggerUpdate] = useState(0);
   const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
   const loadState = useRef<{
     loadedHash?: string;
@@ -54,6 +55,9 @@ export default function useIndex() {
           loadState.current.content = parsed;
           const newModelKind = parsed?.modelKind && parsed.modelKind in example ? (parsed.modelKind as ModelKind) : 'basic';
           setModelKind(newModelKind);
+          setTriggerUpdate((prev) => {
+            return prev + 1;
+          });
           setEcho(<div className="text-green-500">Shared Content Loaded.</div>);
         })
         .catch((error) => {
@@ -69,9 +73,9 @@ export default function useIndex() {
     setModelText(shared?.model ?? example[modelKind].model);
     setRequest(shared?.request ?? example[modelKind].request);
     setCustomConfig(shared?.customConfig ?? defaultCustomConfig);
-    setEnforceContextData(new Map(Object.entries(JSON.parse(example[modelKind].enforceContext || defaultEnforceContext))));
+    setEnforceContextData(new Map(Object.entries(JSON.parse(shared?.enforceContext || example[modelKind].enforceContext || defaultEnforceContext))));
     loadState.current.content = undefined;
-  }, [modelKind]);
+  }, [modelKind, triggerUpdate]);
 
   function handleShare(v: ReactNode | string) {
     if (isValidElement(v)) {
