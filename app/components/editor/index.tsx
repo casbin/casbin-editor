@@ -25,6 +25,7 @@ import LanguageMenu from '@/app/components/LanguageMenu';
 import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
 import { toast, Toaster } from 'react-hot-toast';
+import { CONFIG_TEMPLATES } from '@/app/constants/configTemplates';
 
 export const EditorScreen = () => {
   const {
@@ -94,11 +95,18 @@ export const EditorScreen = () => {
   }, [modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult]);
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
+  const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const template = CONFIG_TEMPLATES[e.target.value];
+    if (template) {
+      setCustomConfigPersistent(template.value);
+    }
+  };
+
   return (
     <div className="flex flex-col sm:flex-row h-full">
       <Toaster position="top-center" />
       <div
-        className={clsx('sm:relative', 'pl-0 sm:pl-2 pr-0 sm:pr-2 border-r border-[#dddddd]', 'transition-all duration-300', {
+        className={clsx('sm:relative', 'p-0 border-r border-[#dddddd]', 'transition-all duration-300', {
           'hidden sm:block': !showCustomConfig,
           block: showCustomConfig,
           'sm:w-72': open,
@@ -130,8 +138,23 @@ export const EditorScreen = () => {
             </svg>
           </button>
 
-          <div className={'pt-6 h-12 pl-2 flex items-center font-bold'}>
-            {(showCustomConfig || open) && <div className={textClass}>{t('Custom config')}</div>}
+          <div className={'pt-6 h-12 pl-2 flex items-center font-bold gap-2'}>
+            {(showCustomConfig || open) && (
+              <>
+                <select onChange={handleTemplateChange} className="border rounded px-2 py-1 text-sm mb-5" defaultValue="">
+                  <option value="" disabled>
+                    {t('Choose Config')}
+                  </option>
+                  {Object.entries(CONFIG_TEMPLATES).map(([key, template]) => {
+                    return (
+                      <option key={key} value={key}>
+                        {template.label}
+                      </option>
+                    );
+                  })}
+                </select>
+              </>
+            )}
           </div>
           <div className="flex-grow overflow-auto h-full">
             {(showCustomConfig || open) && (
@@ -421,9 +444,7 @@ export const EditorScreen = () => {
                     } else if (Array.isArray(v)) {
                       const formattedResults = v.map((res) => {
                         if (typeof res === 'object') {
-                          const reasonString = Array.isArray(res.reason) && res.reason.length > 0 
-                            ? ` Reason: ${JSON.stringify(res.reason)}` 
-                            : '';
+                          const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
                           return `${res.okEx}${reasonString}`;
                         }
                         return res;

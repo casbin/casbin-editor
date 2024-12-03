@@ -430,23 +430,6 @@ g, bob, data2_allow_group`,
   },
 };
 
-export const defaultCustomConfig = `(function() {
-  return {
-    /**
-     * Here is custom functions for Casbin.
-     * Currently, there are built-in globMatch, keyMatch, keyMatch2, keyMatch3, keyMatch4, regexMatch, ipMatch.
-     */
-    functions: {},
-    /**
-     * If the value is undefined, the Casbin does not use it.
-     * example:
-     * matchingForGFunction: 'globMatch'
-     * matchingDomainForGFunction: 'keyMatch'
-     */
-    matchingForGFunction: undefined,
-    matchingDomainForGFunction: undefined
-  };
-})();`;
 export const defaultEnforceContext = `{
   "r": "r",
   "p": "p",

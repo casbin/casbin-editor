@@ -1,7 +1,8 @@
 import React, { isValidElement, ReactNode, useEffect, useRef, useState } from 'react';
-import { defaultCustomConfig, defaultEnforceContext, example, ModelKind } from '@/app/components/editor/casbin-mode/example';
+import { defaultEnforceContext, example, ModelKind } from '@/app/components/editor/casbin-mode/example';
 import { ShareFormat } from '@/app/components/editor/hooks/useShareInfo';
 import { defaultEnforceContextData } from '@/app/components/editor/hooks/useSetupEnforceContext';
+import { CONFIG_TEMPLATES } from '@/app/constants/configTemplates';
 
 export default function useIndex() {
   const [modelKind, setModelKind] = useState<ModelKind>('basic');
@@ -10,7 +11,7 @@ export default function useIndex() {
   const [request, setRequest] = useState('');
   const [echo, setEcho] = useState<ReactNode>(<></>);
   const [requestResult, setRequestResult] = useState('');
-  const [customConfig, setCustomConfig] = useState('');
+  const [customConfig, setCustomConfig] = useState(CONFIG_TEMPLATES.default.value);
   const [share, setShare] = useState('');
   const [triggerUpdate, setTriggerUpdate] = useState(0);
   const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
@@ -72,7 +73,7 @@ export default function useIndex() {
     setPolicy(shared?.policy ?? example[modelKind].policy);
     setModelText(shared?.model ?? example[modelKind].model);
     setRequest(shared?.request ?? example[modelKind].request);
-    setCustomConfig(shared?.customConfig ?? defaultCustomConfig);
+    setCustomConfig(shared?.customConfig ?? CONFIG_TEMPLATES.default.value);
     setEnforceContextData(new Map(Object.entries(JSON.parse(shared?.enforceContext || example[modelKind].enforceContext || defaultEnforceContext))));
     loadState.current.content = undefined;
   }, [modelKind, triggerUpdate]);
