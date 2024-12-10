@@ -1,5 +1,8 @@
 {
-  "Custom config": "사용자 정의 구성",
+  "Custom Functions": "사용자 정의 함수",
+  "Add Function": "함수 추가",
+  "Add Role Matching": "역할 매칭 추가",
+  "Add Domain Matching": "도메인 매칭 추가",
   "Model": "모델",
   "Select your model": "모델 선택",
   "RESET": "재설정",

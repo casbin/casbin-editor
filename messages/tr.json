@@ -1,5 +1,8 @@
 {
-  "Custom config": "Özel yapılandırma",
+  "Custom Functions": "Özel yapılandırma",
+  "Add Function": "Fonksiyon ekle",
+  "Add Role Matching": "Rol eşleştirme ekle",
+  "Add Domain Matching": "Domain eşleştirme ekle",
   "Model": "Model",
   "Select your model": "Modelinizi seçin",
   "RESET": "SIFIRLA",

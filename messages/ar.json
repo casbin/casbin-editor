@@ -1,5 +1,8 @@
 {
-  "Custom config": "تكوين مخصص",
+  "Custom Functions": "وظائف مخصصة",
+  "Add Function": "إضافة وظيفة",
+  "Add Role Matching": "إضافة مطابقة الدور",
+  "Add Domain Matching": "إضافة مطابقة المجال",
   "Model": "نموذج",
   "Select your model": "حدد النموذج الخاص بك",
   "RESET": "إعادة ضبط",

@@ -1,5 +1,8 @@
 {
-  "Custom config": "Cấu hình tùy chỉnh",
+  "Custom Functions": "Cấu hình tùy chỉnh",
+  "Add Function": "Thêm hàm",
+  "Add Role Matching": "Thêm phù hợp với vai trò",
+  "Add Domain Matching": "Thêm phù hợp với miền",
   "Model": "Mô hình",
   "Select your model": "Chọn mô hình của bạn",
   "RESET": "CÀI LẠI",

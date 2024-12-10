@@ -1,5 +1,8 @@
 {
-  "Custom config": "Пользовательская конфигурация",
+  "Custom Functions": "Пользовательские функции",
+  "Add Function": "Добавить функцию",
+  "Add Role Matching": "Добавить соответствие ролей",
+  "Add Domain Matching": "Добавить соответствие доменов",
   "Model": "Модель",
   "Select your model": "Выберите вашу модель",
   "RESET": "СБРОС",

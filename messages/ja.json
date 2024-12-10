@@ -1,5 +1,8 @@
 {
-  "Custom config": "カスタム設定",
+  "Custom Functions": "カスタム関数",
+  "Add Function": "関数を追加",
+  "Add Role Matching": "ロールマッチングを追加",
+  "Add Domain Matching": "ドメインマッチングを追加",
   "Model": "モデル",
   "Select your model": "モデルを選択",
   "RESET": "リセット",
