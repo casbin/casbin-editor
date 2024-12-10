@@ -14,3 +14,19 @@ button:hover img {
   max-height: var(--radix-dropdown-menu-content-available-height);
   overflow-y: auto;
 }
+
+/* ------------------------------ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* ------------------------------ */

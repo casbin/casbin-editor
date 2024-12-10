@@ -6,8 +6,7 @@ import { clsx } from 'clsx';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
 import { basicSetup } from 'codemirror';
-import { indentUnit, StreamLanguage } from '@codemirror/language';
-import { go } from '@codemirror/legacy-modes/mode/go';
+import { indentUnit } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
@@ -25,16 +24,31 @@ import LanguageMenu from '@/app/components/LanguageMenu';
 import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
 import { toast, Toaster } from 'react-hot-toast';
-import { CONFIG_TEMPLATES } from '@/app/constants/configTemplates';
+import { CustomConfigPanel } from './CustomConfigPanel';
 
 export const EditorScreen = () => {
   const {
-    modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request,
-    setRequest, echo, setEcho, requestResult, setRequestResult, customConfig, setCustomConfig, share, setShare,
-    enforceContextData, setEnforceContextData, setPolicyPersistent, setModelTextPersistent,
-    setCustomConfigPersistent, setRequestPersistent, setEnforceContextDataPersistent, handleShare,
-  } = useIndex();  
-  const [open, setOpen] = useState(true);
+    modelKind,
+    setModelKind,
+    modelText,
+    policy,
+    request,
+    echo,
+    setEcho,
+    requestResult,
+    setRequestResult,
+    customConfig,
+    share,
+    setShare,
+    enforceContextData,
+    setPolicyPersistent,
+    setModelTextPersistent,
+    setCustomConfigPersistent,
+    setRequestPersistent,
+    setEnforceContextDataPersistent,
+    handleShare,
+  } = useIndex();
+  const [open, setOpen] = useState(false);
   const { enforcer } = useRunTest();
   const { shareInfo } = useShareInfo();
   const { copy } = useCopy();
@@ -95,87 +109,27 @@ export const EditorScreen = () => {
   }, [modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult]);
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
-  const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const template = CONFIG_TEMPLATES[e.target.value];
-    if (template) {
-      setCustomConfigPersistent(template.value);
-    }
-  };
-
   return (
     <div className="flex flex-col sm:flex-row h-full">
       <Toaster position="top-center" />
       <div
-        className={clsx('sm:relative', 'p-0 border-r border-[#dddddd]', 'transition-all duration-300', {
+        className={clsx('sm:relative border-r border-[#dddddd]', 'transition-all duration-300', {
           'hidden sm:block': !showCustomConfig,
           block: showCustomConfig,
-          'sm:w-72': open,
+          'sm:w-1/3': open,
           'sm:w-5': !open,
         })}
       >
         <div className="flex flex-col h-full">
-          <button
-            className={clsx(
-              'absolute top-.5 right-0 translate-x-1/2',
-              'h-7 w-7',
-              'bg-[#ffffff]',
-              'border-[1.5px] rounded-full',
-              'items-center justify-center',
-              'hidden sm:flex',
-            )}
-            onClick={() => {
-              return setOpen(!open);
-            }}
-          >
-            <svg
-              className={clsx('h-8 w-8')}
-              style={{
-                transform: open ? 'rotateZ(0deg)' : 'rotateZ(180deg)',
-              }}
-              viewBox="0 0 24 24"
-            >
-              <path fill={'currentColor'} d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
-            </svg>
-          </button>
-
-          <div className={'pt-6 h-12 pl-2 flex items-center font-bold gap-2'}>
-            {(showCustomConfig || open) && (
-              <>
-                <select onChange={handleTemplateChange} className="border rounded px-2 py-1 text-sm mb-5" defaultValue="">
-                  <option value="" disabled>
-                    {t('Choose Config')}
-                  </option>
-                  {Object.entries(CONFIG_TEMPLATES).map(([key, template]) => {
-                    return (
-                      <option key={key} value={key}>
-                        {template.label}
-                      </option>
-                    );
-                  })}
-                </select>
-              </>
-            )}
-          </div>
-          <div className="flex-grow overflow-auto h-full">
-            {(showCustomConfig || open) && (
-              <div className="flex flex-col h-full">
-                <CodeMirror
-                  height="100%"
-                  onChange={setCustomConfigPersistent}
-                  theme={monokai}
-                  basicSetup={{
-                    lineNumbers: true,
-                    highlightActiveLine: true,
-                    bracketMatching: true,
-                    indentOnInput: true,
-                  }}
-                  extensions={[basicSetup, StreamLanguage.define(go), indentUnit.of('    '), EditorView.lineWrapping]}
-                  className="function flex-grow"
-                  value={customConfig}
-                />
-              </div>
-            )}
-          </div>
+          <CustomConfigPanel
+            open={open}
+            setOpen={setOpen}
+            showCustomConfig={showCustomConfig}
+            customConfig={customConfig}
+            setCustomConfigPersistent={setCustomConfigPersistent}
+            textClass={textClass}
+            t={t}
+          />
         </div>
       </div>
       <div className={clsx('flex flex-col grow h-full w-full')}>
