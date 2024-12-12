@@ -85,9 +85,9 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
 
   // Add new function
   const addNewFunction = () => {
-    const regularFunctionCount = functions.filter((f) => 
-      {return !['matchingForGFunction', 'matchingDomainForGFunction'].includes(f.name)}
-    ).length;
+    const regularFunctionCount = functions.filter((f) => {
+      return !['matchingForGFunction', 'matchingDomainForGFunction'].includes(f.name);
+    }).length;
 
     const newFunction = {
       id: Date.now().toString(),
@@ -126,7 +126,6 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
         return f.name === 'matchingForGFunction';
       })
     ) {
-      alert('Role Matching Function already exists!');
       return;
     }
 
@@ -148,7 +147,6 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
         return f.name === 'matchingDomainForGFunction';
       })
     ) {
-      alert('Domain Matching Function already exists!');
       return;
     }
 
