@@ -85,9 +85,13 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
 
   // Add new function
   const addNewFunction = () => {
+    const regularFunctionCount = functions.filter((f) => 
+      {return !['matchingForGFunction', 'matchingDomainForGFunction'].includes(f.name)}
+    ).length;
+
     const newFunction = {
       id: Date.now().toString(),
-      name: `my_func${functions.length + 1}`,
+      name: `my_func${regularFunctionCount + 1}`,
       body: '(arg1, arg2) => {\n  return arg1.endsWith(arg2);\n}',
     };
     setFunctions([...functions, newFunction]);
