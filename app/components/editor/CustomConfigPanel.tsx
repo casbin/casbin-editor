@@ -202,6 +202,12 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
     }, 0);
   };
 
+  const hasMatchingFunction = (name: string) => {
+    return functions.some((f) => {
+      return f.name === name;
+    });
+  };
+
   return (
     <>
       <button
@@ -303,31 +309,25 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
             >
               {t('Add Function')}
             </button>
+
             <button
               onClick={addMatchingFunction}
-              className={clsx(
-                'px-3 py-1',
-                'border border-[#453d7d]',
-                'text-[#453d7a]',
-                'bg-[#efefef]',
-                'rounded',
-                'hover:bg-[#453d7d] hover:text-white',
-                'transition-colors duration-500',
-              )}
+              disabled={hasMatchingFunction('matchingForGFunction')}
+              className={clsx('px-3 py-1', 'border', 'rounded', 'transition-colors duration-500', {
+                'btn-active': !hasMatchingFunction('matchingForGFunction'),
+                'btn-disabled': hasMatchingFunction('matchingForGFunction'),
+              })}
             >
               {t('Add Role Matching')}
             </button>
+
             <button
               onClick={addMatchingDomainFunction}
-              className={clsx(
-                'px-3 py-1',
-                'border border-[#453d7d]',
-                'text-[#453d7a]',
-                'bg-[#efefef]',
-                'rounded',
-                'hover:bg-[#453d7d] hover:text-white',
-                'transition-colors duration-500',
-              )}
+              disabled={hasMatchingFunction('matchingDomainForGFunction')}
+              className={clsx('px-3 py-1', 'border', 'rounded', 'transition-colors duration-500', {
+                'btn-active': !hasMatchingFunction('matchingDomainForGFunction'),
+                'btn-disabled': hasMatchingFunction('matchingDomainForGFunction'),
+              })}
             >
               {t('Add Domain Matching')}
             </button>

@@ -48,7 +48,7 @@ export const EditorScreen = () => {
     setEnforceContextDataPersistent,
     handleShare,
   } = useIndex();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const { enforcer } = useRunTest();
   const { shareInfo } = useShareInfo();
   const { copy } = useCopy();

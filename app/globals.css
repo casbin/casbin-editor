@@ -30,3 +30,14 @@ button:hover img {
   background: transparent;
 }
 /* ------------------------------ */
+
+
+/* ------------------------------ */
+.btn-active {
+  @apply border-[#453d7d] text-[#453d7a] bg-[#efefef] hover:bg-[#453d7d] hover:text-white;
+}
+
+.btn-disabled {
+  @apply border-gray-300 text-gray-300 bg-gray-100 cursor-not-allowed;
+}
+/* ------------------------------ */
