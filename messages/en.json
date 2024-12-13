@@ -1,5 +1,8 @@
 {
-  "Custom config": "Custom config",
+  "Custom Functions": "Custom Functions",
+  "Add Function": "Add Function",
+  "Add Role Matching": "Add Role Matching",
+  "Add Domain Matching": "Add Domain Matching",
   "Model": "Model",
   "Select your model": "Select your model",
   "RESET": "RESET",

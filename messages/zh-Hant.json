@@ -1,5 +1,8 @@
 {
-  "Custom config": "自定義配置",
+  "Custom Functions": "自定義函數",
+  "Add Function": "添加函數",
+  "Add Role Matching": "添加角色匹配",
+  "Add Domain Matching": "添加域名匹配",
   "Model": "模型",
   "Select your model": "選擇模型",
   "RESET": "重置",

@@ -1,5 +1,8 @@
 {
-  "Custom config": "Configurazione personalizzata",
+  "Custom Functions": "Funzioni personalizzate",
+  "Add Function": "Aggiungi funzione",
+  "Add Role Matching": "Aggiungi corrispondenza di ruolo",
+  "Add Domain Matching": "Aggiungi corrispondenza di dominio",
   "Model": "Modello",
   "Select your model": "Seleziona il tuo modello",
   "RESET": "REIMPOSTA",

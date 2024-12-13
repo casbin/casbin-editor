@@ -1,5 +1,8 @@
 {
-  "Custom config": "Benutzerdefinierte Konfiguration",
+  "Custom Functions": "Benutzerdefinierte Funktionen",
+  "Add Function": "Funktion hinzufügen",
+  "Add Role Matching": "Rolle hinzufügen",
+  "Add Domain Matching": "Domain hinzufügen",
   "Model": "Modell",
   "Select your model": "Wählen Sie Ihr Modell",
   "RESET": "Zurücksetzen",

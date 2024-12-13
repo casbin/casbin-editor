@@ -14,3 +14,30 @@ button:hover img {
   max-height: var(--radix-dropdown-menu-content-available-height);
   overflow-y: auto;
 }
+
+/* ------------------------------ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* ------------------------------ */
+
+
+/* ------------------------------ */
+.btn-active {
+  @apply border-[#453d7d] text-[#453d7a] bg-[#efefef] hover:bg-[#453d7d] hover:text-white;
+}
+
+.btn-disabled {
+  @apply border-gray-300 text-gray-300 bg-gray-100 cursor-not-allowed;
+}
+/* ------------------------------ */

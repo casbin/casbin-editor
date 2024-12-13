@@ -89,6 +89,12 @@ async function enforcer(props: RunTestProps) {
   try {
     const e = await newEnforcer(newModel(props.model), props.policy ? new StringAdapter(props.policy) : undefined);
 
+    if (!e.getRoleManager()) {
+      // Create a new RoleManager instance, 10 is the maximum role level
+      const roleManager = new DefaultRoleManager(10);
+      e.setRoleManager(roleManager);
+    }
+
     const customConfigCode = props.customConfig;
     if (customConfigCode) {
       try {

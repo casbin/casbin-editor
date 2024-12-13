@@ -1,5 +1,8 @@
 {
-  "Custom config": "Konfigurasi khusus",
+  "Custom Functions": "Fungsi khusus",
+  "Add Function": "Tambah fungsi",
+  "Add Role Matching": "Tambah penyokong peran",
+  "Add Domain Matching": "Tambah penyokong domain",
   "Model": "Model",
   "Select your model": "Pilih model Anda",
   "RESET": "RESET",
