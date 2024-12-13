@@ -1,4 +1,7 @@
-import GenerateCasbinVersionPlugin from './generateCasbinVersionPlugin.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const casbinVersion = require('./node_modules/casbin/package.json').version;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // reactStrictMode: false,
@@ -41,13 +44,12 @@ const nextConfig = {
       })
     );
 
-    if (!isServer) {
-      config.plugins.push(new GenerateCasbinVersionPlugin());
-    }
-
     return config;
   },
 
+  env: {
+    CASBIN_VERSION: casbinVersion
+  }
 };
 
 export default nextConfig;

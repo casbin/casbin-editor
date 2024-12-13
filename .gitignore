@@ -12,7 +12,6 @@
 # next.js
 /.next/
 /out/
-/public/casbin-version.json
 
 # production
 /build

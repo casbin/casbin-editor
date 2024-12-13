@@ -56,7 +56,6 @@ export const EditorScreen = () => {
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
   });
-  const [casbinVersion, setCasbinVersion] = useState('');
   const [showCustomConfig, setShowCustomConfig] = useState(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
   const openDrawerWithMessage = (message: string) => {
@@ -70,15 +69,7 @@ export const EditorScreen = () => {
   };
   const { t, lang, theme, toggleTheme } = useLang();
   const [isContentLoaded, setIsContentLoaded] = useState(false);
-
-  useEffect(() => {
-    const fetchCasbinVersion = async () => {
-      const response = await fetch('casbin-version.json');
-      const data = await response.json();
-      setCasbinVersion(data.casbinVersion);
-    };
-    fetchCasbinVersion();
-  }, []);
+  const casbinVersion = process.env.CASBIN_VERSION;
 
   useEffect(() => {
     if (modelKind && modelText) {
