@@ -10,11 +10,32 @@ import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
 import { newModel } from 'casbin';
 import { setError } from '@/app/utils/errorManager';
+import { buttonPlugin } from '@/app/components/editor/ButtonPlugin';
+import { extractPageContent } from '@/app/utils/contentExtractor';
+import { useLang } from '@/app/context/LangContext';
+import SidePanelChat from '@/app/components/SidePanelChat';
+import { example, ModelKind } from '@/app/components/editor/casbin-mode/example';
+import { clsx } from 'clsx';
 
 export const ModelEditor = () => {
   const [modelText, setModelText] = useState('');
+  const [modelKind, setModelKind] = useState<ModelKind>('');
   const editorRef = useRef<EditorView | null>(null);
   const cursorPosRef = useRef<{ from: number; to: number } | null>(null);
+  const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
+  const { t, lang, theme } = useLang();
+  const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
+
+  const openDrawerWithMessage = (message: string) => {
+    if (sidePanelChatRef.current) {
+      sidePanelChatRef.current.openDrawer(message);
+    }
+  };
+
+  const extractContent = (boxType: string) => {
+    const { message } = extractPageContent(boxType, t, lang);
+    return message;
+  };
 
   const validateModel = useCallback(async (text: string) => {
     try {
@@ -31,14 +52,18 @@ export const ModelEditor = () => {
 
   const handleMessage = useCallback((event: MessageEvent) => {
     if (event.data.type === 'initializeModel') {
-      setModelText(event.data.modelText);
+      if (event.data.modelText) {
+        setModelText(event.data.modelText);
+      }
     } else if (event.data.type === 'getModelText') {
       window.parent.postMessage({
         type: 'modelUpdate',
         modelText: modelText
       }, '*');
     } else if (event.data.type === 'updateModelText') {
-      setModelText(event.data.modelText);
+      if (event.data.modelText) {
+        setModelText(event.data.modelText);
+      }
     }
   }, [modelText]);
 
@@ -73,9 +98,63 @@ export const ModelEditor = () => {
     }
   }, [modelText]);
 
+  useEffect(() => {
+    if (modelKind && example[modelKind]) {
+      setModelText(example[modelKind].model);
+    }
+  }, [modelKind]);
+
   return (
     <div className="flex-grow overflow-auto h-full">
       <div className="flex flex-col h-full">
+        <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
+          <div className={clsx(textClass, 'font-bold')}>{t('Model')}</div>
+          <select
+            value={modelKind}
+            onChange={(e) => {
+              const selectedKind = e.target.value as ModelKind;
+              if (selectedKind && example[selectedKind]) {
+                setModelText(example[selectedKind].model);
+                setModelKind('');
+                window.parent.postMessage({
+                  type: 'modelUpdate',
+                  modelText: example[selectedKind].model
+                }, '*');
+              }
+            }}
+            className={'border-[#767676] border rounded'}
+          >
+            <option value="" disabled>
+              {t('Select your model')}
+            </option>
+            {Object.keys(example).map((n) => {
+              return (
+                <option key={n} value={n}>
+                  {example[n as ModelKind].name}
+                </option>
+              );
+            })}
+          </select>
+          <button
+            className={clsx(
+              'rounded',
+              'text-[#453d7d]',
+              'px-1',
+              'border border-[#453d7d]',
+              'bg-[#efefef]',
+              'hover:bg-[#453d7d] hover:text-white',
+              'transition-colors duration-500',
+            )}
+            onClick={() => {
+              const ok = window.confirm('Confirm Reset?');
+              if (ok) {
+                window.location.reload();
+              }
+            }}
+          >
+            {t('RESET')}
+          </button>
+        </div>
         <CodeMirror
           height="100%"
           theme={monokai}
@@ -93,6 +172,7 @@ export const ModelEditor = () => {
             EditorView.lineWrapping,
             linter(casbinLinter),
             lintGutter(),
+            buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
             EditorView.updateListener.of((update) => {
               if (update.docChanged) {
                 editorRef.current = update.view;
@@ -102,6 +182,9 @@ export const ModelEditor = () => {
           className={'function flex-grow h-[300px]'}
           value={modelText}
         />
+        <div className="mr-4">
+          <SidePanelChat ref={sidePanelChatRef} />
+        </div>
       </div>
     </div>
   );

@@ -325,6 +325,9 @@ export const EditorScreen = () => {
             <div className={clsx('h-10 pl-2 font-bold', 'flex items-center justify-between')}>
               <div className={textClass}>{t('Enforcement Result')}</div>
               <div className="mr-4">
+                <div className="text-red-600 flex items-center">
+                  <span>{t('Why this result')}</span>
+                </div>
                 <SidePanelChat ref={sidePanelChatRef} />
               </div>
             </div>
