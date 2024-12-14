@@ -19,7 +19,7 @@ import { clsx } from 'clsx';
 
 export const ModelEditor = () => {
   const [modelText, setModelText] = useState('');
-  const [modelKind, setModelKind] = useState<ModelKind>('basic');
+  const [modelKind, setModelKind] = useState<ModelKind>('');
   const editorRef = useRef<EditorView | null>(null);
   const cursorPosRef = useRef<{ from: number; to: number } | null>(null);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
@@ -52,14 +52,18 @@ export const ModelEditor = () => {
 
   const handleMessage = useCallback((event: MessageEvent) => {
     if (event.data.type === 'initializeModel') {
-      setModelText(event.data.modelText);
+      if (event.data.modelText) {
+        setModelText(event.data.modelText);
+      }
     } else if (event.data.type === 'getModelText') {
       window.parent.postMessage({
         type: 'modelUpdate',
         modelText: modelText
       }, '*');
     } else if (event.data.type === 'updateModelText') {
-      setModelText(event.data.modelText);
+      if (event.data.modelText) {
+        setModelText(event.data.modelText);
+      }
     }
   }, [modelText]);
 
@@ -108,7 +112,15 @@ export const ModelEditor = () => {
           <select
             value={modelKind}
             onChange={(e) => {
-              setModelKind(e.target.value as ModelKind);
+              const selectedKind = e.target.value as ModelKind;
+              if (selectedKind && example[selectedKind]) {
+                setModelText(example[selectedKind].model);
+                setModelKind('');
+                window.parent.postMessage({
+                  type: 'modelUpdate',
+                  modelText: example[selectedKind].model
+                }, '*');
+              }
             }}
             className={'border-[#767676] border rounded'}
           >
