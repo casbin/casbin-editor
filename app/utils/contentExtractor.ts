@@ -9,7 +9,7 @@ export const extractPageContent = (boxType: string, t: (key: string) => string, 
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
   const customConfigMatch = mainContent.match(new RegExp(`${t('Custom Functions')}\\s+([\\s\\S]*?)\\s+${t('Model')}`));
-  const modelMatch = mainContent.match(new RegExp(`${t('Model')}\\s+([\\s\\S]*?)\\s+${t('Policy')}`));
+  const modelMatch = mainContent.match(new RegExp(`${t('Model')}\\s+([\\s\\S]*?)(?:${t('Policy')}|$)`));
   const policyMatch = mainContent.match(new RegExp(`${t('Policy')}\\s+([\\s\\S]*?)\\s+${t('Request')}`));
   const requestMatch = mainContent.match(new RegExp(`${t('Request')}\\s+([\\s\\S]*?)\\s+${t('Enforcement Result')}`));
   const enforcementResultMatch = mainContent.match(new RegExp(`${t('Enforcement Result')}\\s+([\\s\\S]*?)\\s+${t('RUN THE TEST')}`));
