@@ -20,6 +20,7 @@ import { clsx } from 'clsx';
 export const ModelEditor = () => {
   const [modelText, setModelText] = useState('');
   const [modelKind, setModelKind] = useState<ModelKind>('');
+  const [initialText, setInitialText] = useState('');
   const editorRef = useRef<EditorView | null>(null);
   const cursorPosRef = useRef<{ from: number; to: number } | null>(null);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
@@ -50,29 +51,36 @@ export const ModelEditor = () => {
     validateModel(modelText);
   }, [modelText, validateModel]);
 
-  const handleMessage = useCallback((event: MessageEvent) => {
-    if (event.data.type === 'initializeModel') {
-      if (event.data.modelText) {
-        setModelText(event.data.modelText);
+  const handleMessage = useCallback(
+    (event: MessageEvent) => {
+      if (event.data.type === 'initializeModel') {
+        if (event.data.modelText) {
+          setModelText(event.data.modelText);
+          setInitialText(event.data.modelText);
+        }
+        if (event.data.lang) {
+          setLang(event.data.lang);
+        }
+      } else if (event.data.type === 'getModelText') {
+        window.parent.postMessage(
+          {
+            type: 'modelUpdate',
+            modelText: modelText,
+          },
+          '*',
+        );
+      } else if (event.data.type === 'updateModelText') {
+        if (event.data.modelText) {
+          setModelText(event.data.modelText);
+        }
+      } else if (event.data.type === 'updateLanguage') {
+        if (event.data.language) {
+          setLang(event.data.language);
+        }
       }
-      if (event.data.language) {
-        setLang(event.data.language);
-      }
-    } else if (event.data.type === 'getModelText') {
-      window.parent.postMessage({
-        type: 'modelUpdate',
-        modelText: modelText
-      }, '*');
-    } else if (event.data.type === 'updateModelText') {
-      if (event.data.modelText) {
-        setModelText(event.data.modelText);
-      }
-    } else if (event.data.type === 'updateLanguage') {
-      if (event.data.language) {
-        setLang(event.data.language);
-      }
-    }
-  }, [modelText, setLang]);
+    },
+    [modelText, setLang],
+  );
 
   useEffect(() => {
     window.addEventListener('message', handleMessage);
@@ -86,10 +94,13 @@ export const ModelEditor = () => {
   const handleModelTextChange = useCallback((value: string, viewUpdate: any) => {
     setModelText(value);
     cursorPosRef.current = viewUpdate.state.selection.main;
-    window.parent.postMessage({
-      type: 'modelUpdate',
-      modelText: value
-    }, '*');
+    window.parent.postMessage(
+      {
+        type: 'modelUpdate',
+        modelText: value,
+      },
+      '*',
+    );
   }, []);
 
   useEffect(() => {
@@ -97,10 +108,10 @@ export const ModelEditor = () => {
       const { from, to } = cursorPosRef.current;
       const docLength = editorRef.current.state.doc.length;
       editorRef.current.dispatch({
-        selection: { 
-          anchor: Math.min(from, docLength), 
-          head: Math.min(to, docLength) 
-        }
+        selection: {
+          anchor: Math.min(from, docLength),
+          head: Math.min(to, docLength),
+        },
       });
     }
   }, [modelText]);
@@ -123,10 +134,13 @@ export const ModelEditor = () => {
               if (selectedKind && example[selectedKind]) {
                 setModelText(example[selectedKind].model);
                 setModelKind('');
-                window.parent.postMessage({
-                  type: 'modelUpdate',
-                  modelText: example[selectedKind].model
-                }, '*');
+                window.parent.postMessage(
+                  {
+                    type: 'modelUpdate',
+                    modelText: example[selectedKind].model,
+                  },
+                  '*',
+                );
               }
             }}
             className={'border-[#767676] border rounded'}
@@ -155,7 +169,16 @@ export const ModelEditor = () => {
             onClick={() => {
               const ok = window.confirm('Confirm Reset?');
               if (ok) {
-                window.location.reload();
+                const rbacModel = example['rbac'].model;
+                setModelText(rbacModel);
+                setModelKind('');
+                window.parent.postMessage(
+                  {
+                    type: 'modelUpdate',
+                    modelText: rbacModel,
+                  },
+                  '*',
+                );
               }
             }}
           >
