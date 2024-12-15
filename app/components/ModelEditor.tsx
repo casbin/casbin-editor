@@ -23,7 +23,7 @@ export const ModelEditor = () => {
   const editorRef = useRef<EditorView | null>(null);
   const cursorPosRef = useRef<{ from: number; to: number } | null>(null);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
-  const { t, lang, theme } = useLang();
+  const { t, lang, theme, setLang } = useLang();
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
   const openDrawerWithMessage = (message: string) => {
@@ -55,6 +55,9 @@ export const ModelEditor = () => {
       if (event.data.modelText) {
         setModelText(event.data.modelText);
       }
+      if (event.data.language) {
+        setLang(event.data.language);
+      }
     } else if (event.data.type === 'getModelText') {
       window.parent.postMessage({
         type: 'modelUpdate',
@@ -64,8 +67,12 @@ export const ModelEditor = () => {
       if (event.data.modelText) {
         setModelText(event.data.modelText);
       }
+    } else if (event.data.type === 'updateLanguage') {
+      if (event.data.language) {
+        setLang(event.data.language);
+      }
     }
-  }, [modelText]);
+  }, [modelText, setLang]);
 
   useEffect(() => {
     window.addEventListener('message', handleMessage);
