@@ -16,17 +16,7 @@ import React from 'react';
 import { DefaultRoleManager, newEnforcer, newModel, StringAdapter, Util } from 'casbin';
 import { newEnforceContext } from '@/app/components/editor/hooks/useSetupEnforceContext';
 import { setError } from '@/app/utils/errorManager';
-
-interface RunTestProps {
-  model: string;
-  modelKind: string;
-  policy: string;
-  customConfig: string;
-  request: string;
-  enforceContextData: Map<string, string>;
-  onResponse: (com: JSX.Element | any[]) => void;
-  // parseABAC: boolean;
-}
+import { remoteEnforcer } from './useRemoteEnforcer';
 
 function parseABACRequest(line: string): any[] {
   let value: string | Record<string, any> = '';
@@ -83,10 +73,49 @@ function parseABACRequest(line: string): any[] {
   return request;
 }
 
-async function enforcer(props: RunTestProps) {
+async function enforcer(props: {
+  request: string;
+  onResponse: (v: (JSX.Element | any[])) => void;
+  enforceContextData: Map<string, string>;
+  customConfig: string;
+  selectedEngine: string;
+  model: string;
+  modelKind: string;
+  policy: string
+}) {
   const startTime = performance.now();
-  const result: { request: string; okEx: boolean; reason: string[]; }[] = []; 
+
   try {
+    if (props.selectedEngine === 'java' || props.selectedEngine === 'go') {
+      const requests = props.request.split('\n').filter((line) => {return line.trim()});
+      const results = await Promise.all(requests.map(async (request) => {
+        const result = await remoteEnforcer({
+          model: props.model,
+          policy: props.policy,
+          request: request,
+          engine: props.selectedEngine as 'java' | 'go'
+        });
+        return { request, ...result };
+      }));
+
+      const stopTime = performance.now();
+      props.onResponse(<div className="text-green-500">{'Done in ' + (stopTime - startTime).toFixed(2) + 'ms'}</div>);
+
+      const hasError = results.some((r) => {return r.error});
+      if (hasError) {
+        const errors = results.filter((r) => {return r.error}).map((r) => {return r.error});
+        throw new Error(errors.join('\n'));
+      }
+
+      props.onResponse(results.map((result) => {return {
+        request: result.request,
+        okEx: result.allowed,
+        reason: result.reason
+      }}));
+      return;
+    }
+
+    const result: { request: string; okEx: boolean; reason: string[]; }[] = [];
     const e = await newEnforcer(newModel(props.model), props.policy ? new StringAdapter(props.policy) : undefined);
 
     if (!e.getRoleManager()) {
