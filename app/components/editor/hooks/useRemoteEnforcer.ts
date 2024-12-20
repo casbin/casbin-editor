@@ -20,29 +20,28 @@ interface RemoteEnforcerProps {
 }
 
 export async function remoteEnforcer(props: RemoteEnforcerProps) {
-  const { model, policy, request, engine } = props;
-
   try {
     const baseUrl = 'https://door.casdoor.com/api/run-casbin-command';
-
     const args = [
-      "enforce",
-      "-m",
-      model,
-      "-p",
-      policy,
-      ...request.split(',').map((item) => {return item.trim()})
+      'enforce',
+      '-m',
+      props.model,
+      '-p',
+      props.policy,
+      ...props.request.split(',').map((item) => {
+        return item.trim();
+      }),
     ];
 
     const url = new URL(baseUrl);
-    url.searchParams.set('language', engine);
+    url.searchParams.set('language', props.engine);
     url.searchParams.set('args', JSON.stringify(args));
 
     const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
-      }
+        Accept: 'application/json',
+      },
     });
 
     if (!response.ok) {
@@ -51,22 +50,41 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
 
     const result = await response.json();
 
-    if (result.status !== "ok") {
+    if (result.status !== 'ok') {
       throw new Error(result.msg || 'API request failed');
     }
 
-    const enforceResult = JSON.parse(result.data.trim());
+    let enforceResult;
+    const data = result.data.trim();
+
+    try {
+      enforceResult = JSON.parse(data);
+    } catch {
+      if (data.toLowerCase() === 'allowed') {
+        enforceResult = {
+          allow: true,
+          explain: 'Allowed by policy',
+        };
+      } else if (data.toLowerCase() === 'denied') {
+        enforceResult = {
+          allow: false,
+          explain: 'Denied by policy',
+        };
+      } else {
+        throw new Error(`Unexpected response format: ${data}`);
+      }
+    }
 
     return {
       allowed: enforceResult.allow,
       reason: enforceResult.explain ? [enforceResult.explain] : [],
-      error: null
+      error: null,
     };
   } catch (error) {
     return {
       allowed: false,
-      reason: ["Error occurred during enforcement"],
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      reason: ['Error occurred during enforcement'],
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 }

@@ -451,5 +451,3 @@ export const defaultEnforceContext = `{
   "e": "e",
   "m": "m"
 }`;
-
-export type ModelKind = string;

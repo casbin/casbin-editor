@@ -14,12 +14,12 @@ import { buttonPlugin } from '@/app/components/editor/ButtonPlugin';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { useLang } from '@/app/context/LangContext';
 import SidePanelChat from '@/app/components/SidePanelChat';
-import { example, ModelKind } from '@/app/components/editor/casbin-mode/example';
+import { example } from '@/app/components/editor/casbin-mode/example';
 import { clsx } from 'clsx';
 
 export const ModelEditor = () => {
   const [modelText, setModelText] = useState('');
-  const [modelKind, setModelKind] = useState<ModelKind>('');
+  const [modelKind, setModelKind] = useState('');
   const [initialText, setInitialText] = useState('');
   const editorRef = useRef<EditorView | null>(null);
   const cursorPosRef = useRef<{ from: number; to: number } | null>(null);
@@ -130,7 +130,7 @@ export const ModelEditor = () => {
           <select
             value={modelKind}
             onChange={(e) => {
-              const selectedKind = e.target.value as ModelKind;
+              const selectedKind = e.target.value;
               if (selectedKind && example[selectedKind]) {
                 setModelText(example[selectedKind].model);
                 setModelKind('');
@@ -151,7 +151,7 @@ export const ModelEditor = () => {
             {Object.keys(example).map((n) => {
               return (
                 <option key={n} value={n}>
-                  {example[n as ModelKind].name}
+                  {example[n].name}
                 </option>
               );
             })}
