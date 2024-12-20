@@ -1,6 +1,6 @@
 'use client';
 import React, { isValidElement, useState, useEffect, useRef } from 'react';
-import { example, ModelKind } from './casbin-mode/example';
+import { example } from './casbin-mode/example';
 import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
 import { clsx } from 'clsx';
 import CodeMirror from '@uiw/react-codemirror';
@@ -189,7 +189,7 @@ export const EditorScreen = () => {
                 {Object.keys(example).map((n) => {
                   return (
                     <option key={n} value={n}>
-                      {example[n as ModelKind].name}
+                      {example[n].name}
                     </option>
                   );
                 })}

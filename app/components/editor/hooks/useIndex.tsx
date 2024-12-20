@@ -1,10 +1,10 @@
 import React, { isValidElement, ReactNode, useEffect, useRef, useState } from 'react';
-import { defaultCustomConfig, defaultEnforceContext, example, ModelKind } from '@/app/components/editor/casbin-mode/example';
+import { defaultCustomConfig, defaultEnforceContext, example } from '@/app/components/editor/casbin-mode/example';
 import { ShareFormat } from '@/app/components/editor/hooks/useShareInfo';
 import { defaultEnforceContextData } from '@/app/components/editor/hooks/useSetupEnforceContext';
 
 export default function useIndex() {
-  const [modelKind, setModelKind] = useState<ModelKind>('basic');
+  const [modelKind, setModelKind] = useState('basic');
   const [modelText, setModelText] = useState('');
   const [policy, setPolicy] = useState('');
   const [request, setRequest] = useState('');
@@ -53,7 +53,7 @@ export default function useIndex() {
         .then((content) => {
           const parsed = JSON.parse(content) as ShareFormat;
           loadState.current.content = parsed;
-          const newModelKind = parsed?.modelKind && parsed.modelKind in example ? (parsed.modelKind as ModelKind) : 'basic';
+          const newModelKind = parsed?.modelKind && parsed.modelKind in example ? parsed.modelKind : 'basic';
           setModelKind(newModelKind);
           setTriggerUpdate((prev) => {
             return prev + 1;
