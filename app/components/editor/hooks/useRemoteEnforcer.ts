@@ -23,7 +23,7 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
   try {
     const baseUrl = 'https://door.casdoor.com/api/run-casbin-command';
     const args = [
-      'enforce',
+      'enforceEx',
       '-m',
       props.model,
       '-p',
@@ -63,12 +63,12 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
       if (data.toLowerCase() === 'allowed') {
         enforceResult = {
           allow: true,
-          explain: 'Allowed by policy',
+          explain: ['Allowed by policy'],
         };
       } else if (data.toLowerCase() === 'denied') {
         enforceResult = {
           allow: false,
-          explain: 'Denied by policy',
+          explain: ['Denied by policy'],
         };
       } else {
         throw new Error(`Unexpected response format: ${data}`);
@@ -77,7 +77,7 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
 
     return {
       allowed: enforceResult.allow,
-      reason: enforceResult.explain ? [enforceResult.explain] : [],
+      reason: enforceResult.explain ? enforceResult.explain : [],
       error: null,
     };
   } catch (error) {
