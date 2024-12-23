@@ -60,19 +60,7 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
     try {
       enforceResult = JSON.parse(data);
     } catch {
-      if (data.toLowerCase() === 'allowed') {
-        enforceResult = {
-          allow: true,
-          explain: ['Allowed by policy'],
-        };
-      } else if (data.toLowerCase() === 'denied') {
-        enforceResult = {
-          allow: false,
-          explain: ['Denied by policy'],
-        };
-      } else {
-        throw new Error(`Unexpected response format: ${data}`);
-      }
+      throw new Error(`Unexpected response format: ${data}`);
     }
 
     return {
