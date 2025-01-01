@@ -16,55 +16,42 @@ describe('Casbin Engine Tests', () => {
         const requests = testCase.request.split('\n').filter(Boolean);
 
         for (const request of requests) {
-          try {
-            const requestParams = request.split(',').map((param) => {
-              return param.trim();
-            });
-            const nodeResult = await nodeEnforcer.enforce(...requestParams);
+          const requestParams = request.split(',').map((param) => {return param.trim()});
+          const nodeResult = await nodeEnforcer.enforce(...requestParams);
 
-            for (const [engineType, engine] of Object.entries(remoteEngines)) {
-              try {
-                const adjustedRequestParams = [...requestParams];
-                if (engineType === 'go' && adjustedRequestParams.length < 3) {
-                  adjustedRequestParams.push('');
-                }
-
-                const remoteResult = await engine.enforce({
-                  model: testCase.model,
-                  policy: testCase.policy || ' ',
-                  request: adjustedRequestParams.join(','),
-                });
-
-                if (remoteResult.error) {
-                  throw new Error(`${engineType} engine error: ${remoteResult.error}`);
-                }
-
-                console.log(`${testCase.name} - ${engineType} complete response:`, {
-                  request: adjustedRequestParams,
-                  response: remoteResult,
-                  nodeResult: nodeResult,
-                });
-
-                expect(remoteResult.allowed).toBe(nodeResult);
-              } catch (engineError: any) {
-                console.error(`${testCase.name} - ${engineType} engine error:`, {
-                  error: engineError.message,
-                  request: requestParams,
-                  model: testCase.model,
-                  policy: testCase.policy,
-                });
-                throw engineError;
+          for (const [engineType, engine] of Object.entries(remoteEngines)) {
+            try {
+              const adjustedRequestParams = [...requestParams];
+              if (engineType === 'go' && adjustedRequestParams.length < 3) {
+                adjustedRequestParams.push('');
               }
+
+              const remoteResult = await engine.enforce({
+                model: testCase.model,
+                policy: testCase.policy || ' ',
+                request: adjustedRequestParams.join(','),
+              });
+
+              if (remoteResult.error) {
+                throw new Error(`${engineType} engine error: ${remoteResult.error}`);
+              }
+
+              console.log(`${testCase.name} - ${engineType} complete response:`, {
+                request: adjustedRequestParams,
+                response: remoteResult,
+                nodeResult: nodeResult,
+              });
+
+              expect(remoteResult.allowed).toBe(nodeResult);
+            } catch (engineError: any) {
+              console.error(`${testCase.name} - ${engineType} engine error:`, {
+                error: engineError.message,
+                request: requestParams,
+                model: testCase.model,
+                policy: testCase.policy,
+              });
+              throw engineError;
             }
-          } catch (error: any) {
-            console.error(`Error in ${testCase.name}:`, {
-              error: error.message,
-              stack: error.stack,
-              request: request,
-              model: testCase.model,
-              policy: testCase.policy,
-            });
-            throw error;
           }
         }
       }, 10000);
