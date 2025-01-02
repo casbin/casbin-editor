@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - add_jest_configuration
   pull_request:
     branches:
       - master
