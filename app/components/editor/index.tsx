@@ -133,7 +133,7 @@ export const EditorScreen = () => {
           const result = formattedResults.join('\n');
           setRequestResult(result);
           if (result && !result.includes('error')) {
-            toast.success('Test completed successfully');
+            toast.success(t('Test completed successfully'));
           }
         }
       },
