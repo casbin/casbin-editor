@@ -14,6 +14,7 @@
 
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { useLang } from '@/app/context/LangContext';
 
 interface ShareProps extends ShareFormat {
   onResponse: (info: JSX.Element | string) => void;
@@ -41,12 +42,13 @@ async function dpaste(content: string) {
 
 export default function useShareInfo() {
   const [sharing, setSharing] = useState(false);
+  const { t } = useLang();
 
   function shareInfo(props: ShareProps) {
     if (sharing) return;
     setSharing(true);
 
-    const loadingToast = toast.loading('Sharing...');
+    const loadingToast = toast.loading(t('Sharing'));
 
     const shareContent: ShareFormat = {
       ...Object.entries(props).reduce((acc, [key, value]) => {
@@ -61,7 +63,7 @@ export default function useShareInfo() {
 
     if (Object.keys(shareContent).length === 0) {
       setSharing(false);
-      toast.error('No content to share');
+      toast.error(t('No content to share'));
       toast.dismiss(loadingToast);
       return;
     }
@@ -75,19 +77,19 @@ export default function useShareInfo() {
         navigator.clipboard
           .writeText(shareUrl)
           .then(() => {
-            toast.success('Link copied to clipboard', {
+            toast.success(t('Link copied to clipboard'), {
               duration: 3000,
             });
           })
           .catch(() => {
-            toast.error('Failed to copy link, please copy manually');
+            toast.error(t('Failed to copy link, please copy manually'));
           });
 
         props.onResponse(hash);
       })
       .catch((error) => {
         setSharing(false);
-        toast.error(`Share failed: ${error.message}`);
+        toast.error(`${t('Share failed')}: ${error.message}`);
       })
       .finally(() => {
         toast.dismiss(loadingToast);

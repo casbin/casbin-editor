@@ -12,6 +12,8 @@
   "Why this result": "Mengapa keputusan ini",
   "RUN THE TEST": "JALANKAN UJIAN",
   "SHARE": "KONGSI",
-  "Copied": "Disalin",
-  "COPY": "SALIN"
+  "Sharing": "Mengongsikan...",
+  "Share failed": "Mengongsikan gagal",
+  "No content to share": "Tidak ada konten untuk dibagikan",
+  "Link copied to clipboard": "Tautan disalin ke clipboard"
 }

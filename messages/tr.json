@@ -12,6 +12,8 @@
   "Why this result": "Neden bu sonuç",
   "RUN THE TEST": "TESTİ ÇALIŞTIR",
   "SHARE": "PAYLAŞ",
-  "Copied": "Kopyalandı",
-  "COPY": "KOPYALA"
+  "Sharing": "Paylaşıyor...",
+  "Share failed": "Paylaşım başarısız",
+  "No content to share": "Paylaşılacak içerik yok",
+  "Link copied to clipboard": "Link kopyalandı"
 }

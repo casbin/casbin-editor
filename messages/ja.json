@@ -12,6 +12,8 @@
   "Why this result": "なぜこの結果？",
   "RUN THE TEST": "テスト実行",
   "SHARE": "共有",
-  "Copied": "コピー完了",
-  "COPY": "コピー"
+  "Sharing": "共有中...",
+  "Share failed": "共有失敗",
+  "No content to share": "共有する内容がありません",
+  "Link copied to clipboard": "リンクがクリップボードにコピーされました"
 }
