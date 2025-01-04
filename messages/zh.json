@@ -12,6 +12,9 @@
   "Why this result": "为何此结果？",
   "RUN THE TEST": "运行",
   "SHARE": "分享",
-  "Copied": "已复制",
-  "COPY": "复制"
+  "Sharing": "分享中...",
+  "Share failed": "分享失败",
+  "No content to share": "没有内容可以分享",
+  "Link copied to clipboard": "链接已复制到剪贴板",
+  "Test completed successfully": "测试成功"
 }

@@ -12,6 +12,9 @@
   "Why this result": "Perché questo risultato",
   "RUN THE TEST": "ESEGUI IL TEST",
   "SHARE": "CONDIVIDI",
-  "Copied": "Copiato",
-  "COPY": "COPIA"
+  "Sharing": "Condividendo...",
+  "Share failed": "Condivisione fallita",
+  "No content to share": "Nessun contenuto da condividere",
+  "Link copied to clipboard": "Link copiato nel portapapele",
+  "Test completed successfully": "Test completato con successo"
 }

@@ -12,6 +12,9 @@
   "Why this result": "Mengapa hasil ini",
   "RUN THE TEST": "JALANKAN UJI",
   "SHARE": "BAGIKAN",
-  "Copied": "Tersalin",
-  "COPY": "SALIN"
+  "Sharing": "Membagikan...",
+  "Share failed": "Membagikan gagal",
+  "No content to share": "Tidak ada konten untuk dibagikan",
+  "Link copied to clipboard": "Tautan disalin ke clipboard",
+  "Test completed successfully": "Uji berhasil"
 }
