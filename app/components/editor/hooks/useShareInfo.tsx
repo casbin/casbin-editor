@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 interface ShareProps extends ShareFormat {
   onResponse: (info: JSX.Element | string) => void;
@@ -43,9 +44,9 @@ export default function useShareInfo() {
   function shareInfo(props: ShareProps) {
     if (sharing) return;
     setSharing(true);
-    props.onResponse(<div className="text-orange-500">Sharing...</div>);
 
-    // Create an object that contains only non-null values
+    const loadingToast = toast.loading('Sharing...');
+
     const shareContent: ShareFormat = {
       ...Object.entries(props).reduce((acc, [key, value]) => {
         if (key !== 'onResponse' && value != null && value !== '') {
@@ -56,10 +57,10 @@ export default function useShareInfo() {
       modelKind: props.modelKind,
     };
 
-    // Check if there are any non-null values to share
     if (Object.keys(shareContent).length === 0) {
       setSharing(false);
-      props.onResponse(<div className="text-red-500">No content to share</div>);
+      toast.error('No content to share');
+      toast.dismiss(loadingToast);
       return;
     }
 
@@ -67,11 +68,27 @@ export default function useShareInfo() {
       .then((url: string) => {
         setSharing(false);
         const hash = url.split('/')[3];
+        const shareUrl = `${window.location.origin}${window.location.pathname}#${hash}`;
+
+        navigator.clipboard
+          .writeText(shareUrl)
+          .then(() => {
+            toast.success('Link copied to clipboard', {
+              duration: 3000,
+            });
+          })
+          .catch(() => {
+            toast.error('Failed to copy link, please copy manually');
+          });
+
         props.onResponse(hash);
       })
       .catch((error) => {
         setSharing(false);
-        props.onResponse(<div className="text-red-500">Error sharing content: {error.message}</div>);
+        toast.error(`Share failed: ${error.message}`);
+      })
+      .finally(() => {
+        toast.dismiss(loadingToast);
       });
   }
 

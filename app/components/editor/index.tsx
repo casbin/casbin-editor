@@ -441,58 +441,30 @@ export const EditorScreen = () => {
             >
               {t('RUN THE TEST')}
             </button>
-            {!share ? (
-              <button
-                className={clsx(
-                  'rounded',
-                  'px-2 py-1',
-                  'border border-[#453d7d]',
-                  'text-[#453d7a]',
-                  'bg-[#efefef]',
-                  'hover:bg-[#453d7d] hover:text-white',
-                  'transition-colors duration-500',
-                )}
-                onClick={() => {
-                  return shareInfo({
-                    onResponse: (v) => {
-                      return handleShare(v);
-                    },
-                    modelKind,
-                    model: modelText,
-                    policy,
-                    customConfig,
-                    request,
-                    requestResult: Array.from(enforceContextData.entries()),
-                  });
-                }}
-              >
-                {t('SHARE')}
-              </button>
-            ) : (
-              <button
-                className={clsx(
-                  'rounded',
-                  'px-2 py-1',
-                  'border border-[#453d7d]',
-                  'text-[#453d7a]',
-                  'bg-[#efefef]',
-                  'hover:bg-[#453d7d] hover:text-white',
-                  'transition-colors duration-500',
-                )}
-                onClick={() => {
-                  return copy(
-                    () => {
-                      setShare('');
-                      setEcho(<div className="text-green-500">{t('Copied')}</div>);
-                      toast.success(t('Link copied to clipboard'));
-                    },
-                    `${window.location.origin + window.location.pathname}#${share}`,
-                  );
-                }}
-              >
-                {t('COPY')}
-              </button>
-            )}
+            <button
+              className={clsx(
+                'rounded',
+                'px-2 py-1',
+                'border border-[#453d7d]',
+                'text-[#453d7a]',
+                'bg-[#efefef]',
+                'hover:bg-[#453d7d] hover:text-white',
+                'transition-colors duration-500',
+              )}
+              onClick={() => {
+                shareInfo({
+                  onResponse: (v) => {return handleShare(v)},
+                  modelKind,
+                  model: modelText,
+                  policy,
+                  customConfig,
+                  request,
+                  requestResult: Array.from(enforceContextData.entries()),
+                });
+              }}
+            >
+              {t('SHARE')}
+            </button>
           </div>
 
           <div className="flex flex-row justify-between items-center w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
