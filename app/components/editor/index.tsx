@@ -77,34 +77,29 @@ export const EditorScreen = () => {
   useEffect(() => {
     if (modelKind && modelText) {
       setIsContentLoaded(true);
-      if (selectedEngine === 'node') {
-        enforcer({
-          modelKind,
-          model: modelText,
-          policy,
-          customConfig,
-          request,
-          enforceContextData,
-          selectedEngine,
-          onResponse: (v) => {
-            if (isValidElement(v)) {
-              setEcho(v);
-            } else if (Array.isArray(v)) {
-              const formattedResults = v.map((res) => {
-                if (typeof res === 'object') {
-                  const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
-                  return `${res.okEx}${reasonString}`;
-                }
-                return res;
-              });
-              setRequestResult(formattedResults.join('\n'));
-            }
-          },
-        });
-      } else {
-        setRequestResult('');
-        setEcho(null);
-      }
+      enforcer({
+        modelKind,
+        model: modelText,
+        policy,
+        customConfig,
+        request,
+        enforceContextData,
+        selectedEngine,
+        onResponse: (v) => {
+          if (isValidElement(v)) {
+            setEcho(v);
+          } else if (Array.isArray(v)) {
+            const formattedResults = v.map((res) => {
+              if (typeof res === 'object') {
+                const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
+                return `${res.okEx}${reasonString}`;
+              }
+              return res;
+            });
+            setRequestResult(formattedResults.join('\n'));
+          }
+        },
+      });
     }
   }, [modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult, selectedEngine]);
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
