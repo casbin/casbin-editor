@@ -27,6 +27,7 @@ export interface ShareFormat {
   request?: string;
   requestResult?: object;
   enforceContext?: string;
+  selectedEngine?: string;
 }
 
 async function dpaste(content: string) {
@@ -55,6 +56,7 @@ export default function useShareInfo() {
         return acc;
       }, {} as ShareFormat),
       modelKind: props.modelKind,
+      selectedEngine: props.selectedEngine,
     };
 
     if (Object.keys(shareContent).length === 0) {

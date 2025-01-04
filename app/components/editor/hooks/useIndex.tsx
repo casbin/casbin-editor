@@ -14,6 +14,7 @@ export default function useIndex() {
   const [share, setShare] = useState('');
   const [triggerUpdate, setTriggerUpdate] = useState(0);
   const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
+  const [selectedEngine, setSelectedEngine] = useState('node');
   const loadState = useRef<{
     loadedHash?: string;
     content?: ShareFormat;
@@ -74,6 +75,9 @@ export default function useIndex() {
     setRequest(shared?.request ?? example[modelKind].request);
     setCustomConfig(shared?.customConfig ?? defaultCustomConfig);
     setEnforceContextData(new Map(Object.entries(JSON.parse(shared?.enforceContext || example[modelKind].enforceContext || defaultEnforceContext))));
+    if (shared?.selectedEngine) {
+      setSelectedEngine(shared.selectedEngine);
+    }
     loadState.current.content = undefined;
   }, [modelKind, triggerUpdate]);
 
@@ -88,9 +92,31 @@ export default function useIndex() {
   }
 
   return {
-    modelKind, setModelKind, modelText, setModelText, policy, setPolicy, request,
-    setRequest, echo, setEcho, requestResult, setRequestResult, customConfig, setCustomConfig, share, setShare,
-    enforceContextData, setEnforceContextData, setPolicyPersistent, setModelTextPersistent,
-    setCustomConfigPersistent, setRequestPersistent, setEnforceContextDataPersistent, handleShare,
-  } ;
+    modelKind,
+    setModelKind,
+    modelText,
+    setModelText,
+    policy,
+    setPolicy,
+    request,
+    setRequest,
+    echo,
+    setEcho,
+    requestResult,
+    setRequestResult,
+    customConfig,
+    setCustomConfig,
+    share,
+    setShare,
+    enforceContextData,
+    setEnforceContextData,
+    setPolicyPersistent,
+    setModelTextPersistent,
+    setCustomConfigPersistent,
+    setRequestPersistent,
+    setEnforceContextDataPersistent,
+    handleShare,
+    selectedEngine,
+    setSelectedEngine,
+  };
 }

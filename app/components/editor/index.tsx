@@ -44,6 +44,8 @@ export const EditorScreen = () => {
     setRequestPersistent,
     setEnforceContextDataPersistent,
     handleShare,
+    selectedEngine,
+    setSelectedEngine,
   } = useIndex();
   const [open, setOpen] = useState(true);
   const { enforcer } = useRunTest();
@@ -66,7 +68,6 @@ export const EditorScreen = () => {
   const { t, lang, theme, toggleTheme } = useLang();
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const casbinVersion = process.env.CASBIN_VERSION;
-  const [selectedEngine, setSelectedEngine] = useState('node');
   const engineGithubLinks = {
     node: `https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`,
     java: 'https://github.com/casbin/jcasbin/releases',
@@ -455,6 +456,7 @@ export const EditorScreen = () => {
                   customConfig,
                   request,
                   requestResult: Array.from(enforceContextData.entries()),
+                  selectedEngine,
                 });
               }}
             >
