@@ -67,6 +67,7 @@ export const EditorScreen = () => {
   };
   const { t, lang, theme, toggleTheme } = useLang();
   const [isContentLoaded, setIsContentLoaded] = useState(false);
+  const [isEngineLoading, setIsEngineLoading] = useState(false);
   const casbinVersion = process.env.CASBIN_VERSION;
   const engineGithubLinks = {
     node: `https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`,
@@ -268,7 +269,11 @@ export const EditorScreen = () => {
                   className="bg-transparent border border-[#e13c3c] rounded px-2 py-1 text-[#e13c3c] focus:outline-none"
                   value={selectedEngine}
                   onChange={(e) => {
-                    return setSelectedEngine(e.target.value);
+                    setIsEngineLoading(true);
+                    setSelectedEngine(e.target.value);
+                    setTimeout(() => {
+                      setIsEngineLoading(false);
+                    }, 500);
                   }}
                 >
                   <option value="node">Node-Casbin(NodeJs) v{casbinVersion}</option>
@@ -387,29 +392,37 @@ export const EditorScreen = () => {
             </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
-                <CodeMirror
-                  height="100%"
-                  onChange={() => {
-                    return;
-                  }}
-                  theme={monokai}
-                  extensions={[
-                    basicSetup,
-                    javascriptLanguage,
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                    EditorView.editable.of(false),
-                    buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult'),
-                  ]}
-                  basicSetup={{
-                    lineNumbers: true,
-                    highlightActiveLine: true,
-                    bracketMatching: true,
-                    indentOnInput: true,
-                  }}
-                  className={'cursor-not-allowed flex-grow h-[300px]'}
-                  value={requestResult}
-                />
+                {isEngineLoading ? (
+                  <div className="h-full w-full flex items-center justify-center bg-[#272822]">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="animate-spin rounded-full h-8 w-8 border-4 border-[#e13c3c] border-t-transparent"></div>
+                    </div>
+                  </div>
+                ) : (
+                  <CodeMirror
+                    height="100%"
+                    onChange={() => {
+                      return;
+                    }}
+                    theme={monokai}
+                    extensions={[
+                      basicSetup,
+                      javascriptLanguage,
+                      indentUnit.of('    '),
+                      EditorView.lineWrapping,
+                      EditorView.editable.of(false),
+                      buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult'),
+                    ]}
+                    basicSetup={{
+                      lineNumbers: true,
+                      highlightActiveLine: true,
+                      bracketMatching: true,
+                      indentOnInput: true,
+                    }}
+                    className={'cursor-not-allowed flex-grow h-[300px]'}
+                    value={requestResult}
+                  />
+                )}
               </div>
             </div>
           </div>
