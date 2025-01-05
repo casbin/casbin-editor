@@ -437,12 +437,6 @@ export const defaultCustomConfig = `(function() {
   return arg1.endsWith(arg2);
 }
     },
-    matchingForGFunction: (user, role) => {
-  return user.department === role.department;
-},
-    matchingDomainForGFunction: (domain1, domain2) => {
-  return domain1.startsWith(domain2);
-}
   };
 })();`;
 export const defaultEnforceContext = `{
