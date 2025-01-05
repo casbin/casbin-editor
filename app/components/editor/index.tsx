@@ -24,6 +24,7 @@ import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
 import { toast, Toaster } from 'react-hot-toast';
 import { CustomConfigPanel } from './CustomConfigPanel';
+import { loadingOverlay } from './LoadingOverlayExtension';
 
 export const EditorScreen = () => {
   const {
@@ -392,37 +393,30 @@ export const EditorScreen = () => {
             </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
-                {isEngineLoading ? (
-                  <div className="h-full w-full flex items-center justify-center bg-[#272822]">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="animate-spin rounded-full h-8 w-8 border-4 border-[#e13c3c] border-t-transparent"></div>
-                    </div>
-                  </div>
-                ) : (
-                  <CodeMirror
-                    height="100%"
-                    onChange={() => {
-                      return;
-                    }}
-                    theme={monokai}
-                    extensions={[
-                      basicSetup,
-                      javascriptLanguage,
-                      indentUnit.of('    '),
-                      EditorView.lineWrapping,
-                      EditorView.editable.of(false),
-                      buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult'),
-                    ]}
-                    basicSetup={{
-                      lineNumbers: true,
-                      highlightActiveLine: true,
-                      bracketMatching: true,
-                      indentOnInput: true,
-                    }}
-                    className={'cursor-not-allowed flex-grow h-[300px]'}
-                    value={requestResult}
-                  />
-                )}
+                <CodeMirror
+                  height="100%"
+                  onChange={() => {
+                    return;
+                  }}
+                  theme={monokai}
+                  extensions={[
+                    basicSetup,
+                    javascriptLanguage,
+                    indentUnit.of('    '),
+                    EditorView.lineWrapping,
+                    EditorView.editable.of(false),
+                    buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult'),
+                    loadingOverlay(isEngineLoading),
+                  ]}
+                  basicSetup={{
+                    lineNumbers: true,
+                    highlightActiveLine: true,
+                    bracketMatching: true,
+                    indentOnInput: true,
+                  }}
+                  className={'cursor-not-allowed flex-grow h-[300px]'}
+                  value={requestResult}
+                />
               </div>
             </div>
           </div>
