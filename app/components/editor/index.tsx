@@ -24,6 +24,7 @@ import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
 import { toast, Toaster } from 'react-hot-toast';
 import { CustomConfigPanel } from './CustomConfigPanel';
+import { loadingOverlay } from './LoadingOverlayExtension';
 
 export const EditorScreen = () => {
   const {
@@ -67,6 +68,8 @@ export const EditorScreen = () => {
   };
   const { t, lang, theme, toggleTheme } = useLang();
   const [isContentLoaded, setIsContentLoaded] = useState(false);
+  const [isEngineLoading, setIsEngineLoading] = useState(false);
+  const skipNextEffectRef = useRef(false);
   const casbinVersion = process.env.CASBIN_VERSION;
   const engineGithubLinks = {
     node: `https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`,
@@ -76,6 +79,10 @@ export const EditorScreen = () => {
 
   useEffect(() => {
     if (modelKind && modelText) {
+      if (skipNextEffectRef.current) {
+        skipNextEffectRef.current = false;
+        return;
+      }
       setIsContentLoaded(true);
       enforcer({
         modelKind,
@@ -268,7 +275,34 @@ export const EditorScreen = () => {
                   className="bg-transparent border border-[#e13c3c] rounded px-2 py-1 text-[#e13c3c] focus:outline-none"
                   value={selectedEngine}
                   onChange={(e) => {
-                    return setSelectedEngine(e.target.value);
+                    setIsEngineLoading(true);
+                    skipNextEffectRef.current = true;
+                    setSelectedEngine(e.target.value);
+                    enforcer({
+                      modelKind,
+                      model: modelText,
+                      policy,
+                      customConfig,
+                      request,
+                      enforceContextData,
+                      selectedEngine: e.target.value,
+                      onResponse: (v) => {
+                        setIsEngineLoading(false);
+
+                        if (isValidElement(v)) {
+                          setEcho(v);
+                        } else if (Array.isArray(v)) {
+                          const formattedResults = v.map((res) => {
+                            if (typeof res === 'object') {
+                              const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
+                              return `${res.okEx}${reasonString}`;
+                            }
+                            return res;
+                          });
+                          setRequestResult(formattedResults.join('\n'));
+                        }
+                      },
+                    });
                   }}
                 >
                   <option value="node">Node-Casbin(NodeJs) v{casbinVersion}</option>
@@ -400,6 +434,7 @@ export const EditorScreen = () => {
                     EditorView.lineWrapping,
                     EditorView.editable.of(false),
                     buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult'),
+                    loadingOverlay(isEngineLoading),
                   ]}
                   basicSetup={{
                     lineNumbers: true,
