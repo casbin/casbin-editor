@@ -272,9 +272,31 @@ export const EditorScreen = () => {
                   onChange={(e) => {
                     setIsEngineLoading(true);
                     setSelectedEngine(e.target.value);
-                    setTimeout(() => {
-                      setIsEngineLoading(false);
-                    }, 500);
+                    enforcer({
+                      modelKind,
+                      model: modelText,
+                      policy,
+                      customConfig,
+                      request,
+                      enforceContextData,
+                      selectedEngine: e.target.value,
+                      onResponse: (v) => {
+                        setIsEngineLoading(false);
+
+                        if (isValidElement(v)) {
+                          setEcho(v);
+                        } else if (Array.isArray(v)) {
+                          const formattedResults = v.map((res) => {
+                            if (typeof res === 'object') {
+                              const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
+                              return `${res.okEx}${reasonString}`;
+                            }
+                            return res;
+                          });
+                          setRequestResult(formattedResults.join('\n'));
+                        }
+                      },
+                    });
                   }}
                 >
                   <option value="node">Node-Casbin(NodeJs) v{casbinVersion}</option>
