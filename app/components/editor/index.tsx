@@ -69,6 +69,7 @@ export const EditorScreen = () => {
   const { t, lang, theme, toggleTheme } = useLang();
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [isEngineLoading, setIsEngineLoading] = useState(false);
+  const skipNextEffectRef = useRef(false);
   const casbinVersion = process.env.CASBIN_VERSION;
   const engineGithubLinks = {
     node: `https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`,
@@ -78,6 +79,10 @@ export const EditorScreen = () => {
 
   useEffect(() => {
     if (modelKind && modelText) {
+      if (skipNextEffectRef.current) {
+        skipNextEffectRef.current = false;
+        return;
+      }
       setIsContentLoaded(true);
       enforcer({
         modelKind,
@@ -271,6 +276,7 @@ export const EditorScreen = () => {
                   value={selectedEngine}
                   onChange={(e) => {
                     setIsEngineLoading(true);
+                    skipNextEffectRef.current = true;
                     setSelectedEngine(e.target.value);
                     enforcer({
                       modelKind,
