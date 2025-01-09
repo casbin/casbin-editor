@@ -25,20 +25,15 @@ describe('Casbin Engine Tests', () => {
         for (const request of requests) {
           const requestParams = request.split(',').map((param) => {return param.trim()});
           const nodeResult = await nodeEnforcer.enforce(...requestParams);
-          
+
           const engineResults: EngineResult[] = [];
-          
+
           for (const [engineType, engine] of Object.entries(remoteEngines)) {
             try {
-              const adjustedRequestParams = [...requestParams];
-              if (engineType === 'go' && adjustedRequestParams.length < 3) {
-                adjustedRequestParams.push('');
-              }
-
               const remoteResult = await engine.enforce({
                 model: testCase.model,
                 policy: testCase.policy || ' ',
-                request: adjustedRequestParams.join(','),
+                request: requestParams.join(','),
               });
 
               if (remoteResult.error) {
@@ -71,7 +66,7 @@ describe('Casbin Engine Tests', () => {
           const logMessage = [
             `\n=== Test Case: [${testCase.name}] ===`,
             `Request params: [${requestParams.join(', ')}]`,
-            ...engineResults.map((result) => 
+            ...engineResults.map((result) =>
               {return `[${result.engineType.toUpperCase()}] Result:\n` +
               `  Allowed: [${result.allowed}]\n` +
               `  Reason: [${result.reason?.join(', ')}]\n` +
