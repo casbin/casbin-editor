@@ -2073,10 +2073,10 @@ caniuse-lite@^1.0.30001688:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001690.tgz#f2d15e3aaf8e18f76b2b8c1481abde063b8104c8"
   integrity sha512-5ExiE3qQN6oF8Clf8ifIDcMRCRE/dMGcETG/XGMD8/XiXm6HXQgQTh1yZYLXXpSOsEUlJm1Xr7kGULZTuGtP/w==
 
-casbin@^5.36.0:
-  version "5.36.0"
-  resolved "https://registry.yarnpkg.com/casbin/-/casbin-5.36.0.tgz#1379a32a09fed5735a7048e9848ddaf42e28a994"
-  integrity sha512-vaH292Ed+Op8WhNFA/VJqMearhnQwFs3TU3qKCOAmUeTtGS9un8+fPvJ4OGQ7luWFAG/EVZAvNWCWTbciU4R+Q==
+casbin@^5.37.0:
+  version "5.37.0"
+  resolved "https://registry.yarnpkg.com/casbin/-/casbin-5.37.0.tgz#493ddf4c770541cb09f1c7693080e1e10413953b"
+  integrity sha512-3AlFx/pJ/8hDZHuhTa0+8OXujfIJByGGJWw9uhcaki7MMQbtpZcs66FSURTsoAHKmCR1+IqLko+bvDBmEapxwQ==
   dependencies:
     "@casbin/expression-eval" "^5.3.0"
     await-lock "^2.0.1"
