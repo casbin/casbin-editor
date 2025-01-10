@@ -297,10 +297,10 @@ alice, data2, write`,
   abac: {
     name: 'ABAC',
     model: `[request_definition]
-r = sub, obj
+r = sub, obj, act
 
 [policy_definition]
-p = sub, obj
+p = sub, obj, act
 
 [policy_effect]
 e = some(where (p.eft == allow))
