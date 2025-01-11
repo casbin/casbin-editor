@@ -376,6 +376,66 @@ alice, /alice_data/hello, POST`,
     customConfig: undefined,
     enforceContext: undefined,
   },
+  keymatch3: {
+    name: 'RESTful (KeyMatch3)',
+    model: `[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = r.sub == p.sub && keyMatch3(r.obj, p.obj) && regexMatch(r.act, p.act)`,
+    policy: `p, alice, /alice_data/{resource}/, GET
+p, alice, /alice_data2/{id}/using/{resId}/, GET`,
+    request: `alice, /alice_data/hello/, GET
+alice, /alice_data/hello/, POST`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
+  keymatch4: {
+    name: 'RESTful (KeyMatch4)',
+    model: `[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = r.sub == p.sub && keyMatch4(r.obj, p.obj) && regexMatch(r.act, p.act)`,
+    policy: `p, alice, /alice_data/{resource}?, GET
+p, alice, /alice_data2/{id}/using/{resId}?, GET`,
+    request: `alice, /alice_data/hello?, GET
+alice, /alice_data/hello?, POST`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
+  keymatch5: {
+    name: 'RESTful (KeyMatch5)',
+    model: `[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = r.sub == p.sub && keyMatch5(r.obj, p.obj) && regexMatch(r.act, p.act)`,
+    policy: `p, alice, /alice_data/{resource}/.*, GET
+p, alice, /alice_data2/{id}/using/{resId}/.*, GET`,
+    request: `alice, /alice_data/hello/123, GET
+alice, /alice_data/hello/123, POST`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
   ipmatch: {
     name: 'IP match',
     model: `[request_definition]
