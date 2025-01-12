@@ -24,22 +24,34 @@ export default function useEngineVersions(isEngineLoading: boolean): EngineVersi
           const javaEngine = createCasbinEngine('java');
           const goEngine = createCasbinEngine('go');
 
-          const [jVersion, gVersion] = await Promise.all([javaEngine.getVersion(), goEngine.getVersion()]);
+          const [jVersion, gVersion] = await Promise.all([
+            javaEngine.getVersion(),
+            goEngine.getVersion()
+          ]);
 
-          setJavaVersion(jVersion);
-          setGoVersion(gVersion);
+          setJavaVersion(jVersion || 'unknown');
+          setGoVersion(gVersion || 'unknown');
         } catch (error) {
           console.error('Error getting versions:', error);
+          setJavaVersion('unknown');
+          setGoVersion('unknown');
         }
       }
     };
     getAllVersions();
   }, [isEngineLoading]);
 
+  const getVersionedLink = (base: string, version: string | undefined | null) => {
+    if (!version || version === 'unknown') {
+      return base;
+    }
+    return `${base}tag/v${version}`;
+  };
+
   const engineGithubLinks = {
-    node: `https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion || 'latest'}`,
-    java: `https://github.com/casbin/jcasbin/releases/tag/v${javaVersion || 'latest'}`,
-    go: `https://github.com/casbin/casbin/releases/tag/v${goVersion || 'latest'}`,
+    node: getVersionedLink('https://github.com/casbin/node-casbin/releases/', casbinVersion),
+    java: getVersionedLink('https://github.com/casbin/jcasbin/releases/', javaVersion),
+    go: getVersionedLink('https://github.com/casbin/casbin/releases/', goVersion),
   };
 
   return {
