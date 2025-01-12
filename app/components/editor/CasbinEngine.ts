@@ -18,18 +18,14 @@ export interface ICasbinEngine {
     enforceContextData?: Map<string, string>;
   }): Promise<EnforceResult>;
 
-  getVersion(): Promise<string>;
-  getType(): 'node' | 'java' | 'go';
+  getVersion?(): Promise<string>;
 }
 
 // Node.js
 export class NodeCasbinEngine implements ICasbinEngine {
   async enforce(params) {
     try {
-      const e = await newEnforcer(
-        newModel(params.model),
-        params.policy ? new StringAdapter(params.policy) : undefined
-      );
+      const e = await newEnforcer(newModel(params.model), params.policy ? new StringAdapter(params.policy) : undefined);
 
       setupRoleManager(e);
 
@@ -47,14 +43,6 @@ export class NodeCasbinEngine implements ICasbinEngine {
     } catch (error) {
       throw error;
     }
-  }
-
-  async getVersion(): Promise<string> {
-    return process.env.CASBIN_VERSION || 'unknown';
-  }
-
-  getType(): 'node' {
-    return 'node';
   }
 }
 
@@ -87,10 +75,6 @@ export class RemoteCasbinEngine implements ICasbinEngine {
 
   async getVersion(): Promise<string> {
     return getRemoteVersion(this.engine);
-  }
-
-  getType(): 'java' | 'go' {
-    return this.engine;
   }
 }
 

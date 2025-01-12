@@ -24,10 +24,7 @@ export default function useEngineVersions(isEngineLoading: boolean): EngineVersi
           const javaEngine = createCasbinEngine('java');
           const goEngine = createCasbinEngine('go');
 
-          const [jVersion, gVersion] = await Promise.all([
-            javaEngine.getVersion(),
-            goEngine.getVersion()
-          ]);
+          const [jVersion, gVersion] = await Promise.all([javaEngine.getVersion?.(), goEngine.getVersion?.()]);
 
           setJavaVersion(jVersion || 'unknown');
           setGoVersion(gVersion || 'unknown');
