@@ -25,7 +25,7 @@ import { casbinLinter } from '@/app/utils/casbinLinter';
 import { toast, Toaster } from 'react-hot-toast';
 import { CustomConfigPanel } from './CustomConfigPanel';
 import { loadingOverlay } from './LoadingOverlayExtension';
-import { createCasbinEngine } from './CasbinEngine';
+import useEngineVersions from './hooks/useEngineVersions';
 
 export const EditorScreen = () => {
   const {
@@ -71,57 +71,7 @@ export const EditorScreen = () => {
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [isEngineLoading, setIsEngineLoading] = useState(false);
   const skipNextEffectRef = useRef(false);
-  const [javaVersion, setJavaVersion] = useState<string>('');
-  const [goVersion, setGoVersion] = useState<string>('');
-  const casbinVersion = process.env.CASBIN_VERSION;
-  const engineGithubLinks = {
-    node: `https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`,
-    java: `https://github.com/casbin/jcasbin/releases/tag/v${javaVersion}`,
-    go: `https://github.com/casbin/casbin/releases/tag/v${goVersion}`,
-  };
-
-  useEffect(() => {
-    const getVersion = async () => {
-      if (!isEngineLoading && (selectedEngine === 'java' || selectedEngine === 'go')) {
-        try {
-          const engine = createCasbinEngine(selectedEngine);
-          const version = await engine.getVersion();
-          if (selectedEngine === 'java') {
-            setJavaVersion(version);
-          } else {
-            setGoVersion(version);
-          }
-        } catch (error) {
-          console.error('Error getting engine version:', error);
-          if (selectedEngine === 'java') {
-            setJavaVersion('unknown');
-          } else {
-            setGoVersion('unknown');
-          }
-        }
-      }
-    };
-    getVersion();
-  }, [selectedEngine, isEngineLoading]);
-
-  useEffect(() => {
-    const getAllVersions = async () => {
-      if (!isEngineLoading) {
-        try {
-          const javaEngine = createCasbinEngine('java');
-          const goEngine = createCasbinEngine('go');
-
-          const [jVersion, gVersion] = await Promise.all([javaEngine.getVersion(), goEngine.getVersion()]);
-
-          setJavaVersion(jVersion);
-          setGoVersion(gVersion);
-        } catch (error) {
-          console.error('Error getting versions:', error);
-        }
-      }
-    };
-    getAllVersions();
-  }, [isEngineLoading]);
+  const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isEngineLoading);
 
   useEffect(() => {
     if (modelKind && modelText) {
