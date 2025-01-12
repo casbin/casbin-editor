@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react';
 import { createCasbinEngine } from '../CasbinEngine';
+import { VersionInfo } from '../hooks/useRemoteEnforcer';
 
 interface EngineVersions {
-  javaVersion: string;
-  goVersion: string;
+  javaVersion: {
+    engine: string;
+    lib: string;
+  };
+  goVersion: {
+    engine: string;
+    lib: string;
+  };
   casbinVersion: string | undefined;
   engineGithubLinks: {
     node: string;
@@ -13,8 +20,8 @@ interface EngineVersions {
 }
 
 export default function useEngineVersions(isEngineLoading: boolean): EngineVersions {
-  const [javaVersion, setJavaVersion] = useState<string>('');
-  const [goVersion, setGoVersion] = useState<string>('');
+  const [javaVersion, setJavaVersion] = useState<{ engine: string; lib: string }>({ engine: '', lib: '' });
+  const [goVersion, setGoVersion] = useState<{ engine: string; lib: string }>({ engine: '', lib: '' });
   const casbinVersion = process.env.CASBIN_VERSION;
 
   useEffect(() => {
@@ -24,14 +31,28 @@ export default function useEngineVersions(isEngineLoading: boolean): EngineVersi
           const javaEngine = createCasbinEngine('java');
           const goEngine = createCasbinEngine('go');
 
-          const [jVersion, gVersion] = await Promise.all([javaEngine.getVersion?.(), goEngine.getVersion?.()]);
+          const [jVersion, gVersion] = (await Promise.all([javaEngine.getVersion?.(), goEngine.getVersion?.()])) as [
+            VersionInfo | undefined,
+            VersionInfo | undefined,
+          ];
 
-          setJavaVersion(jVersion || 'unknown');
-          setGoVersion(gVersion || 'unknown');
+          if (jVersion) {
+            setJavaVersion({
+              engine: jVersion.engineVersion,
+              lib: jVersion.libVersion,
+            });
+          }
+
+          if (gVersion) {
+            setGoVersion({
+              engine: gVersion.engineVersion,
+              lib: gVersion.libVersion,
+            });
+          }
         } catch (error) {
           console.error('Error getting versions:', error);
-          setJavaVersion('unknown');
-          setGoVersion('unknown');
+          setJavaVersion({ engine: 'unknown', lib: 'unknown' });
+          setGoVersion({ engine: 'unknown', lib: 'unknown' });
         }
       }
     };
@@ -47,8 +68,8 @@ export default function useEngineVersions(isEngineLoading: boolean): EngineVersi
 
   const engineGithubLinks = {
     node: getVersionedLink('https://github.com/casbin/node-casbin/releases/', casbinVersion),
-    java: getVersionedLink('https://github.com/casbin/jcasbin/releases/', javaVersion),
-    go: getVersionedLink('https://github.com/casbin/casbin/releases/', goVersion),
+    java: getVersionedLink('https://github.com/casbin/jcasbin/releases/', javaVersion.lib),
+    go: getVersionedLink('https://github.com/casbin/casbin/releases/', goVersion.lib),
   };
 
   return {

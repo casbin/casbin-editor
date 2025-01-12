@@ -19,6 +19,11 @@ interface RemoteEnforcerProps {
   engine: 'java' | 'go';
 }
 
+export interface VersionInfo {
+  engineVersion: string;
+  libVersion: string;
+}
+
 export async function remoteEnforcer(props: RemoteEnforcerProps) {
   try {
     const baseUrl = 'https://door.casdoor.com/api/run-casbin-command';
@@ -77,28 +82,33 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
   }
 }
 
-export async function getRemoteVersion(language: 'java' | 'go'): Promise<string> {
+export async function getRemoteVersion(language: 'java' | 'go'): Promise<VersionInfo> {
   try {
     const baseUrl = 'https://door.casdoor.com/api/run-casbin-command';
-    const args = ['-v'];
-
     const url = new URL(baseUrl);
     url.searchParams.set('language', language);
-    url.searchParams.set('args', JSON.stringify(args));
+    url.searchParams.set('args', JSON.stringify(['-v']));
 
     const response = await fetch(url.toString());
     const result = await response.json();
-
     const versionInfo = result.data as string;
-    if (language === 'java') {
-      const match = versionInfo.match(/jcasbin\s+([\d.]+)/);
+
+    const [cliLine, libLine] = versionInfo.split('\n');
+
+    const getVersionNumber = (line: string) => {
+      const match = line.match(/(?:v|[\s])([\d.]+)/);
       return match ? match[1] : 'unknown';
-    } else {
-      const match = versionInfo.match(/casbin\s+v([\d.]+)/);
-      return match ? match[1] : 'unknown';
-    }
+    };
+
+    return {
+      engineVersion: getVersionNumber(cliLine),
+      libVersion: getVersionNumber(libLine),
+    };
   } catch (error) {
-    console.error('Error getting remote version:', error);
-    return 'unknown';
+    console.error(`Error getting ${language} version:`, error);
+    return {
+      engineVersion: 'unknown',
+      libVersion: 'unknown',
+    };
   }
 }

@@ -301,9 +301,13 @@ export const EditorScreen = () => {
                     });
                   }}
                 >
-                  <option value="node">Node-Casbin(NodeJs) v{casbinVersion}</option>
-                  <option value="java">jCasbin(Java) v{javaVersion}</option>
-                  <option value="go">Casbin(Go) v{goVersion}</option>
+                  <option value="node">Node-Casbin (NodeJs) v{casbinVersion}</option>
+                  <option value="java">
+                    jCasbin (Java) v{javaVersion.lib} (CLI v{javaVersion.engine})
+                  </option>
+                  <option value="go">
+                    Casbin (Go) v{goVersion.lib} (CLI v{goVersion.engine})
+                  </option>
                 </select>
                 <a href={engineGithubLinks[selectedEngine]} target="_blank" rel="noopener noreferrer" className="text-[#e13c3c] hover:text-[#ff4d4d]">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
