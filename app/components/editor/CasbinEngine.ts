@@ -1,6 +1,7 @@
 import { newEnforcer, newModel, StringAdapter } from 'casbin';
 import { remoteEnforcer } from './hooks/useRemoteEnforcer';
 import { setupRoleManager, setupCustomConfig, processRequests } from '@/app/utils/casbinEnforcer';
+import { getRemoteVersion } from './hooks/useRemoteEnforcer';
 
 interface EnforceResult {
   allowed: boolean;
@@ -17,7 +18,7 @@ export interface ICasbinEngine {
     enforceContextData?: Map<string, string>;
   }): Promise<EnforceResult>;
 
-  getVersion(): string;
+  getVersion(): Promise<string>;
   getType(): 'node' | 'java' | 'go';
 }
 
@@ -48,8 +49,8 @@ export class NodeCasbinEngine implements ICasbinEngine {
     }
   }
 
-  getVersion(): string {
-    return process.env.CASBIN_VERSION || '';
+  async getVersion(): Promise<string> {
+    return process.env.CASBIN_VERSION || 'unknown';
   }
 
   getType(): 'node' {
@@ -84,8 +85,8 @@ export class RemoteCasbinEngine implements ICasbinEngine {
     }
   }
 
-  getVersion(): string {
-    return '';
+  async getVersion(): Promise<string> {
+    return getRemoteVersion(this.engine);
   }
 
   getType(): 'java' | 'go' {
