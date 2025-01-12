@@ -76,8 +76,8 @@ export const EditorScreen = () => {
   const casbinVersion = process.env.CASBIN_VERSION;
   const engineGithubLinks = {
     node: `https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`,
-    java: 'https://github.com/casbin/jcasbin/releases',
-    go: 'https://github.com/casbin/casbin/releases',
+    java: `https://github.com/casbin/jcasbin/releases/tag/v${javaVersion}`,
+    go: `https://github.com/casbin/casbin/releases/tag/v${goVersion}`,
   };
 
   useEffect(() => {
