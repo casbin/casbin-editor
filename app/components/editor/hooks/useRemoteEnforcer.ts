@@ -97,7 +97,7 @@ export async function getRemoteVersion(language: 'java' | 'go'): Promise<Version
 
     const getVersionNumber = (line: string) => {
       const match = line.match(/(?:v|[\s])([\d.]+)/);
-      return match ? match[1] : 'unknown';
+      return match ? `v${match[1]}` : 'unknown';
     };
 
     return {

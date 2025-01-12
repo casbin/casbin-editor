@@ -63,7 +63,8 @@ export default function useEngineVersions(isEngineLoading: boolean): EngineVersi
     if (!version || version === 'unknown') {
       return base;
     }
-    return `${base}tag/v${version}`;
+    const versionNumber = version.startsWith('v') ? version.substring(1) : version;
+    return `${base}tag/v${versionNumber}`;
   };
 
   const engineGithubLinks = {

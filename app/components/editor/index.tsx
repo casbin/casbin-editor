@@ -301,12 +301,12 @@ export const EditorScreen = () => {
                     });
                   }}
                 >
-                  <option value="node">Node-Casbin (NodeJs) v{casbinVersion}</option>
+                  <option value="node">Node-Casbin (NodeJs) {casbinVersion}</option>
                   <option value="java">
-                    jCasbin (Java) v{javaVersion.lib} (CLI v{javaVersion.engine})
+                    jCasbin (Java) {javaVersion.lib} (CLI {javaVersion.engine})
                   </option>
                   <option value="go">
-                    Casbin (Go) v{goVersion.lib} (CLI v{goVersion.engine})
+                    Casbin (Go) {goVersion.lib} (CLI {goVersion.engine})
                   </option>
                 </select>
                 <a href={engineGithubLinks[selectedEngine]} target="_blank" rel="noopener noreferrer" className="text-[#e13c3c] hover:text-[#ff4d4d]">
