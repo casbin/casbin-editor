@@ -303,10 +303,10 @@ export const EditorScreen = () => {
                 >
                   <option value="node">Node-Casbin (NodeJs) {casbinVersion}</option>
                   <option value="java">
-                    jCasbin (Java) {javaVersion.libVersion} (CLI {javaVersion.engineVersion})
+                    jCasbin (Java) {javaVersion.libVersion} | (CLI {javaVersion.engineVersion})
                   </option>
                   <option value="go">
-                    Casbin (Go) {goVersion.libVersion} (CLI {goVersion.engineVersion})
+                    Casbin (Go) {goVersion.libVersion} | (CLI {goVersion.engineVersion})
                   </option>
                 </select>
                 <a href={engineGithubLinks[selectedEngine]} target="_blank" rel="noopener noreferrer" className="text-[#e13c3c] hover:text-[#ff4d4d]">
