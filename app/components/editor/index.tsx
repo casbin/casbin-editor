@@ -25,6 +25,7 @@ import { casbinLinter } from '@/app/utils/casbinLinter';
 import { toast, Toaster } from 'react-hot-toast';
 import { CustomConfigPanel } from './CustomConfigPanel';
 import { loadingOverlay } from './LoadingOverlayExtension';
+import useEngineVersions from './hooks/useEngineVersions';
 
 export const EditorScreen = () => {
   const {
@@ -70,12 +71,7 @@ export const EditorScreen = () => {
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [isEngineLoading, setIsEngineLoading] = useState(false);
   const skipNextEffectRef = useRef(false);
-  const casbinVersion = process.env.CASBIN_VERSION;
-  const engineGithubLinks = {
-    node: `https://github.com/casbin/node-casbin/releases/tag/v${casbinVersion}`,
-    java: 'https://github.com/casbin/jcasbin/releases',
-    go: 'https://github.com/casbin/casbin/releases',
-  };
+  const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isEngineLoading);
 
   useEffect(() => {
     if (modelKind && modelText) {
@@ -305,9 +301,13 @@ export const EditorScreen = () => {
                     });
                   }}
                 >
-                  <option value="node">Node-Casbin(NodeJs) v{casbinVersion}</option>
-                  <option value="java">jCasbin(Java)</option>
-                  <option value="go">Casbin(Go)</option>
+                  <option value="node">Node-Casbin (NodeJs) {casbinVersion}</option>
+                  <option value="java">
+                    jCasbin (Java) {javaVersion.libVersion} | (CLI {javaVersion.engineVersion})
+                  </option>
+                  <option value="go">
+                    Casbin (Go) {goVersion.libVersion} | (CLI {goVersion.engineVersion})
+                  </option>
                 </select>
                 <a href={engineGithubLinks[selectedEngine]} target="_blank" rel="noopener noreferrer" className="text-[#e13c3c] hover:text-[#ff4d4d]">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

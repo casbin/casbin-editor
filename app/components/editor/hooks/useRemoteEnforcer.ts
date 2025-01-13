@@ -19,6 +19,11 @@ interface RemoteEnforcerProps {
   engine: 'java' | 'go';
 }
 
+export interface VersionInfo {
+  engineVersion: string;
+  libVersion: string;
+}
+
 export async function remoteEnforcer(props: RemoteEnforcerProps) {
   try {
     const baseUrl = 'https://door.casdoor.com/api/run-casbin-command';
@@ -73,6 +78,37 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
       allowed: false,
       reason: ['Error occurred during enforcement'],
       error: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
+  }
+}
+
+export async function getRemoteVersion(language: 'java' | 'go'): Promise<VersionInfo> {
+  try {
+    const baseUrl = 'https://door.casdoor.com/api/run-casbin-command';
+    const url = new URL(baseUrl);
+    url.searchParams.set('language', language);
+    url.searchParams.set('args', JSON.stringify(['-v']));
+
+    const response = await fetch(url.toString());
+    const result = await response.json();
+    const versionInfo = result.data as string;
+
+    const [cliLine, libLine] = versionInfo.split('\n');
+
+    const getVersionNumber = (line: string) => {
+      const match = line.match(/(?:v|[\s])([\d.]+)/);
+      return match ? `v${match[1]}` : 'unknown';
+    };
+
+    return {
+      engineVersion: getVersionNumber(cliLine),
+      libVersion: getVersionNumber(libLine),
+    };
+  } catch (error) {
+    console.error(`Error getting ${language} version:`, error);
+    return {
+      engineVersion: 'unknown',
+      libVersion: 'unknown',
     };
   }
 }
