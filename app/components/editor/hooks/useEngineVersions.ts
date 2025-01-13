@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react';
 import { createCasbinEngine } from '../CasbinEngine';
+import { VersionInfo } from './useRemoteEnforcer';
 
 type EngineType = 'java' | 'go' | 'node';
 
-interface VersionInfo {
-  engine: string;
-  lib: string;
+export interface EngineVersionsReturn {
+  javaVersion: VersionInfo;
+  goVersion: VersionInfo;
+  casbinVersion: string | undefined;
+  engineGithubLinks: Record<EngineType, string>;
 }
 
-const ENGINE_CONFIGS: Record<
-  EngineType,
-  {
-    githubRepo: string;
-    createEngine: () => ReturnType<typeof createCasbinEngine>;
-  }
-> = {
+interface EngineConfig {
+  githubRepo: string;
+  createEngine: () => ReturnType<typeof createCasbinEngine>;
+}
+
+const ENGINE_CONFIGS: Record<EngineType, EngineConfig> = {
   java: {
     githubRepo: 'casbin/jcasbin',
     createEngine: () => {
@@ -37,83 +39,53 @@ const ENGINE_CONFIGS: Record<
 
 export default function useEngineVersions(isEngineLoading: boolean): EngineVersionsReturn {
   const [versions, setVersions] = useState<Record<EngineType, VersionInfo>>(() => {
-    return Object.keys(ENGINE_CONFIGS).reduce(
-      (acc, key) => {
-        return {
-          ...acc,
-          [key]: { engine: '', lib: '' },
-        };
-      },
-      {} as Record<EngineType, VersionInfo>,
-    );
+    return Object.fromEntries(
+      Object.keys(ENGINE_CONFIGS).map((key) => {
+        return [key, { engineVersion: '', libVersion: '' }];
+      }),
+    ) as Record<EngineType, VersionInfo>;
   });
 
   const casbinVersion = process.env.CASBIN_VERSION;
 
   useEffect(() => {
-    const getAllVersions = async () => {
+    const fetchVersions = async () => {
       if (isEngineLoading) return;
 
       try {
-        const versionPromises = Object.entries(ENGINE_CONFIGS).map(async ([type, config]) => {
-          const engine = config.createEngine();
-          const version = await engine.getVersion?.();
-          return [type, version] as const;
-        });
-
-        const results = await Promise.all(versionPromises);
-
-        const newVersions = results.reduce(
-          (acc, [type, version]) => {
-            return {
-              ...acc,
-              [type]: version ? { engine: version.engineVersion, lib: version.libVersion } : { engine: 'unknown', lib: 'unknown' },
-            };
-          },
-          {} as Record<EngineType, VersionInfo>,
+        const versionEntries = await Promise.all(
+          Object.entries(ENGINE_CONFIGS).map(async ([type, config]) => {
+            const engine = config.createEngine();
+            const version = await engine.getVersion?.();
+            return [type, version || { engineVersion: 'unknown', libVersion: 'unknown' }] as const;
+          }),
         );
 
-        setVersions(newVersions);
+        setVersions(Object.fromEntries(versionEntries) as Record<EngineType, VersionInfo>);
       } catch (error) {
-        console.error('Error getting versions:', error);
-        const defaultVersions = Object.keys(ENGINE_CONFIGS).reduce(
-          (acc, key) => {
-            return {
-              ...acc,
-              [key]: { engine: 'unknown', lib: 'unknown' },
-            };
-          },
-          {} as Record<EngineType, VersionInfo>,
+        const defaultVersions = Object.fromEntries(
+          Object.keys(ENGINE_CONFIGS).map((key) => {
+            return [key, { engineVersion: 'unknown', libVersion: 'unknown' }];
+          }),
         );
-
-        setVersions(defaultVersions);
+        setVersions(defaultVersions as Record<EngineType, VersionInfo>);
       }
     };
 
-    getAllVersions();
+    fetchVersions();
   }, [isEngineLoading]);
 
-  const getVersionedLink = (base: string, version?: string | null) => {
-    if (!version || version === 'unknown') {
-      return base;
-    }
-
-    const versionNumber = version.startsWith('v') ? version.substring(1) : version;
-    return `${base}tag/v${versionNumber}`;
+  const getVersionedLink = (repo: string, version?: string | null) => {
+    return version && version !== 'unknown'
+      ? `https://github.com/${repo}/releases/tag/v${version.startsWith('v') ? version.slice(1) : version}`
+      : `https://github.com/${repo}/releases/`;
   };
 
-  const engineGithubLinks = Object.entries(ENGINE_CONFIGS).reduce(
-    (acc, [type, config]) => {
-      return {
-        ...acc,
-        [type]:
-          type === 'node'
-            ? getVersionedLink(`https://github.com/${config.githubRepo}/releases/`, casbinVersion)
-            : getVersionedLink(`https://github.com/${config.githubRepo}/releases/`, versions[type as EngineType]?.lib),
-      };
-    },
-    {} as Record<string, string>,
-  );
+  const engineGithubLinks = Object.fromEntries(
+    Object.entries(ENGINE_CONFIGS).map(([type, config]) => {
+      return [type, getVersionedLink(config.githubRepo, type === 'node' ? casbinVersion : versions[type as EngineType]?.libVersion)];
+    }),
+  ) as Record<EngineType, string>;
 
   return {
     javaVersion: versions.java,
@@ -121,10 +93,4 @@ export default function useEngineVersions(isEngineLoading: boolean): EngineVersi
     casbinVersion,
     engineGithubLinks,
   };
-}
-export interface EngineVersionsReturn {
-  javaVersion: VersionInfo;
-  goVersion: VersionInfo;
-  casbinVersion: string | undefined;
-  engineGithubLinks: Record<string, string>;
 }
