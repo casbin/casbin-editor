@@ -308,8 +308,8 @@ e = some(where (p.eft == allow))
 [matchers]
 m = r.sub == r.obj.Owner`,
     policy: '',
-    request: `alice, { Owner: 'alice'}
-alice, { Owner: 'bob'}`,
+    request: `alice, { "Owner" : "alice" }
+alice, { "Owner" : "bob" }`,
     customConfig: undefined,
     enforceContext: undefined,
   },
