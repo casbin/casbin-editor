@@ -495,7 +495,7 @@ export const EditorScreen = () => {
           </div>
 
           <div className="flex flex-row justify-between items-center w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
-            <div className={clsx(textClass)}>{echo}</div>
+            <div className={clsx(textClass, 'overflow-x-auto whitespace-nowrap max-w-[300px] sm:max-w-[500px] text-ellipsis')}>{echo}</div>
 
             <div className="flex flex-row items-center ml-auto sm:ml-3">
               <button
