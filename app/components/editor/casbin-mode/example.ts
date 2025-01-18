@@ -328,7 +328,7 @@ e = some(where (p.eft == allow))
 m = eval(p.sub_rule) && r.obj == p.obj && r.act == p.act`,
     policy: `p, r.sub.Age > 18 && r.sub.Age < 60, /data1, read
 `,
-    request: `{ Age: 30}, /data1, read`,
+    request: `{ "Age": 30}, /data1, read`,
     customConfig: undefined,
     enforceContext: undefined,
   },
