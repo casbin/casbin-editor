@@ -26,6 +26,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import { CustomConfigPanel } from './CustomConfigPanel';
 import { loadingOverlay } from './LoadingOverlayExtension';
 import useEngineVersions from './hooks/useEngineVersions';
+import { MessageWithTooltip } from './MessageWithTooltip';
 
 export const EditorScreen = () => {
   const {
@@ -495,7 +496,7 @@ export const EditorScreen = () => {
           </div>
 
           <div className="flex flex-row justify-between items-center w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
-            <div className={clsx(textClass, 'overflow-x-auto whitespace-nowrap max-w-[300px] sm:max-w-[500px] text-ellipsis')}>{echo}</div>
+            <MessageWithTooltip message={echo} className={textClass} />
 
             <div className="flex flex-row items-center ml-auto sm:ml-3">
               <button
