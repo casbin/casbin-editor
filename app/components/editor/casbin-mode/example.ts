@@ -294,6 +294,189 @@ alice, data2, write`,
     customConfig: undefined,
     enforceContext: undefined,
   },
+  rbac_with_domains_and_resources: {
+    name: 'RBAC with domains and resource hierarchy',
+    model: `[request_definition]
+r = sub, dom, obj, act
+
+[policy_definition]
+p = sub, dom, obj, act
+
+[role_definition]
+g = _, _, _
+g2 = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub, r.dom) && r.dom == p.dom && g2(r.obj, p.obj) && r.act == p.act`,
+    policy: `p, admin, domain1, resource1, read
+p, admin, domain1, resource1, write
+p, admin, domain2, resource2, read
+p, admin, domain2, resource2, write
+
+g, alice, admin, domain1
+g, bob, admin, domain2
+
+g2, resource1:sub1, resource1
+g2, resource2:sub2, resource2`,
+    request: `alice, domain1, resource1:sub1, read
+bob, domain1, resource1, read
+alice, domain1, resource2, read
+bob, domain2, resource2:sub2, write`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
+  rbac_with_time: {
+    name: 'RBAC with time constraints',
+    model: `[request_definition]
+r = sub, obj, act, time
+
+[policy_definition]
+p = sub, obj, act, time_start, time_end
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act && r.time >= p.time_start && r.time <= p.time_end`,
+    policy: `p, alice, data1, read, 09:00, 18:00
+p, bob, data2, write, 13:00, 16:00
+
+g, cathy, alice`,
+    request: `cathy, data1, read, 10:00
+cathy, data1, read, 08:00
+cathy, data1, read, 19:00
+bob, data2, write, 14:00
+bob, data2, write, 12:00`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
+  rbac_with_tags: {
+    name: 'RBAC with tags',
+    model: `[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+g2 = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && (r.obj == p.obj || g2(r.obj, p.obj)) && r.act == p.act`,
+    policy: `p, admin, restricted_data, read
+p, admin, confidential, write
+
+g, alice, admin
+g, bob, admin
+
+g2, data1, restricted_data
+g2, data2, confidential`,
+    request: `alice, data1, read
+alice, data2, write
+bob, data2, read
+alice, data3, read`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
+  rbac_with_resource_filter: {
+    name: 'RBAC with resource filter',
+    model: `[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && keyMatch2(r.obj, p.obj) && r.act == p.act`,
+    policy: `p, admin, /data/*, read
+p, admin, /data/private/*, write
+g, alice, admin`,
+    request: `alice, /data/test, read
+alice, /data/private/file, write
+alice, /other/test, read`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
+
+  rbac_with_multiple_roles: {
+    name: 'RBAC with multiple roles',
+    model: `[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`,
+    policy: `p, reader, data, read
+p, writer, data, write
+p, admin, data, delete
+
+g, alice, reader
+g, alice, writer
+g, bob, reader
+g, cathy, admin`,
+    request: `alice, data, read
+alice, data, write
+alice, data, delete
+bob, data, write`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
+
+  rbac_with_resource_roles_and_deny: {
+    name: 'RBAC with resource roles and deny rules',
+    model: `[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act, eft
+
+[role_definition]
+g = _, _
+g2 = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow)) && !some(where (p.eft == deny))
+
+[matchers]
+m = (g(r.sub, p.sub) || g2(r.obj, p.sub)) && r.obj == p.obj && r.act == p.act`,
+    policy: `p, admin, data1, read, allow
+p, admin, data2, write, allow
+p, public_data, data3, read, allow
+p, sensitive_data, data3, read, deny
+
+g, alice, admin
+g2, data1, public_data
+g2, data2, sensitive_data`,
+    request: `alice, data1, read
+alice, data2, write
+bob, data3, read`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
   abac: {
     name: 'ABAC',
     model: `[request_definition]
