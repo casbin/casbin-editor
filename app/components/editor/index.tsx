@@ -21,12 +21,12 @@ import { buttonPlugin } from './ButtonPlugin';
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/components/LanguageMenu';
 import { linter, lintGutter } from '@codemirror/lint';
-import { casbinLinter } from '@/app/utils/casbinLinter';
 import { toast, Toaster } from 'react-hot-toast';
 import { CustomConfigPanel } from './CustomConfigPanel';
 import { loadingOverlay } from './LoadingOverlayExtension';
 import useEngineVersions from './hooks/useEngineVersions';
 import { MessageWithTooltip } from './MessageWithTooltip';
+import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
 
 export const EditorScreen = () => {
   const {
@@ -328,6 +328,8 @@ export const EditorScreen = () => {
                     indentUnit.of('    '),
                     EditorView.lineWrapping,
                     buttonPlugin(openDrawerWithMessage, extractContent, 'policy'),
+                    linter(policyLinter),
+                    lintGutter(),
                   ]}
                   basicSetup={{
                     lineNumbers: true,
@@ -397,6 +399,8 @@ export const EditorScreen = () => {
                     indentUnit.of('    '),
                     EditorView.lineWrapping,
                     buttonPlugin(openDrawerWithMessage, extractContent, 'request'),
+                    linter(requestLinter),
+                    lintGutter(),
                   ]}
                   basicSetup={{
                     lineNumbers: true,
