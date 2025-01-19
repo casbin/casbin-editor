@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { createCasbinEngine } from '../CasbinEngine';
-import { setError } from '@/app/utils/errorManager';
+import { setError, parseError } from '@/app/utils/errorManager';
 
 interface RunTestProps {
   model: string;
@@ -85,7 +85,7 @@ async function enforcer(props: RunTestProps) {
     const errorMessage = e instanceof Error ? e.message : 'Unknown error occurred';
     props.onResponse(<div className="text-red-500">{errorMessage}</div>);
     props.onResponse([]);
-    setError(errorMessage);
+    setError(parseError(errorMessage));
   }
 }
 

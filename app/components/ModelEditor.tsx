@@ -9,13 +9,13 @@ import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-co
 import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
 import { newModel } from 'casbin';
-import { setError } from '@/app/utils/errorManager';
 import { buttonPlugin } from '@/app/components/editor/ButtonPlugin';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { useLang } from '@/app/context/LangContext';
 import SidePanelChat from '@/app/components/SidePanelChat';
 import { example } from '@/app/components/editor/casbin-mode/example';
 import { clsx } from 'clsx';
+import { parseError, setError } from '@/app/utils/errorManager';
 
 export const ModelEditor = () => {
   const [modelText, setModelText] = useState('');
@@ -43,7 +43,7 @@ export const ModelEditor = () => {
       await newModel(text);
       setError(null);
     } catch (e) {
-      setError((e as Error).message);
+      setError(parseError((e as Error).message));
     }
   }, []);
 
