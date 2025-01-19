@@ -242,10 +242,10 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
             <div className={textClass}>{t('Custom Functions')}</div>
           </div>
 
-          <div className="flex-grow overflow-auto " style={{ height: '100vh' }}>
+          <div className="flex-1 overflow-auto min-h-0">
             {functions.map((func) => {
               return (
-                <div key={func.id} className="bg-gray-100 rounded-lg flex flex-col" style={{ maxHeight: '50%' }}>
+                <div key={func.id} className="bg-gray-100 rounded-lg flex flex-col">
                   <div className="flex justify-between items-center p-2">
                     <input
                       type="text"
