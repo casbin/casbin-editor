@@ -1,5 +1,5 @@
 'use client';
-import React, { isValidElement, useState, useEffect, useRef } from 'react';
+import React, { isValidElement, useState, useEffect, useRef, useCallback } from 'react';
 import { example } from './casbin-mode/example';
 import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
 import { clsx } from 'clsx';
@@ -70,25 +70,26 @@ export const EditorScreen = () => {
   };
   const { t, lang, theme, toggleTheme } = useLang();
   const [isContentLoaded, setIsContentLoaded] = useState(false);
-  const [isEngineLoading, setIsEngineLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const skipNextEffectRef = useRef(false);
-  const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isEngineLoading);
+  const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isLoading);
 
-  useEffect(() => {
-    if (modelKind && modelText) {
-      if (skipNextEffectRef.current) {
-        skipNextEffectRef.current = false;
-        return;
-      }
-      setIsContentLoaded(true);
+  const handleEnforcerCall = useCallback(
+    (params: {
+      modelKind: string;
+      model: string;
+      policy: string;
+      customConfig: any;
+      request: string;
+      enforceContextData: any;
+      selectedEngine: string;
+    }) => {
+      setRequestResult('');
+      setEcho(null);
+      setIsLoading(true);
+
       enforcer({
-        modelKind,
-        model: modelText,
-        policy,
-        customConfig,
-        request,
-        enforceContextData,
-        selectedEngine,
+        ...params,
         onResponse: (v) => {
           if (isValidElement(v)) {
             setEcho(v);
@@ -102,10 +103,47 @@ export const EditorScreen = () => {
             });
             setRequestResult(formattedResults.join('\n'));
           }
+          setIsLoading(false);
         },
       });
+    },
+    [enforcer, setEcho, setRequestResult],
+  );
+
+  useEffect(() => {
+    if (modelKind && modelText) {
+      if (skipNextEffectRef.current) {
+        skipNextEffectRef.current = false;
+        return;
+      }
+      setIsContentLoaded(true);
+
+      handleEnforcerCall({
+        modelKind,
+        model: modelText,
+        policy,
+        customConfig,
+        request,
+        enforceContextData,
+        selectedEngine,
+      });
     }
-  }, [modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult, selectedEngine]);
+  }, [modelKind, modelText, policy, customConfig, request, enforceContextData, handleEnforcerCall, selectedEngine]);
+
+  const handleEngineChange = (newEngine: string) => {
+    skipNextEffectRef.current = true;
+    setSelectedEngine(newEngine);
+    handleEnforcerCall({
+      modelKind,
+      model: modelText,
+      policy,
+      customConfig,
+      request,
+      enforceContextData,
+      selectedEngine: newEngine,
+    });
+  };
+
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
   const runTest = async () => {
@@ -272,34 +310,7 @@ export const EditorScreen = () => {
                   className="bg-transparent border border-[#e13c3c] rounded px-2 py-1 text-[#e13c3c] focus:outline-none"
                   value={selectedEngine}
                   onChange={(e) => {
-                    setIsEngineLoading(true);
-                    skipNextEffectRef.current = true;
-                    setSelectedEngine(e.target.value);
-                    enforcer({
-                      modelKind,
-                      model: modelText,
-                      policy,
-                      customConfig,
-                      request,
-                      enforceContextData,
-                      selectedEngine: e.target.value,
-                      onResponse: (v) => {
-                        setIsEngineLoading(false);
-
-                        if (isValidElement(v)) {
-                          setEcho(v);
-                        } else if (Array.isArray(v)) {
-                          const formattedResults = v.map((res) => {
-                            if (typeof res === 'object') {
-                              const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
-                              return `${res.okEx}${reasonString}`;
-                            }
-                            return res;
-                          });
-                          setRequestResult(formattedResults.join('\n'));
-                        }
-                      },
-                    });
+                    return handleEngineChange(e.target.value);
                   }}
                 >
                   <option value="node">Node-Casbin (NodeJs) {casbinVersion}</option>
@@ -439,7 +450,7 @@ export const EditorScreen = () => {
                     EditorView.lineWrapping,
                     EditorView.editable.of(false),
                     buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult'),
-                    loadingOverlay(isEngineLoading),
+                    loadingOverlay(isLoading),
                   ]}
                   basicSetup={{
                     lineNumbers: true,
