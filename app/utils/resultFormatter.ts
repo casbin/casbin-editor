@@ -26,3 +26,22 @@ ${result}
     })
     .join('\n\n');
 }
+
+export function formatResults(results: any[]): string {
+  return results.map((res) => {
+    if (typeof res === 'object') {
+      const reasonString = Array.isArray(res.reason) && res.reason.length > 0 
+        ? ` Reason: ${JSON.stringify(res.reason)}` 
+        : '';
+      return `${res.okEx}${reasonString}`;
+    }
+    return res;
+  }).join('\n');
+}
+
+export function createResultsMap(results: Array<{ engine: string; result: string }>): ResultsMap {
+  return results.reduce((acc, { engine, result }) => {
+    acc[engine] = { result };
+    return acc;
+  }, {} as ResultsMap);
+}

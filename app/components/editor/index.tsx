@@ -17,7 +17,7 @@ import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforc
 import useIndex from '@/app/components/editor/hooks/useIndex';
 import SidePanelChat from '@/app/components/SidePanelChat';
 import { extractPageContent } from '@/app/utils/contentExtractor';
-import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
+import { formatResults, formatEngineResults, createResultsMap, ResultsMap } from '@/app/utils/resultFormatter';
 import { buttonPlugin } from './ButtonPlugin';
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/components/LanguageMenu';
@@ -52,15 +52,22 @@ export const EditorScreen = () => {
     selectedEngine,
     setSelectedEngine,
   } = useIndex();
-  const [open, setOpen] = useState(true);
   const { enforcer } = useRunTest();
   const { shareInfo } = useShareInfo();
+  const { t, lang, theme, toggleTheme } = useLang();
+  const [open, setOpen] = useState(true);
+  const [isContentLoaded, setIsContentLoaded] = useState(false);
+  const [showCustomConfig, setShowCustomConfig] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [requestResults, setRequestResults] = useState<ResultsMap>({});
+  const [comparisonEngines, setComparisonEngines] = useState<string[]>([]);
+  const skipNextEffectRef = useRef(false);
+  const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
   const { setupEnforceContextData, setupHandleEnforceContextChange } = useSetupEnforceContext({
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
   });
-  const [showCustomConfig, setShowCustomConfig] = useState(false);
-  const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
+  const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isLoading);
   const openDrawerWithMessage = (message: string) => {
     if (sidePanelChatRef.current) {
       sidePanelChatRef.current.openDrawer(message);
@@ -70,13 +77,6 @@ export const EditorScreen = () => {
     const { message } = extractPageContent(boxType, t, lang);
     return message;
   };
-  const { t, lang, theme, toggleTheme } = useLang();
-  const [isContentLoaded, setIsContentLoaded] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const skipNextEffectRef = useRef(false);
-  const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isLoading);
-  const [requestResults, setRequestResults] = useState<ResultsMap>({});
-  const [comparisonEngines, setComparisonEngines] = useState<string[]>([]);
 
   const handleEnforcerCall = useCallback(
     async (params: {
@@ -88,6 +88,7 @@ export const EditorScreen = () => {
       enforceContextData: any;
       selectedEngine: string;
       comparisonEngines?: string[];
+      showSuccessToast?: boolean;
     }) => {
       setRequestResult('');
       setEcho(null);
@@ -95,51 +96,51 @@ export const EditorScreen = () => {
       setRequestResults({});
 
       const allEngines = [params.selectedEngine, ...(params.comparisonEngines || [])];
-      const enginePromises = allEngines.map((engine) => {
-        return new Promise<{ engine: string; result: string }>((resolve) => {
-          enforcer({
-            ...params,
-            selectedEngine: engine,
-            onResponse: (v) => {
-              if (isValidElement(v)) {
-                setEcho(v);
-              } else if (Array.isArray(v)) {
-                const formattedResults = v.map((res) => {
-                  if (typeof res === 'object') {
-                    const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
-                    return `${res.okEx}${reasonString}`;
-                  }
-                  return res;
-                });
-                resolve({
-                  engine,
-                  result: formattedResults.join('\n'),
-                });
-              }
-            },
-          });
-        });
-      });
+      const results = await Promise.all(
+        allEngines.map((engine) =>
+          {return new Promise<{ engine: string; result: string }>((resolve) => {
+            enforcer({
+              ...params,
+              selectedEngine: engine,
+              onResponse: (v) => {
+                if (isValidElement(v)) {
+                  setEcho(v);
+                } else if (Array.isArray(v)) {
+                  const result = formatResults(v);
+                  resolve({ engine, result });
+                }
+              },
+            });
+          })}
+        )
+      );
 
-      const results = await Promise.all(enginePromises);
-
-      const newResults = results.reduce((acc, { engine, result }) => {
-        acc[engine] = {
-          result,
-        };
-        return acc;
-      }, {} as ResultsMap);
+      const newResults = createResultsMap(results);
 
       setRequestResults(newResults);
-      setRequestResult(
-        results.find((r) => {
-          return r.engine === params.selectedEngine;
-        })?.result || '',
-      );
+      const primaryResult = results.find((r) => {return r.engine === params.selectedEngine})?.result || '';
+      setRequestResult(primaryResult);
+      
+      if (params.showSuccessToast && primaryResult && !primaryResult.includes('error')) {
+        toast.success(t('Test completed successfully'));
+      }
+      
       setIsLoading(false);
     },
-    [enforcer, setEcho, setRequestResult],
+    [enforcer, setEcho, setRequestResult, t]
   );
+
+  const runTest = () => {return handleEnforcerCall({
+    modelKind,
+    model: modelText,
+    policy,
+    customConfig,
+    request,
+    enforceContextData,
+    selectedEngine,
+    comparisonEngines,
+    showSuccessToast: true
+  })};
 
   useEffect(() => {
     if (modelKind && modelText) {
@@ -193,82 +194,6 @@ export const EditorScreen = () => {
   };
 
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
-
-  const runTest = async () => {
-    await enforcer({
-      model: modelText,
-      modelKind,
-      policy,
-      customConfig,
-      request,
-      enforceContextData,
-      selectedEngine,
-      onResponse: (v: JSX.Element | any[]) => {
-        if (isValidElement(v)) {
-          setEcho(v);
-          const props = (v as any).props;
-          if (props.className?.includes('text-red-500')) {
-            const errorMessage = props.children;
-            toast.error(errorMessage);
-            setRequestResult(errorMessage);
-          }
-        } else if (Array.isArray(v)) {
-          const formattedResults = v.map((res) => {
-            if (typeof res === 'object') {
-              const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
-              return `${res.okEx}${reasonString}`;
-            }
-            return res;
-          });
-          const result = formattedResults.join('\n');
-          setRequestResults((prev) => {
-            return {
-              ...prev,
-              [selectedEngine]: {
-                result,
-              },
-            };
-          });
-          setRequestResult(result);
-          if (result && !result.includes('error')) {
-            toast.success(t('Test completed successfully'));
-          }
-        }
-
-        comparisonEngines?.forEach((engine) => {
-          enforcer({
-            model: modelText,
-            modelKind,
-            policy,
-            customConfig,
-            request,
-            enforceContextData,
-            selectedEngine: engine,
-            onResponse: (v: JSX.Element | any[]) => {
-              if (Array.isArray(v)) {
-                const formattedResults = v.map((res) => {
-                  if (typeof res === 'object') {
-                    const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
-                    return `${res.okEx}${reasonString}`;
-                  }
-                  return res;
-                });
-                const result = formattedResults.join('\n');
-                setRequestResults((prev) => {
-                  return {
-                    ...prev,
-                    [engine]: {
-                      result,
-                    },
-                  };
-                });
-              }
-            },
-          });
-        });
-      },
-    });
-  };
 
   return (
     <div className="flex flex-col sm:flex-row h-full">
