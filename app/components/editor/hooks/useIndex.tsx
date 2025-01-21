@@ -67,19 +67,52 @@ export default function useIndex() {
     }
   }, []);
 
-  // Set the editor content based on the shared content
-  useEffect(() => {
+  // sync update all states
+  const updateModelKind = (newModelKind: string) => {
+    setModelKind(newModelKind);
     const shared = loadState.current.content;
-    setPolicy(shared?.policy ?? example[modelKind].policy);
-    setModelText(shared?.model ?? example[modelKind].model);
-    setRequest(shared?.request ?? example[modelKind].request);
+    setPolicy(shared?.policy ?? example[newModelKind].policy);
+    setModelText(shared?.model ?? example[newModelKind].model);
+    setRequest(shared?.request ?? example[newModelKind].request);
     setCustomConfig(shared?.customConfig ?? defaultCustomConfig);
-    setEnforceContextData(new Map(Object.entries(JSON.parse(shared?.enforceContext || example[modelKind].enforceContext || defaultEnforceContext))));
-    if (shared?.selectedEngine) {
-      setSelectedEngine(shared.selectedEngine);
+    setEnforceContextData(
+      new Map(Object.entries(JSON.parse(shared?.enforceContext || example[newModelKind].enforceContext || defaultEnforceContext))),
+    );
+  };
+
+  // sync update all states when init
+  useEffect(() => {
+    if (!modelText && !policy && !request) {
+      const shared = loadState.current.content;
+      setPolicy(shared?.policy ?? example[modelKind].policy);
+      setModelText(shared?.model ?? example[modelKind].model);
+      setRequest(shared?.request ?? example[modelKind].request);
+      setCustomConfig(shared?.customConfig ?? defaultCustomConfig);
+      setEnforceContextData(
+        new Map(Object.entries(JSON.parse(shared?.enforceContext || example[modelKind].enforceContext || defaultEnforceContext))),
+      );
     }
-    loadState.current.content = undefined;
-  }, [modelKind, triggerUpdate]);
+  }, [modelKind, modelText, policy, request]);
+
+  // effect for handling shared content loading
+  useEffect(() => {
+    if (triggerUpdate > 0) {
+      const shared = loadState.current.content;
+      const newModelKind = shared?.modelKind && shared.modelKind in example ? shared.modelKind : 'basic';
+      setModelKind(newModelKind);
+      setPolicy(shared?.policy ?? example[newModelKind].policy);
+      setModelText(shared?.model ?? example[newModelKind].model);
+      setRequest(shared?.request ?? example[newModelKind].request);
+      setCustomConfig(shared?.customConfig ?? defaultCustomConfig);
+      setEnforceContextData(
+        new Map(Object.entries(JSON.parse(shared?.enforceContext || example[newModelKind].enforceContext || defaultEnforceContext))),
+      );
+      if (shared?.selectedEngine) {
+        setSelectedEngine(shared.selectedEngine);
+      }
+      loadState.current.content = undefined;
+    }
+  }, [triggerUpdate]);
 
   function handleShare(v: ReactNode | string) {
     if (isValidElement(v)) {
@@ -93,7 +126,7 @@ export default function useIndex() {
 
   return {
     modelKind,
-    setModelKind,
+    setModelKind: updateModelKind,
     modelText,
     setModelText,
     policy,
