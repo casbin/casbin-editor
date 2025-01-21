@@ -16,7 +16,8 @@ import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
 import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforceContext';
 import useIndex from '@/app/components/editor/hooks/useIndex';
 import SidePanelChat from '@/app/components/SidePanelChat';
-import { extractPageContent } from '../../utils/contentExtractor';
+import { extractPageContent } from '@/app/utils/contentExtractor';
+import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { buttonPlugin } from './ButtonPlugin';
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/components/LanguageMenu';
@@ -73,7 +74,7 @@ export const EditorScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const skipNextEffectRef = useRef(false);
   const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isLoading);
-  const [requestResults, setRequestResults] = useState<{ [key: string]: { result: string; timestamp: number } }>({});
+  const [requestResults, setRequestResults] = useState<ResultsMap>({});
 
   const handleEnforcerCall = useCallback(
     (params: {
@@ -191,27 +192,6 @@ export const EditorScreen = () => {
         }
       },
     });
-  };
-
-  const formatResults = (results: { [key: string]: { result: string; timestamp: number } }) => {
-    const entries = Object.entries(results);
-
-    if (entries.length === 1) {
-      return entries[0][1].result;
-    }
-
-    return entries
-      .sort((a, b) => {
-        return b[1].timestamp - a[1].timestamp;
-      })
-      .map(([engine, { result, timestamp }], index) => {
-        const time = new Date(timestamp).toLocaleTimeString();
-        const isLatest = index === 0;
-        return `${isLatest ? '// 🟢 ' : '// ⚪️ '}${engine} Engine Result
-${result}
-${isLatest ? '// ========================' : '// ----------------------------------------'}`;
-      })
-      .join('\n\n');
   };
 
   return (
@@ -492,7 +472,7 @@ ${isLatest ? '// ========================' : '// -------------------------------
                     indentOnInput: true,
                   }}
                   className={'cursor-not-allowed flex-grow h-[300px]'}
-                  value={Object.keys(requestResults).length > 0 ? formatResults(requestResults) : requestResult}
+                  value={Object.keys(requestResults).length > 0 ? formatEngineResults(requestResults) : requestResult}
                 />
               </div>
             </div>
