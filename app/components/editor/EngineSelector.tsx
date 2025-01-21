@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useLang } from '@/app/context/LangContext';
+
 
 interface EngineVersion {
   libVersion: string;
@@ -51,6 +53,7 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({
   engineGithubLinks,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useLang();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const engines = AVAILABLE_ENGINES(casbinVersion, javaVersion, goVersion);
 
@@ -102,7 +105,7 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({
         }}
         className="border border-[#e13c3c] rounded px-2 py-1 text-[#e13c3c] hover:bg-[#e13c3c] hover:text-white"
       >
-        Compare
+        {t('Compare')}
       </button>
 
       {isOpen && (
