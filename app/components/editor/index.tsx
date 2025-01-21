@@ -28,6 +28,7 @@ import { loadingOverlay } from './LoadingOverlayExtension';
 import useEngineVersions from './hooks/useEngineVersions';
 import { MessageWithTooltip } from './MessageWithTooltip';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
+import { EngineSelector } from './EngineSelector';
 
 export const EditorScreen = () => {
   const {
@@ -75,9 +76,10 @@ export const EditorScreen = () => {
   const skipNextEffectRef = useRef(false);
   const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isLoading);
   const [requestResults, setRequestResults] = useState<ResultsMap>({});
+  const [comparisonEngines, setComparisonEngines] = useState<string[]>([]);
 
   const handleEnforcerCall = useCallback(
-    (params: {
+    async (params: {
       modelKind: string;
       model: string;
       policy: string;
@@ -85,39 +87,56 @@ export const EditorScreen = () => {
       request: string;
       enforceContextData: any;
       selectedEngine: string;
+      comparisonEngines?: string[];
     }) => {
       setRequestResult('');
       setEcho(null);
       setIsLoading(true);
+      setRequestResults({});
 
-      enforcer({
-        ...params,
-        onResponse: (v) => {
-          if (isValidElement(v)) {
-            setEcho(v);
-          } else if (Array.isArray(v)) {
-            const formattedResults = v.map((res) => {
-              if (typeof res === 'object') {
-                const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
-                return `${res.okEx}${reasonString}`;
+      const allEngines = [params.selectedEngine, ...(params.comparisonEngines || [])];
+      const enginePromises = allEngines.map((engine) => {
+        return new Promise<{ engine: string; result: string }>((resolve) => {
+          enforcer({
+            ...params,
+            selectedEngine: engine,
+            onResponse: (v) => {
+              if (isValidElement(v)) {
+                setEcho(v);
+              } else if (Array.isArray(v)) {
+                const formattedResults = v.map((res) => {
+                  if (typeof res === 'object') {
+                    const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
+                    return `${res.okEx}${reasonString}`;
+                  }
+                  return res;
+                });
+                resolve({
+                  engine,
+                  result: formattedResults.join('\n'),
+                });
               }
-              return res;
-            });
-            const result = formattedResults.join('\n');
-            setRequestResults((prev) => {
-              return {
-                ...prev,
-                [params.selectedEngine]: {
-                  result,
-                  timestamp: Date.now(),
-                },
-              };
-            });
-            setRequestResult(result);
-          }
-          setIsLoading(false);
-        },
+            },
+          });
+        });
       });
+
+      const results = await Promise.all(enginePromises);
+
+      const newResults = results.reduce((acc, { engine, result }) => {
+        acc[engine] = {
+          result,
+        };
+        return acc;
+      }, {} as ResultsMap);
+
+      setRequestResults(newResults);
+      setRequestResult(
+        results.find((r) => {
+          return r.engine === params.selectedEngine;
+        })?.result || '',
+      );
+      setIsLoading(false);
     },
     [enforcer, setEcho, setRequestResult],
   );
@@ -129,6 +148,8 @@ export const EditorScreen = () => {
         return;
       }
       setIsContentLoaded(true);
+      setRequestResults({});
+      setRequestResult('');
 
       handleEnforcerCall({
         modelKind,
@@ -138,13 +159,27 @@ export const EditorScreen = () => {
         request,
         enforceContextData,
         selectedEngine,
+        comparisonEngines,
       });
     }
-  }, [modelKind, modelText, policy, customConfig, request, enforceContextData, handleEnforcerCall, selectedEngine]);
+  }, [
+    modelKind,
+    modelText,
+    policy,
+    customConfig,
+    request,
+    enforceContextData,
+    selectedEngine,
+    comparisonEngines,
+    handleEnforcerCall,
+    setRequestResult,
+  ]);
 
-  const handleEngineChange = (newEngine: string) => {
+  const handleEngineChange = (newPrimary: string, newComparison: string[]) => {
     skipNextEffectRef.current = true;
-    setSelectedEngine(newEngine);
+    setSelectedEngine(newPrimary);
+    setComparisonEngines(newComparison);
+    setRequestResults({});
     handleEnforcerCall({
       modelKind,
       model: modelText,
@@ -152,7 +187,8 @@ export const EditorScreen = () => {
       customConfig,
       request,
       enforceContextData,
-      selectedEngine: newEngine,
+      selectedEngine: newPrimary,
+      comparisonEngines: newComparison,
     });
   };
 
@@ -185,11 +221,51 @@ export const EditorScreen = () => {
             return res;
           });
           const result = formattedResults.join('\n');
+          setRequestResults((prev) => {
+            return {
+              ...prev,
+              [selectedEngine]: {
+                result,
+              },
+            };
+          });
           setRequestResult(result);
           if (result && !result.includes('error')) {
             toast.success(t('Test completed successfully'));
           }
         }
+
+        comparisonEngines?.forEach((engine) => {
+          enforcer({
+            model: modelText,
+            modelKind,
+            policy,
+            customConfig,
+            request,
+            enforceContextData,
+            selectedEngine: engine,
+            onResponse: (v: JSX.Element | any[]) => {
+              if (Array.isArray(v)) {
+                const formattedResults = v.map((res) => {
+                  if (typeof res === 'object') {
+                    const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
+                    return `${res.okEx}${reasonString}`;
+                  }
+                  return res;
+                });
+                const result = formattedResults.join('\n');
+                setRequestResults((prev) => {
+                  return {
+                    ...prev,
+                    [engine]: {
+                      result,
+                    },
+                  };
+                });
+              }
+            },
+          });
+        });
       },
     });
   };
@@ -319,27 +395,15 @@ export const EditorScreen = () => {
             <div className="h-10 pl-2 font-bold flex items-center justify-between">
               <div className={textClass}>{t('Policy')}</div>
               <div className="text-right font-bold mr-4 text-sm flex items-center justify-end gap-2">
-                <select
-                  className="bg-transparent border border-[#e13c3c] rounded px-2 py-1 text-[#e13c3c] focus:outline-none"
-                  value={selectedEngine}
-                  onChange={(e) => {
-                    return handleEngineChange(e.target.value);
-                  }}
-                >
-                  <option value="node">Node-Casbin (NodeJs) {casbinVersion}</option>
-                  <option value="java">
-                    jCasbin (Java) {javaVersion.libVersion} | (CLI {javaVersion.engineVersion})
-                  </option>
-                  <option value="go">
-                    Casbin (Go) {goVersion.libVersion} | (CLI {goVersion.engineVersion})
-                  </option>
-                </select>
-                <a href={engineGithubLinks[selectedEngine]} target="_blank" rel="noopener noreferrer" className="text-[#e13c3c] hover:text-[#ff4d4d]">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    {/* eslint-disable-next-line max-len */}
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                  </svg>
-                </a>
+                <EngineSelector
+                  selectedEngine={selectedEngine}
+                  comparisonEngines={comparisonEngines}
+                  onEngineChange={handleEngineChange}
+                  casbinVersion={casbinVersion}
+                  javaVersion={javaVersion}
+                  goVersion={goVersion}
+                  engineGithubLinks={engineGithubLinks}
+                />
               </div>
             </div>
             <div className="flex-grow overflow-auto h-full">
@@ -472,7 +536,7 @@ export const EditorScreen = () => {
                     indentOnInput: true,
                   }}
                   className={'cursor-not-allowed flex-grow h-[300px]'}
-                  value={Object.keys(requestResults).length > 0 ? formatEngineResults(requestResults) : requestResult}
+                  value={Object.keys(requestResults).length > 0 ? formatEngineResults(requestResults, selectedEngine) : requestResult}
                 />
               </div>
             </div>
