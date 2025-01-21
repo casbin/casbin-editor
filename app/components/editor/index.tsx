@@ -73,6 +73,7 @@ export const EditorScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const skipNextEffectRef = useRef(false);
   const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isLoading);
+  const [requestResults, setRequestResults] = useState<{ [key: string]: { result: string; timestamp: number } }>({});
 
   const handleEnforcerCall = useCallback(
     (params: {
@@ -101,7 +102,17 @@ export const EditorScreen = () => {
               }
               return res;
             });
-            setRequestResult(formattedResults.join('\n'));
+            const result = formattedResults.join('\n');
+            setRequestResults((prev) => {
+              return {
+                ...prev,
+                [params.selectedEngine]: {
+                  result,
+                  timestamp: Date.now(),
+                },
+              };
+            });
+            setRequestResult(result);
           }
           setIsLoading(false);
         },
@@ -182,6 +193,21 @@ export const EditorScreen = () => {
     });
   };
 
+  const formatResults = (results: { [key: string]: { result: string; timestamp: number } }) => {
+    return Object.entries(results)
+      .sort((a, b) => {
+        return b[1].timestamp - a[1].timestamp;
+      })
+      .map(([engine, { result, timestamp }], index) => {
+        const time = new Date(timestamp).toLocaleTimeString();
+        const isLatest = index === 0;
+        return `${isLatest ? '// 🟢 ' : '// ⚪️ '}${engine.toUpperCase()} Engine Result
+${result}
+${isLatest ? '// ======== Latest Result ========' : '// ----------------------------------------'}`;
+      })
+      .join('\n\n');
+  };
+
   return (
     <div className="flex flex-col sm:flex-row h-full">
       <Toaster position="top-center" />
@@ -214,6 +240,7 @@ export const EditorScreen = () => {
                 value={modelKind}
                 onChange={(e) => {
                   setModelKind(e.target.value);
+                  setRequestResults({});
                 }}
                 className={'border-[#767676] border rounded'}
               >
@@ -459,7 +486,7 @@ export const EditorScreen = () => {
                     indentOnInput: true,
                   }}
                   className={'cursor-not-allowed flex-grow h-[300px]'}
-                  value={requestResult}
+                  value={Object.keys(requestResults).length > 0 ? formatResults(requestResults) : requestResult}
                 />
               </div>
             </div>
