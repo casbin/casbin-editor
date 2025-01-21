@@ -31,6 +31,8 @@ export function useEnforceCall(
       setRequestResults({});
 
       const allEngines = [params.selectedEngine, ...(params.comparisonEngines || [])];
+      let lastEcho: React.ReactNode = null;
+
       const results = await Promise.all(
         allEngines.map((engine) => {
           return new Promise<{ engine: string; result: string }>((resolve) => {
@@ -39,7 +41,7 @@ export function useEnforceCall(
               selectedEngine: engine,
               onResponse: (v: any) => {
                 if (isValidElement(v)) {
-                  setEcho(v);
+                  lastEcho = v;
                 } else if (Array.isArray(v)) {
                   const result = formatResults(v);
                   resolve({ engine, result });
@@ -58,6 +60,8 @@ export function useEnforceCall(
           return r.engine === params.selectedEngine;
         })?.result || '';
       setRequestResult(primaryResult);
+
+      setEcho(lastEcho);
 
       if (params.showSuccessToast && primaryResult && !primaryResult.includes('error')) {
         toast.success(t('Test completed successfully'));
