@@ -29,6 +29,7 @@ export interface ShareFormat {
   requestResult?: object;
   enforceContext?: string;
   selectedEngine?: string;
+  comparisonEngines?: string[];
 }
 
 async function dpaste(content: string) {
