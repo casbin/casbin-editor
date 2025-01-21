@@ -1,5 +1,5 @@
 'use client';
-import React, { isValidElement, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { example } from './casbin-mode/example';
 import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
 import { clsx } from 'clsx';
@@ -16,17 +16,20 @@ import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
 import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforceContext';
 import useIndex from '@/app/components/editor/hooks/useIndex';
 import SidePanelChat from '@/app/components/SidePanelChat';
-import { extractPageContent } from '../../utils/contentExtractor';
+import { extractPageContent } from '@/app/utils/contentExtractor';
+import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { buttonPlugin } from './ButtonPlugin';
 import { useLang } from '@/app/context/LangContext';
-import LanguageMenu from '@/app/components/LanguageMenu';
+import LanguageMenu from '@/app/context/LanguageMenu';
 import { linter, lintGutter } from '@codemirror/lint';
-import { toast, Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { CustomConfigPanel } from './CustomConfigPanel';
 import { loadingOverlay } from './LoadingOverlayExtension';
 import useEngineVersions from './hooks/useEngineVersions';
 import { MessageWithTooltip } from './MessageWithTooltip';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
+import { EngineSelector } from './EngineSelector';
+import { useEnforceCall } from './hooks/useEnforceCall';
 
 export const EditorScreen = () => {
   const {
@@ -50,15 +53,23 @@ export const EditorScreen = () => {
     selectedEngine,
     setSelectedEngine,
   } = useIndex();
-  const [open, setOpen] = useState(true);
   const { enforcer } = useRunTest();
   const { shareInfo } = useShareInfo();
+  const { t, lang, theme, toggleTheme } = useLang();
+  const [open, setOpen] = useState(true);
+  const [isContentLoaded, setIsContentLoaded] = useState(false);
+  const [showCustomConfig, setShowCustomConfig] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [requestResults, setRequestResults] = useState<ResultsMap>({});
+  const [comparisonEngines, setComparisonEngines] = useState<string[]>([]);
+  const skipNextEffectRef = useRef(false);
+  const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
   const { setupEnforceContextData, setupHandleEnforceContextChange } = useSetupEnforceContext({
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
   });
-  const [showCustomConfig, setShowCustomConfig] = useState(false);
-  const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
+  const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isLoading);
+  const { handleEnforcerCall } = useEnforceCall(enforcer, setEcho, setRequestResult, setRequestResults, setIsLoading, t);
   const openDrawerWithMessage = (message: string) => {
     if (sidePanelChatRef.current) {
       sidePanelChatRef.current.openDrawer(message);
@@ -68,11 +79,20 @@ export const EditorScreen = () => {
     const { message } = extractPageContent(boxType, t, lang);
     return message;
   };
-  const { t, lang, theme, toggleTheme } = useLang();
-  const [isContentLoaded, setIsContentLoaded] = useState(false);
-  const [isEngineLoading, setIsEngineLoading] = useState(false);
-  const skipNextEffectRef = useRef(false);
-  const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isEngineLoading);
+
+  const runTest = () => {
+    return handleEnforcerCall({
+      modelKind,
+      model: modelText,
+      policy,
+      customConfig,
+      request,
+      enforceContextData,
+      selectedEngine,
+      comparisonEngines,
+      showSuccessToast: true,
+    });
+  };
 
   useEffect(() => {
     if (modelKind && modelText) {
@@ -81,7 +101,10 @@ export const EditorScreen = () => {
         return;
       }
       setIsContentLoaded(true);
-      enforcer({
+      setRequestResults({});
+      setRequestResult('');
+
+      handleEnforcerCall({
         modelKind,
         model: modelText,
         policy,
@@ -89,60 +112,40 @@ export const EditorScreen = () => {
         request,
         enforceContextData,
         selectedEngine,
-        onResponse: (v) => {
-          if (isValidElement(v)) {
-            setEcho(v);
-          } else if (Array.isArray(v)) {
-            const formattedResults = v.map((res) => {
-              if (typeof res === 'object') {
-                const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
-                return `${res.okEx}${reasonString}`;
-              }
-              return res;
-            });
-            setRequestResult(formattedResults.join('\n'));
-          }
-        },
+        comparisonEngines,
       });
     }
-  }, [modelKind, modelText, policy, customConfig, request, enforceContextData, enforcer, setEcho, setRequestResult, selectedEngine]);
-  const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
+  }, [
+    modelKind,
+    modelText,
+    policy,
+    customConfig,
+    request,
+    enforceContextData,
+    selectedEngine,
+    comparisonEngines,
+    handleEnforcerCall,
+    setRequestResult,
+  ]);
 
-  const runTest = async () => {
-    await enforcer({
-      model: modelText,
+  const handleEngineChange = (newPrimary: string, newComparison: string[]) => {
+    skipNextEffectRef.current = true;
+    setSelectedEngine(newPrimary);
+    setComparisonEngines(newComparison);
+    setRequestResults({});
+    handleEnforcerCall({
       modelKind,
+      model: modelText,
       policy,
       customConfig,
       request,
       enforceContextData,
-      selectedEngine,
-      onResponse: (v: JSX.Element | any[]) => {
-        if (isValidElement(v)) {
-          setEcho(v);
-          const props = (v as any).props;
-          if (props.className?.includes('text-red-500')) {
-            const errorMessage = props.children;
-            toast.error(errorMessage);
-            setRequestResult(errorMessage);
-          }
-        } else if (Array.isArray(v)) {
-          const formattedResults = v.map((res) => {
-            if (typeof res === 'object') {
-              const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
-              return `${res.okEx}${reasonString}`;
-            }
-            return res;
-          });
-          const result = formattedResults.join('\n');
-          setRequestResult(result);
-          if (result && !result.includes('error')) {
-            toast.success(t('Test completed successfully'));
-          }
-        }
-      },
+      selectedEngine: newPrimary,
+      comparisonEngines: newComparison,
     });
   };
+
+  const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
   return (
     <div className="flex flex-col sm:flex-row h-full">
@@ -176,6 +179,7 @@ export const EditorScreen = () => {
                 value={modelKind}
                 onChange={(e) => {
                   setModelKind(e.target.value);
+                  setRequestResults({});
                 }}
                 className={'border-[#767676] border rounded'}
               >
@@ -268,54 +272,15 @@ export const EditorScreen = () => {
             <div className="h-10 pl-2 font-bold flex items-center justify-between">
               <div className={textClass}>{t('Policy')}</div>
               <div className="text-right font-bold mr-4 text-sm flex items-center justify-end gap-2">
-                <select
-                  className="bg-transparent border border-[#e13c3c] rounded px-2 py-1 text-[#e13c3c] focus:outline-none"
-                  value={selectedEngine}
-                  onChange={(e) => {
-                    setIsEngineLoading(true);
-                    skipNextEffectRef.current = true;
-                    setSelectedEngine(e.target.value);
-                    enforcer({
-                      modelKind,
-                      model: modelText,
-                      policy,
-                      customConfig,
-                      request,
-                      enforceContextData,
-                      selectedEngine: e.target.value,
-                      onResponse: (v) => {
-                        setIsEngineLoading(false);
-
-                        if (isValidElement(v)) {
-                          setEcho(v);
-                        } else if (Array.isArray(v)) {
-                          const formattedResults = v.map((res) => {
-                            if (typeof res === 'object') {
-                              const reasonString = Array.isArray(res.reason) && res.reason.length > 0 ? ` Reason: ${JSON.stringify(res.reason)}` : '';
-                              return `${res.okEx}${reasonString}`;
-                            }
-                            return res;
-                          });
-                          setRequestResult(formattedResults.join('\n'));
-                        }
-                      },
-                    });
-                  }}
-                >
-                  <option value="node">Node-Casbin (NodeJs) {casbinVersion}</option>
-                  <option value="java">
-                    jCasbin (Java) {javaVersion.libVersion} | (CLI {javaVersion.engineVersion})
-                  </option>
-                  <option value="go">
-                    Casbin (Go) {goVersion.libVersion} | (CLI {goVersion.engineVersion})
-                  </option>
-                </select>
-                <a href={engineGithubLinks[selectedEngine]} target="_blank" rel="noopener noreferrer" className="text-[#e13c3c] hover:text-[#ff4d4d]">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    {/* eslint-disable-next-line max-len */}
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                  </svg>
-                </a>
+                <EngineSelector
+                  selectedEngine={selectedEngine}
+                  comparisonEngines={comparisonEngines}
+                  onEngineChange={handleEngineChange}
+                  casbinVersion={casbinVersion}
+                  javaVersion={javaVersion}
+                  goVersion={goVersion}
+                  engineGithubLinks={engineGithubLinks}
+                />
               </div>
             </div>
             <div className="flex-grow overflow-auto h-full">
@@ -439,7 +404,7 @@ export const EditorScreen = () => {
                     EditorView.lineWrapping,
                     EditorView.editable.of(false),
                     buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult'),
-                    loadingOverlay(isEngineLoading),
+                    loadingOverlay(isLoading),
                   ]}
                   basicSetup={{
                     lineNumbers: true,
@@ -448,7 +413,7 @@ export const EditorScreen = () => {
                     indentOnInput: true,
                   }}
                   className={'cursor-not-allowed flex-grow h-[300px]'}
-                  value={requestResult}
+                  value={Object.keys(requestResults).length > 0 ? formatEngineResults(requestResults, selectedEngine) : requestResult}
                 />
               </div>
             </div>

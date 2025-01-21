@@ -12,12 +12,10 @@ export default function useIndex() {
   const [requestResult, setRequestResult] = useState('');
   const [customConfig, setCustomConfig] = useState('');
   const [share, setShare] = useState('');
-  const [triggerUpdate, setTriggerUpdate] = useState(0);
   const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
   const [selectedEngine, setSelectedEngine] = useState('node');
   const loadState = useRef<{
     loadedHash?: string;
-    content?: ShareFormat;
   }>({});
 
   function setPolicyPersistent(text: string): void {
@@ -41,24 +39,35 @@ export default function useIndex() {
     setEnforceContextData(new Map(map));
   }
 
-  // Load shared content from dpaste.com
+  const updateAllStates = (newModelKind: string, shared?: ShareFormat) => {
+    const modelKindToUse = shared?.modelKind && shared.modelKind in example ? shared.modelKind : newModelKind;
+
+    setModelKind(modelKindToUse);
+    setPolicy(shared?.policy ?? example[modelKindToUse].policy);
+    setModelText(shared?.model ?? example[modelKindToUse].model);
+    setRequest(shared?.request ?? example[modelKindToUse].request);
+    setCustomConfig(shared?.customConfig ?? defaultCustomConfig);
+    setEnforceContextData(
+      new Map(Object.entries(JSON.parse(shared?.enforceContext || example[modelKindToUse].enforceContext || defaultEnforceContext))),
+    );
+
+    if (shared?.selectedEngine) {
+      setSelectedEngine(shared.selectedEngine);
+    }
+  };
+
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     if (hash && hash !== loadState.current.loadedHash) {
       loadState.current.loadedHash = hash;
       setEcho(<div className="text-orange-500">Loading Shared Content...</div>);
+
       fetch(`https://dpaste.com/${hash}.txt`)
         .then((resp) => {
           return resp.ok ? resp.text() : Promise.reject(`HTTP error: ${resp.status}`);
         })
         .then((content) => {
-          const parsed = JSON.parse(content) as ShareFormat;
-          loadState.current.content = parsed;
-          const newModelKind = parsed?.modelKind && parsed.modelKind in example ? parsed.modelKind : 'basic';
-          setModelKind(newModelKind);
-          setTriggerUpdate((prev) => {
-            return prev + 1;
-          });
+          updateAllStates('basic', JSON.parse(content) as ShareFormat);
           setEcho(<div className="text-green-500">Shared Content Loaded.</div>);
         })
         .catch((error) => {
@@ -67,19 +76,11 @@ export default function useIndex() {
     }
   }, []);
 
-  // Set the editor content based on the shared content
   useEffect(() => {
-    const shared = loadState.current.content;
-    setPolicy(shared?.policy ?? example[modelKind].policy);
-    setModelText(shared?.model ?? example[modelKind].model);
-    setRequest(shared?.request ?? example[modelKind].request);
-    setCustomConfig(shared?.customConfig ?? defaultCustomConfig);
-    setEnforceContextData(new Map(Object.entries(JSON.parse(shared?.enforceContext || example[modelKind].enforceContext || defaultEnforceContext))));
-    if (shared?.selectedEngine) {
-      setSelectedEngine(shared.selectedEngine);
+    if (!modelText && !policy && !request) {
+      updateAllStates(modelKind);
     }
-    loadState.current.content = undefined;
-  }, [modelKind, triggerUpdate]);
+  }, [modelKind, modelText, policy, request]);
 
   function handleShare(v: ReactNode | string) {
     if (isValidElement(v)) {
@@ -93,7 +94,9 @@ export default function useIndex() {
 
   return {
     modelKind,
-    setModelKind,
+    setModelKind: (newModelKind: string) => {
+      return updateAllStates(newModelKind);
+    },
     modelText,
     setModelText,
     policy,

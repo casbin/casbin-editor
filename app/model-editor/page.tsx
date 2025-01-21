@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ModelEditor } from '../components/ModelEditor';
+import { ModelEditor } from './ModelEditor';
 
 export default function ModelEditorPage() {
   return (
