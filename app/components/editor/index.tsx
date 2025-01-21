@@ -194,16 +194,22 @@ export const EditorScreen = () => {
   };
 
   const formatResults = (results: { [key: string]: { result: string; timestamp: number } }) => {
-    return Object.entries(results)
+    const entries = Object.entries(results);
+
+    if (entries.length === 1) {
+      return entries[0][1].result;
+    }
+
+    return entries
       .sort((a, b) => {
         return b[1].timestamp - a[1].timestamp;
       })
       .map(([engine, { result, timestamp }], index) => {
         const time = new Date(timestamp).toLocaleTimeString();
         const isLatest = index === 0;
-        return `${isLatest ? '// 🟢 ' : '// ⚪️ '}${engine.toUpperCase()} Engine Result
+        return `${isLatest ? '// 🟢 ' : '// ⚪️ '}${engine} Engine Result
 ${result}
-${isLatest ? '// ======== Latest Result ========' : '// ----------------------------------------'}`;
+${isLatest ? '// ========================' : '// ----------------------------------------'}`;
       })
       .join('\n\n');
   };
