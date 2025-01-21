@@ -1,5 +1,5 @@
 'use client';
-import React, { isValidElement, useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { example } from './casbin-mode/example';
 import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
 import { clsx } from 'clsx';
@@ -17,18 +17,19 @@ import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforc
 import useIndex from '@/app/components/editor/hooks/useIndex';
 import SidePanelChat from '@/app/components/SidePanelChat';
 import { extractPageContent } from '@/app/utils/contentExtractor';
-import { formatResults, formatEngineResults, createResultsMap, ResultsMap } from '@/app/utils/resultFormatter';
+import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { buttonPlugin } from './ButtonPlugin';
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/components/LanguageMenu';
 import { linter, lintGutter } from '@codemirror/lint';
-import { toast, Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { CustomConfigPanel } from './CustomConfigPanel';
 import { loadingOverlay } from './LoadingOverlayExtension';
 import useEngineVersions from './hooks/useEngineVersions';
 import { MessageWithTooltip } from './MessageWithTooltip';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
 import { EngineSelector } from './EngineSelector';
+import { useEnforceCall } from './hooks/useEnforceCall';
 
 export const EditorScreen = () => {
   const {
@@ -68,6 +69,7 @@ export const EditorScreen = () => {
     data: enforceContextData,
   });
   const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isLoading);
+  const { handleEnforcerCall } = useEnforceCall(enforcer, setEcho, setRequestResult, setRequestResults, setIsLoading, t);
   const openDrawerWithMessage = (message: string) => {
     if (sidePanelChatRef.current) {
       sidePanelChatRef.current.openDrawer(message);
@@ -78,69 +80,19 @@ export const EditorScreen = () => {
     return message;
   };
 
-  const handleEnforcerCall = useCallback(
-    async (params: {
-      modelKind: string;
-      model: string;
-      policy: string;
-      customConfig: any;
-      request: string;
-      enforceContextData: any;
-      selectedEngine: string;
-      comparisonEngines?: string[];
-      showSuccessToast?: boolean;
-    }) => {
-      setRequestResult('');
-      setEcho(null);
-      setIsLoading(true);
-      setRequestResults({});
-
-      const allEngines = [params.selectedEngine, ...(params.comparisonEngines || [])];
-      const results = await Promise.all(
-        allEngines.map((engine) =>
-          {return new Promise<{ engine: string; result: string }>((resolve) => {
-            enforcer({
-              ...params,
-              selectedEngine: engine,
-              onResponse: (v) => {
-                if (isValidElement(v)) {
-                  setEcho(v);
-                } else if (Array.isArray(v)) {
-                  const result = formatResults(v);
-                  resolve({ engine, result });
-                }
-              },
-            });
-          })}
-        )
-      );
-
-      const newResults = createResultsMap(results);
-
-      setRequestResults(newResults);
-      const primaryResult = results.find((r) => {return r.engine === params.selectedEngine})?.result || '';
-      setRequestResult(primaryResult);
-      
-      if (params.showSuccessToast && primaryResult && !primaryResult.includes('error')) {
-        toast.success(t('Test completed successfully'));
-      }
-      
-      setIsLoading(false);
-    },
-    [enforcer, setEcho, setRequestResult, t]
-  );
-
-  const runTest = () => {return handleEnforcerCall({
-    modelKind,
-    model: modelText,
-    policy,
-    customConfig,
-    request,
-    enforceContextData,
-    selectedEngine,
-    comparisonEngines,
-    showSuccessToast: true
-  })};
+  const runTest = () => {
+    return handleEnforcerCall({
+      modelKind,
+      model: modelText,
+      policy,
+      customConfig,
+      request,
+      enforceContextData,
+      selectedEngine,
+      comparisonEngines,
+      showSuccessToast: true,
+    });
+  };
 
   useEffect(() => {
     if (modelKind && modelText) {
