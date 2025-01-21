@@ -20,7 +20,7 @@ import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { buttonPlugin } from './ButtonPlugin';
 import { useLang } from '@/app/context/LangContext';
-import LanguageMenu from '@/app/components/LanguageMenu';
+import LanguageMenu from '@/app/context/LanguageMenu';
 import { linter, lintGutter } from '@codemirror/lint';
 import { Toaster } from 'react-hot-toast';
 import { CustomConfigPanel } from './CustomConfigPanel';
