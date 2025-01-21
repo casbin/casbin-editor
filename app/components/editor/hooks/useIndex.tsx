@@ -14,6 +14,7 @@ export default function useIndex() {
   const [share, setShare] = useState('');
   const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
   const [selectedEngine, setSelectedEngine] = useState('node');
+  const [comparisonEngines, setComparisonEngines] = useState<string[]>([]);
   const loadState = useRef<{
     loadedHash?: string;
   }>({});
@@ -53,6 +54,9 @@ export default function useIndex() {
 
     if (shared?.selectedEngine) {
       setSelectedEngine(shared.selectedEngine);
+    }
+    if (shared?.comparisonEngines) {
+      setComparisonEngines(shared.comparisonEngines);
     }
   };
 
@@ -121,5 +125,7 @@ export default function useIndex() {
     handleShare,
     selectedEngine,
     setSelectedEngine,
+    comparisonEngines,
+    setComparisonEngines,
   };
 }

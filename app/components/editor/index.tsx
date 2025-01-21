@@ -52,6 +52,8 @@ export const EditorScreen = () => {
     handleShare,
     selectedEngine,
     setSelectedEngine,
+    comparisonEngines,
+    setComparisonEngines,
   } = useIndex();
   const { enforcer } = useRunTest();
   const { shareInfo } = useShareInfo();
@@ -61,7 +63,6 @@ export const EditorScreen = () => {
   const [showCustomConfig, setShowCustomConfig] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [requestResults, setRequestResults] = useState<ResultsMap>({});
-  const [comparisonEngines, setComparisonEngines] = useState<string[]>([]);
   const skipNextEffectRef = useRef(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
   const { setupEnforceContextData, setupHandleEnforceContextChange } = useSetupEnforceContext({
@@ -457,6 +458,7 @@ export const EditorScreen = () => {
                   request,
                   requestResult: Array.from(enforceContextData.entries()),
                   selectedEngine,
+                  comparisonEngines,
                 });
               }}
             >
