@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import clsx from 'clsx';
+import { useLang } from '@/app/context/LangContext';
 
 interface FileUploadButtonProps {
   onFileContent: (content: string) => void;
@@ -9,7 +10,7 @@ interface FileUploadButtonProps {
 
 export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onFileContent, accept = '.txt,.conf,.csv', className }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const { t } = useLang();
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -52,7 +53,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onFileConten
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 3v12" />
         </svg>
-        <span>Load</span>
+        <span>{t('Load')}</span>
       </button>
     </div>
   );
