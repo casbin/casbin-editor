@@ -1,4 +1,4 @@
-import { ErrorType, getErrorType } from './errorHandler';
+import { ErrorType, getErrorType } from '@/app/utils/errorHandler';
 
 interface ErrorState {
   message: string;

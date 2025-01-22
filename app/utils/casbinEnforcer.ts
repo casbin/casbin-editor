@@ -1,6 +1,6 @@
 import { Enforcer, DefaultRoleManager, Util as CasbinUtil } from 'casbin';
 import { newEnforceContext } from '@/app/components/hooks/useSetupEnforceContext';
-import { parseABACRequest } from './casbinRequestParser';
+import { parseABACRequest } from '@/app/utils/casbinRequestParser';
 
 /**
  * Configure custom functions and RoleManager

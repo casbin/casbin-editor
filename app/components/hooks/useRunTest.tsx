@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { createCasbinEngine } from '../editor/core/CasbinEngine';
+import { createCasbinEngine } from '@/app/components/editor/core/CasbinEngine';
 import { setError, parseError } from '@/app/utils/errorManager';
 
 interface RunTestProps {
