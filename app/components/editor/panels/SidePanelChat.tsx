@@ -1,5 +1,5 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { extractPageContent } from '../../utils/contentExtractor';
+import { extractPageContent } from '@/app/utils/contentExtractor';
 import { useLang } from '@/app/context/LangContext';
 
 const SidePanelChat = forwardRef((props, ref) => {

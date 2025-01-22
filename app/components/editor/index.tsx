@@ -15,21 +15,22 @@ import useRunTest from '@/app/components/hooks/useRunTest';
 import useShareInfo from '@/app/components/hooks/useShareInfo';
 import useSetupEnforceContext from '@/app/components/hooks/useSetupEnforceContext';
 import useIndex from '@/app/components/hooks/useIndex';
-import SidePanelChat from '@/app/components/editor/SidePanelChat';
+import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
-import { buttonPlugin } from '../plugins/ButtonPlugin';
+import { buttonPlugin } from './plugins/ButtonPlugin';
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/context/LanguageMenu';
 import { linter, lintGutter } from '@codemirror/lint';
 import { Toaster } from 'react-hot-toast';
-import { CustomConfigPanel } from './CustomConfigPanel';
-import { loadingOverlay } from '../plugins/LoadingOverlayExtension';
+import { CustomConfigPanel } from './panels/CustomConfigPanel';
+import { loadingOverlay } from './plugins/LoadingOverlayExtension';
 import useEngineVersions from '../hooks/useEngineVersions';
-import { MessageWithTooltip } from './MessageWithTooltip';
+import { MessageWithTooltip } from './common/MessageWithTooltip';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
 import { EngineSelector } from './core/EngineSelector';
 import { useEnforceCall } from '../hooks/useEnforceCall';
+import { FileUploadButton } from './common/FileUploadButton';
 
 export const EditorScreen = () => {
   const {
@@ -182,7 +183,7 @@ export const EditorScreen = () => {
                   setModelKind(e.target.value);
                   setRequestResults({});
                 }}
-                className={'border-[#767676] border rounded'}
+                className={'border-[#767676] border rounded w-[200px] sm:w-[300px]'}
               >
                 <option value="" disabled>
                   {t('Select your model')}
@@ -214,6 +215,7 @@ export const EditorScreen = () => {
               >
                 {t('RESET')}
               </button>
+              <FileUploadButton onFileContent={setModelTextPersistent} accept=".conf" />
               <div className="sm:hidden ml-auto mr-2">
                 <button
                   className={clsx(
@@ -272,7 +274,10 @@ export const EditorScreen = () => {
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className="h-10 pl-2 font-bold flex items-center justify-between">
               <div className={textClass}>{t('Policy')}</div>
-              <div className="text-right font-bold mr-4 text-sm flex items-center justify-end gap-2">
+              <div className="text-right mr-4 text-sm flex items-center justify-end gap-2">
+                <div className="font-normal text-base">
+                  <FileUploadButton onFileContent={setPolicyPersistent} accept=".csv" />
+                </div>
                 <EngineSelector
                   selectedEngine={selectedEngine}
                   comparisonEngines={comparisonEngines}
@@ -350,6 +355,7 @@ export const EditorScreen = () => {
                   }}
                 />
               </div>
+              <FileUploadButton onFileContent={setRequestPersistent} accept=".txt" />
             </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
