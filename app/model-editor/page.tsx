@@ -1,7 +1,4 @@
-'use client';
-
-import React from 'react';
-import { ModelEditor } from './ModelEditor';
+import { ModelEditor } from '@/app/model-editor/ModelEditor';
 
 export default function ModelEditorPage() {
   return (

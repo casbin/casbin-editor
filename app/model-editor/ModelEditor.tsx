@@ -1,21 +1,21 @@
 'use client';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { clsx } from 'clsx';
+import { newModel } from 'casbin';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
 import { basicSetup } from 'codemirror';
 import { indentUnit } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
-import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { linter, lintGutter } from '@codemirror/lint';
-import { casbinLinter } from '@/app/utils/casbinLinter';
-import { newModel } from 'casbin';
-import { buttonPlugin } from '@/app/components/editor/ButtonPlugin';
-import { extractPageContent } from '@/app/utils/contentExtractor';
-import { useLang } from '@/app/context/LangContext';
-import SidePanelChat from '@/app/components/SidePanelChat';
+import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { example } from '@/app/components/editor/casbin-mode/example';
-import { clsx } from 'clsx';
+import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
+import { buttonPlugin } from '@/app/components/editor/plugins/ButtonPlugin';
+import { extractPageContent } from '@/app/utils/contentExtractor';
+import { casbinLinter } from '@/app/utils/casbinLinter';
 import { parseError, setError } from '@/app/utils/errorManager';
+import { useLang } from '@/app/context/LangContext';
 
 export const ModelEditor = () => {
   const [modelText, setModelText] = useState('');

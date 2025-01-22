@@ -1,7 +1,7 @@
 import { Diagnostic } from '@codemirror/lint';
 import { EditorView } from '@codemirror/view';
-import { getError } from './errorManager';
-import { ErrorType } from './errorHandler';
+import { getError } from '@/app/utils/errorManager';
+import { ErrorType } from '@/app/utils/errorHandler';
 
 function createLinter(errorType: ErrorType) {
   return (view: EditorView): Diagnostic[] => {

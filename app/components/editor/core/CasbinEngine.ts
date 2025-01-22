@@ -1,5 +1,5 @@
 import { newEnforcer, newModel, StringAdapter } from 'casbin';
-import { remoteEnforcer, getRemoteVersion, VersionInfo } from './hooks/useRemoteEnforcer';
+import { remoteEnforcer, getRemoteVersion, VersionInfo } from '@/app/components/hooks/useRemoteEnforcer';
 import { setupRoleManager, setupCustomConfig, processRequests } from '@/app/utils/casbinEnforcer';
 
 interface EnforceResult {

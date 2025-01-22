@@ -1,35 +1,36 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { example } from './casbin-mode/example';
-import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
 import { clsx } from 'clsx';
+import { Toaster } from 'react-hot-toast';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
 import { basicSetup } from 'codemirror';
 import { indentUnit } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
+import { javascriptLanguage } from '@codemirror/lang-javascript';
+import { linter, lintGutter } from '@codemirror/lint';
+import { example } from '@/app/components/editor/casbin-mode/example';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
-import { javascriptLanguage } from '@codemirror/lang-javascript';
-import useRunTest from '@/app/components/editor/hooks/useRunTest';
-import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
-import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforceContext';
-import useIndex from '@/app/components/editor/hooks/useIndex';
-import SidePanelChat from '@/app/components/SidePanelChat';
+import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
+import { CustomConfigPanel } from '@/app/components/editor/panels/CustomConfigPanel';
+import { MessageWithTooltip } from '@/app/components/editor/common/MessageWithTooltip';
+import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
+import { EngineSelector } from '@/app/components/editor/core/EngineSelector';
+import { e, m, p, r } from '@/app/components/hooks/useSetupEnforceContext';
+import useRunTest from '@/app/components/hooks/useRunTest';
+import useShareInfo from '@/app/components/hooks/useShareInfo';
+import useSetupEnforceContext from '@/app/components/hooks/useSetupEnforceContext';
+import useIndex from '@/app/components/hooks/useIndex';
+import useEngineVersions from '@/app/components/hooks/useEngineVersions';
+import { useEnforceCall } from '@/app/components/hooks/useEnforceCall';
+import { buttonPlugin } from '@/app/components/editor/plugins/ButtonPlugin';
+import { loadingOverlay } from '@/app/components/editor/plugins/LoadingOverlayExtension';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
-import { buttonPlugin } from './ButtonPlugin';
+import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/context/LanguageMenu';
-import { linter, lintGutter } from '@codemirror/lint';
-import { Toaster } from 'react-hot-toast';
-import { CustomConfigPanel } from './CustomConfigPanel';
-import { loadingOverlay } from './LoadingOverlayExtension';
-import useEngineVersions from './hooks/useEngineVersions';
-import { MessageWithTooltip } from './MessageWithTooltip';
-import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
-import { EngineSelector } from './EngineSelector';
-import { useEnforceCall } from './hooks/useEnforceCall';
 
 export const EditorScreen = () => {
   const {
@@ -182,7 +183,7 @@ export const EditorScreen = () => {
                   setModelKind(e.target.value);
                   setRequestResults({});
                 }}
-                className={'border-[#767676] border rounded'}
+                className={'border-[#767676] border rounded w-[200px] sm:w-[300px]'}
               >
                 <option value="" disabled>
                   {t('Select your model')}
@@ -214,6 +215,7 @@ export const EditorScreen = () => {
               >
                 {t('RESET')}
               </button>
+              <FileUploadButton onFileContent={setModelTextPersistent} accept=".conf" />
               <div className="sm:hidden ml-auto mr-2">
                 <button
                   className={clsx(
@@ -272,7 +274,10 @@ export const EditorScreen = () => {
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className="h-10 pl-2 font-bold flex items-center justify-between">
               <div className={textClass}>{t('Policy')}</div>
-              <div className="text-right font-bold mr-4 text-sm flex items-center justify-end gap-2">
+              <div className="text-right mr-4 text-sm flex items-center justify-end gap-2">
+                <div className="font-normal text-base">
+                  <FileUploadButton onFileContent={setPolicyPersistent} accept=".csv" />
+                </div>
                 <EngineSelector
                   selectedEngine={selectedEngine}
                   comparisonEngines={comparisonEngines}
@@ -350,6 +355,7 @@ export const EditorScreen = () => {
                   }}
                 />
               </div>
+              <FileUploadButton onFileContent={setRequestPersistent} accept=".txt" />
             </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
