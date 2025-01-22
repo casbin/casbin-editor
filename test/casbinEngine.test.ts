@@ -1,5 +1,5 @@
 import { newEnforcer, newModel, StringAdapter } from 'casbin';
-import { RemoteCasbinEngine } from '../app/components/editor/CasbinEngine';
+import { RemoteCasbinEngine } from '../app/components/editor/core/CasbinEngine';
 import { example } from '../app/components/editor/casbin-mode/example';
 
 interface EngineResult {

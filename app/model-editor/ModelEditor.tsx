@@ -9,10 +9,10 @@ import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-co
 import { linter, lintGutter } from '@codemirror/lint';
 import { casbinLinter } from '@/app/utils/casbinLinter';
 import { newModel } from 'casbin';
-import { buttonPlugin } from '@/app/components/editor/ButtonPlugin';
+import { buttonPlugin } from '@/app/components/plugins/ButtonPlugin';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { useLang } from '@/app/context/LangContext';
-import SidePanelChat from '@/app/components/SidePanelChat';
+import SidePanelChat from '@/app/components/editor/SidePanelChat';
 import { example } from '@/app/components/editor/casbin-mode/example';
 import { clsx } from 'clsx';
 import { parseError, setError } from '@/app/utils/errorManager';

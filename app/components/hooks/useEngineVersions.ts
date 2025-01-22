@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { createCasbinEngine } from '../CasbinEngine';
+import { createCasbinEngine } from '../editor/core/CasbinEngine';
 import { VersionInfo } from './useRemoteEnforcer';
 
 type EngineType = 'java' | 'go' | 'node';

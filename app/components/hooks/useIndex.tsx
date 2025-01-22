@@ -1,7 +1,7 @@
 import React, { isValidElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { defaultCustomConfig, defaultEnforceContext, example } from '@/app/components/editor/casbin-mode/example';
-import { ShareFormat } from '@/app/components/editor/hooks/useShareInfo';
-import { defaultEnforceContextData } from '@/app/components/editor/hooks/useSetupEnforceContext';
+import { ShareFormat } from '@/app/components/hooks/useShareInfo';
+import { defaultEnforceContextData } from '@/app/components/hooks/useSetupEnforceContext';
 
 export default function useIndex() {
   const [modelKind, setModelKind] = useState('basic');

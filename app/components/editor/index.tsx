@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { example } from './casbin-mode/example';
-import { e, m, p, r } from '@/app/components/editor/hooks/useSetupEnforceContext';
+import { e, m, p, r } from '@/app/components/hooks/useSetupEnforceContext';
 import { clsx } from 'clsx';
 import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
@@ -11,25 +11,25 @@ import { EditorView } from '@codemirror/view';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
-import useRunTest from '@/app/components/editor/hooks/useRunTest';
-import useShareInfo from '@/app/components/editor/hooks/useShareInfo';
-import useSetupEnforceContext from '@/app/components/editor/hooks/useSetupEnforceContext';
-import useIndex from '@/app/components/editor/hooks/useIndex';
-import SidePanelChat from '@/app/components/SidePanelChat';
+import useRunTest from '@/app/components/hooks/useRunTest';
+import useShareInfo from '@/app/components/hooks/useShareInfo';
+import useSetupEnforceContext from '@/app/components/hooks/useSetupEnforceContext';
+import useIndex from '@/app/components/hooks/useIndex';
+import SidePanelChat from '@/app/components/editor/SidePanelChat';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
-import { buttonPlugin } from './ButtonPlugin';
+import { buttonPlugin } from '../plugins/ButtonPlugin';
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/context/LanguageMenu';
 import { linter, lintGutter } from '@codemirror/lint';
 import { Toaster } from 'react-hot-toast';
 import { CustomConfigPanel } from './CustomConfigPanel';
-import { loadingOverlay } from './LoadingOverlayExtension';
-import useEngineVersions from './hooks/useEngineVersions';
+import { loadingOverlay } from '../plugins/LoadingOverlayExtension';
+import useEngineVersions from '../hooks/useEngineVersions';
 import { MessageWithTooltip } from './MessageWithTooltip';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
-import { EngineSelector } from './EngineSelector';
-import { useEnforceCall } from './hooks/useEnforceCall';
+import { EngineSelector } from './core/EngineSelector';
+import { useEnforceCall } from '../hooks/useEnforceCall';
 
 export const EditorScreen = () => {
   const {
