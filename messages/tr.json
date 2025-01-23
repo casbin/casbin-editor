@@ -7,9 +7,7 @@
   "Select your model": "Modelinizi seçin",
   "RESET": "SIFIRLA",
   "Policy": "Politika",
-  "Compare": "Karşılaştır",
   "Request": "İstek",
-  "Load": "Yükle",
   "Enforcement Result": "Uygulama Sonucu",
   "Why this result": "Neden bu sonuç",
   "RUN THE TEST": "TESTİ ÇALIŞTIR",
@@ -18,5 +16,10 @@
   "Share failed": "Paylaşım başarısız",
   "No content to share": "Paylaşılacak içerik yok",
   "Link copied to clipboard": "Link kopyalandı",
-  "Test completed successfully": "Test başarıyla tamamlandı"
+  "Test completed successfully": "Test başarıyla tamamlandı",
+  "Enter custom endpoint": "Özel endpoint girin",
+  "Upload File": "Dosya yükle",
+  "Select Endpoint": "Endpoint seçin",
+  "Compare Engines": "Motorları karşılaştır",
+  "View Source Code": "Kaynak kodu görüntüle"
 }

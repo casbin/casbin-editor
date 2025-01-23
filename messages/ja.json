@@ -7,9 +7,7 @@
   "Select your model": "モデルを選択",
   "RESET": "リセット",
   "Policy": "ポリシー",
-  "Compare": "比較",
   "Request": "リクエスト",
-  "Load": "ロード",
   "Enforcement Result": "実行結果",
   "Why this result": "なぜこの結果？",
   "RUN THE TEST": "テスト実行",
@@ -18,5 +16,10 @@
   "Share failed": "共有失敗",
   "No content to share": "共有する内容がありません",
   "Link copied to clipboard": "リンクがクリップボードにコピーされました",
-  "Test completed successfully": "テストが完了しました"
+  "Test completed successfully": "テストが完了しました",
+  "Enter custom endpoint": "カスタムエンドポイントを入力",
+  "Upload File": "ファイルをアップロード",
+  "Select Endpoint": "エンドポイントを選択",
+  "Compare Engines": "エンジンを比較",
+  "View Source Code": "ソースコードを表示"
 }

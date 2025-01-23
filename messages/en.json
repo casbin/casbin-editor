@@ -7,9 +7,7 @@
   "Select your model": "Select your model",
   "RESET": "RESET",
   "Policy": "Policy",
-  "Compare": "Compare",
   "Request": "Request",
-  "Load": "Load",
   "Enforcement Result": "Enforcement Result",
   "Why this result": "Why this result",
   "RUN THE TEST": "RUN THE TEST",
@@ -18,5 +16,10 @@
   "Share failed": "Share failed",
   "No content to share": "No content to share",
   "Link copied to clipboard": "Link copied to clipboard",
-  "Test completed successfully": "Test completed successfully"
+  "Test completed successfully": "Test completed successfully",
+  "Enter custom endpoint": "Enter custom endpoint",
+  "Upload File": "Upload File",
+  "Select Endpoint": "Select Endpoint",
+  "Compare Engines": "Compare Engines",
+  "View Source Code": "View Source Code"
 }

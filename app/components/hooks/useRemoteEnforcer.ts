@@ -24,9 +24,19 @@ export interface VersionInfo {
   libVersion: string;
 }
 
+export const DEFAULT_ENDPOINT = 'door.casdoor.com';
+
+export const getEndpoint = () => {
+  try {
+    return window?.localStorage?.getItem('casbinEndpoint') || DEFAULT_ENDPOINT;
+  } catch {
+    return DEFAULT_ENDPOINT;
+  }
+};
+
 export async function remoteEnforcer(props: RemoteEnforcerProps) {
   try {
-    const baseUrl = 'https://door.casdoor.com/api/run-casbin-command';
+    const baseUrl = `https://${getEndpoint()}/api/run-casbin-command`;
     const args = [
       'enforceEx',
       '-m',
@@ -84,7 +94,7 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
 
 export async function getRemoteVersion(language: 'java' | 'go'): Promise<VersionInfo> {
   try {
-    const baseUrl = 'https://door.casdoor.com/api/run-casbin-command';
+    const baseUrl = `https://${getEndpoint()}/api/run-casbin-command`;
     const url = new URL(baseUrl);
     url.searchParams.set('language', language);
     url.searchParams.set('args', JSON.stringify(['-v']));

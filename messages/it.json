@@ -7,9 +7,7 @@
   "Select your model": "Seleziona il tuo modello",
   "RESET": "REIMPOSTA",
   "Policy": "Politica",
-  "Compare": "Confronta",
   "Request": "Richiesta",
-  "Load": "Carica",
   "Enforcement Result": "Risultato dell'applicazione",
   "Why this result": "Perché questo risultato",
   "RUN THE TEST": "ESEGUI IL TEST",
@@ -18,5 +16,10 @@
   "Share failed": "Condivisione fallita",
   "No content to share": "Nessun contenuto da condividere",
   "Link copied to clipboard": "Link copiato nel portapapele",
-  "Test completed successfully": "Test completato con successo"
+  "Test completed successfully": "Test completato con successo",
+  "Enter custom endpoint": "Inserisci l'endpoint personalizzato",
+  "Upload File": "Carica file",
+  "Select Endpoint": "Seleziona endpoint",
+  "Compare Engines": "Confronta motori",
+  "View Source Code": "Visualizza codice sorgente"
 }

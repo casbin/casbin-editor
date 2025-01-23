@@ -7,9 +7,7 @@
   "Select your model": "选择模型",
   "RESET": "重置",
   "Policy": "策略",
-  "Compare": "比较",
   "Request": "请求",
-  "Load": "上传",
   "Enforcement Result": "执行结果",
   "Why this result": "为何此结果？",
   "RUN THE TEST": "运行",
@@ -18,5 +16,10 @@
   "Share failed": "分享失败",
   "No content to share": "没有内容可以分享",
   "Link copied to clipboard": "链接已复制到剪贴板",
-  "Test completed successfully": "测试成功"
+  "Test completed successfully": "测试成功",
+  "Enter custom endpoint": "输入自定义端点",
+  "Upload File": "上传文件",
+  "Select Endpoint": "选择端点",
+  "Compare Engines": "比较引擎",
+  "View Source Code": "查看源码"
 }
