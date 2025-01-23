@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useLang } from '@/app/context/LangContext';
-
 
 interface EngineVersion {
   libVersion: string;
@@ -53,7 +51,6 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({
   engineGithubLinks,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { t } = useLang();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const engines = AVAILABLE_ENGINES(casbinVersion, javaVersion, goVersion);
 
@@ -88,15 +85,22 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({
       <select
         className="bg-transparent border border-[#e13c3c] rounded px-2 py-1 text-[#e13c3c] focus:outline-none"
         value={selectedEngine}
-        onChange={(e) => {return handlePrimaryEngineChange(e.target.value)}}
+        onChange={(e) => {
+          return handlePrimaryEngineChange(e.target.value);
+        }}
       >
-        {engines.map((engine) => {return (
-          <option key={engine.id} value={engine.id}>
-            {engine.name} {!engine.version ? '' : 
-              typeof engine.version === 'string' ? engine.version :
-              `${engine.version.libVersion} | (CLI ${engine.version.engineVersion})`}
-          </option>
-        )})}
+        {engines.map((engine) => {
+          return (
+            <option key={engine.id} value={engine.id}>
+              {engine.name}{' '}
+              {!engine.version
+                ? ''
+                : typeof engine.version === 'string'
+                  ? engine.version
+                  : `${engine.version.libVersion} | (CLI ${engine.version.engineVersion})`}
+            </option>
+          );
+        })}
       </select>
 
       <button
@@ -105,7 +109,10 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({
         }}
         className="border border-[#e13c3c] rounded px-2 py-1 text-[#e13c3c] hover:bg-[#e13c3c] hover:text-white"
       >
-        {t('Compare')}
+        <svg className="w-4 h-4" viewBox="0 0 1024 1024" fill="currentColor">
+          {/* eslint-disable-next-line max-len */}
+          <path d="M116.364 837.818h279.272v93.091H23.273V93.091h372.363v93.09H116.364v651.637z m512 0h93.09v93.091h-93.09v-93.09z m139.636 0h93.09v93.091H768v-93.09z m139.636 93.091v-93.09h93.091v93.09h-93.09z m0-325.818V512h93.091v93.09h-93.09z m0 139.636v-93.09h93.091v93.09h-93.09z m0-279.272v-93.091h93.091v93.09h-93.09z m0-139.637v-93.09h93.091v93.09h-93.09z m0-139.636V93.09h93.091v93.09h-93.09z m-46.545 0H768V93.09h93.09v93.09z m-139.636 0h-93.091V93.09h93.09v93.09zM488.727 0h93.091v1024h-93.09V0z" />
+        </svg>
       </button>
 
       {isOpen && (

@@ -14,9 +14,9 @@ import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-co
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
 import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
 import { CustomConfigPanel } from '@/app/components/editor/panels/CustomConfigPanel';
+import { PolicyToolbar } from '@/app/components/editor/panels/PolicyToolbar';
 import { MessageWithTooltip } from '@/app/components/editor/common/MessageWithTooltip';
 import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
-import { EngineSelector } from '@/app/components/editor/core/EngineSelector';
 import { e, m, p, r } from '@/app/components/hooks/useSetupEnforceContext';
 import useRunTest from '@/app/components/hooks/useRunTest';
 import useShareInfo from '@/app/components/hooks/useShareInfo';
@@ -274,20 +274,16 @@ export const EditorScreen = () => {
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className="h-10 pl-2 font-bold flex items-center justify-between">
               <div className={textClass}>{t('Policy')}</div>
-              <div className="text-right mr-4 text-sm flex items-center justify-end gap-2">
-                <div className="font-normal text-base">
-                  <FileUploadButton onFileContent={setPolicyPersistent} accept=".csv" />
-                </div>
-                <EngineSelector
-                  selectedEngine={selectedEngine}
-                  comparisonEngines={comparisonEngines}
-                  onEngineChange={handleEngineChange}
-                  casbinVersion={casbinVersion}
-                  javaVersion={javaVersion}
-                  goVersion={goVersion}
-                  engineGithubLinks={engineGithubLinks}
-                />
-              </div>
+              <PolicyToolbar
+                setPolicyPersistent={setPolicyPersistent}
+                selectedEngine={selectedEngine}
+                comparisonEngines={comparisonEngines}
+                handleEngineChange={handleEngineChange}
+                casbinVersion={casbinVersion}
+                javaVersion={javaVersion}
+                goVersion={goVersion}
+                engineGithubLinks={engineGithubLinks}
+              />
             </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
