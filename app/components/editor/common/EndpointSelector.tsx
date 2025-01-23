@@ -9,10 +9,11 @@ const ENDPOINTS = [
 
 export const EndpointSelector: React.FC = () => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [selectedEndpoint, setSelectedEndpoint] = React.useState(
-    window.localStorage.getItem('casbinEndpoint') || DEFAULT_ENDPOINT
+  const storedEndpoint = window.localStorage.getItem('casbinEndpoint') || DEFAULT_ENDPOINT;
+  const [selectedEndpoint, setSelectedEndpoint] = React.useState(storedEndpoint);
+  const [customEndpoint, setCustomEndpoint] = React.useState(
+    ENDPOINTS.includes(storedEndpoint) ? '' : storedEndpoint
   );
-  const [customEndpoint, setCustomEndpoint] = React.useState('');
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -36,10 +37,14 @@ export const EndpointSelector: React.FC = () => {
 
   const handleCustomEndpointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    setCustomEndpoint(value);
+    
     if (value) {
-      setCustomEndpoint(value);
       setSelectedEndpoint(value);
       window.localStorage.setItem('casbinEndpoint', value);
+    } else {
+      setSelectedEndpoint(DEFAULT_ENDPOINT);
+      window.localStorage.setItem('casbinEndpoint', DEFAULT_ENDPOINT);
     }
   };
 
