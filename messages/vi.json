@@ -17,5 +17,9 @@
   "No content to share": "Không có nội dung để chia sẻ",
   "Link copied to clipboard": "Link đã được sao chép vào clipboard",
   "Test completed successfully": "Test hoàn tất thành công",
-  "Enter custom endpoint": "Nhập điểm cuối tùy chỉnh"
+  "Enter custom endpoint": "Nhập điểm cuối tùy chỉnh",
+  "Upload File": "Tải lên tệp",
+  "Select Endpoint": "Chọn điểm cuối",
+  "Compare Engines": "So sánh máy",
+  "View Source Code": "Xem mã nguồn"
 }

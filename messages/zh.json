@@ -17,5 +17,9 @@
   "No content to share": "没有内容可以分享",
   "Link copied to clipboard": "链接已复制到剪贴板",
   "Test completed successfully": "测试成功",
-  "Enter custom endpoint": "输入自定义端点"
+  "Enter custom endpoint": "输入自定义端点",
+  "Upload File": "上传文件",
+  "Select Endpoint": "选择端点",
+  "Compare Engines": "比较引擎",
+  "View Source Code": "查看源码"
 }

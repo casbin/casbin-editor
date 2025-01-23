@@ -17,5 +17,9 @@
   "No content to share": "Paylaşılacak içerik yok",
   "Link copied to clipboard": "Link kopyalandı",
   "Test completed successfully": "Test başarıyla tamamlandı",
-  "Enter custom endpoint": "Özel endpoint girin"
+  "Enter custom endpoint": "Özel endpoint girin",
+  "Upload File": "Dosya yükle",
+  "Select Endpoint": "Endpoint seçin",
+  "Compare Engines": "Motorları karşılaştır",
+  "View Source Code": "Kaynak kodu görüntüle"
 }

@@ -1,5 +1,5 @@
 import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
-import { EngineSelector } from '@/app/components/editor/core/EngineSelector';
+import { EngineSelector } from '@/app/components/editor/common/EngineSelector';
 import { EndpointSelector } from '@/app/components/editor/common/EndpointSelector';
 
 interface PolicyToolbarProps {

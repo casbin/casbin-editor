@@ -17,5 +17,9 @@
   "No content to share": "共有する内容がありません",
   "Link copied to clipboard": "リンクがクリップボードにコピーされました",
   "Test completed successfully": "テストが完了しました",
-  "Enter custom endpoint": "カスタムエンドポイントを入力"
+  "Enter custom endpoint": "カスタムエンドポイントを入力",
+  "Upload File": "ファイルをアップロード",
+  "Select Endpoint": "エンドポイントを選択",
+  "Compare Engines": "エンジンを比較",
+  "View Source Code": "ソースコードを表示"
 }

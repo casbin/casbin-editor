@@ -17,5 +17,9 @@
   "No content to share": "No content to share",
   "Link copied to clipboard": "Link copied to clipboard",
   "Test completed successfully": "Test completed successfully",
-  "Enter custom endpoint": "Enter custom endpoint"
+  "Enter custom endpoint": "Enter custom endpoint",
+  "Upload File": "Upload File",
+  "Select Endpoint": "Select Endpoint",
+  "Compare Engines": "Compare Engines",
+  "View Source Code": "View Source Code"
 }

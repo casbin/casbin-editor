@@ -17,5 +17,9 @@
   "No content to share": "Não há conteúdo para compartilhar",
   "Link copied to clipboard": "Link copiado para o clipboard",
   "Test completed successfully": "Teste concluído com sucesso",
-  "Enter custom endpoint": "Insira o endpoint personalizado"
+  "Enter custom endpoint": "Insira o endpoint personalizado",
+  "Upload File": "Carregar arquivo",
+  "Select Endpoint": "Selecionar endpoint",
+  "Compare Engines": "Comparar motores",
+  "View Source Code": "Visualizar código fonte"
 }

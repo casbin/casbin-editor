@@ -17,5 +17,9 @@
   "No content to share": "공유할 내용이 없습니다",
   "Link copied to clipboard": "링크가 클립보드에 복사되었습니다",
   "Test completed successfully": "테스트가 완료되었습니다",
-  "Enter custom endpoint": "사용자 정의 엔드포인트 입력"
+  "Enter custom endpoint": "사용자 정의 엔드포인트 입력",
+  "Upload File": "파일 업로드",
+  "Select Endpoint": "엔드포인트 선택",
+  "Compare Engines": "엔진 비교",
+  "View Source Code": "소스 코드 보기"
 }

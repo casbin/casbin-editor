@@ -17,5 +17,9 @@
   "No content to share": "Нет содержимого для разделения",
   "Link copied to clipboard": "Ссылка скопирована в буфер обмена",
   "Test completed successfully": "Тест завершен успешно",
-  "Enter custom endpoint": "Введите пользовательский конечный пункт"
+  "Enter custom endpoint": "Введите пользовательский конечный пункт",
+  "Upload File": "Загрузить файл",
+  "Select Endpoint": "Выберите конечный пункт",
+  "Compare Engines": "Сравнить движки",
+  "View Source Code": "Просмотреть исходный код"
 }
