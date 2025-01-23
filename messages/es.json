@@ -7,9 +7,7 @@
   "Select your model": "Seleccione su modelo",
   "RESET": "REINICIAR",
   "Policy": "Política",
-  "Compare": "Comparar",
   "Request": "Solicitud",
-  "Load": "Cargar",
   "Enforcement Result": "Resultado de ejecución",
   "Why this result": "Por qué este resultado",
   "RUN THE TEST": "EJECUTAR PRUEBA",
@@ -18,5 +16,6 @@
   "Share failed": "Compartir falló",
   "No content to share": "No hay contenido para compartir",
   "Link copied to clipboard": "Enlace copiado en el portapapeles",
-  "Test completed successfully": "Prueba completada con éxito"
+  "Test completed successfully": "Prueba completada con éxito",
+  "Enter custom endpoint": "Ingrese el endpoint personalizado"
 }

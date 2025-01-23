@@ -7,9 +7,7 @@
   "Select your model": "모델 선택",
   "RESET": "재설정",
   "Policy": "정책",
-  "Compare": "비교",
   "Request": "요청",
-  "Load": "로드",
   "Enforcement Result": "집행 결과",
   "Why this result": "이 결과의 이유",
   "RUN THE TEST": "테스트 실행",
@@ -18,5 +16,6 @@
   "Share failed": "공유 실패",
   "No content to share": "공유할 내용이 없습니다",
   "Link copied to clipboard": "링크가 클립보드에 복사되었습니다",
-  "Test completed successfully": "테스트가 완료되었습니다"
+  "Test completed successfully": "테스트가 완료되었습니다",
+  "Enter custom endpoint": "사용자 정의 엔드포인트 입력"
 }

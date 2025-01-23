@@ -7,9 +7,7 @@
   "Select your model": "Chọn mô hình của bạn",
   "RESET": "CÀI LẠI",
   "Policy": "Chính sách",
-  "Compare": "So sánh",
   "Request": "Yêu cầu",
-  "Load": "Tải",
   "Enforcement Result": "Kết quả thi hành",
   "Why this result": "Tại sao kết quả này",
   "RUN THE TEST": "CHẠY THỬ",
@@ -18,5 +16,6 @@
   "Share failed": "Chia sẻ thất bại",
   "No content to share": "Không có nội dung để chia sẻ",
   "Link copied to clipboard": "Link đã được sao chép vào clipboard",
-  "Test completed successfully": "Test hoàn tất thành công"
+  "Test completed successfully": "Test hoàn tất thành công",
+  "Enter custom endpoint": "Nhập điểm cuối tùy chỉnh"
 }

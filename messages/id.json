@@ -7,9 +7,7 @@
   "Select your model": "Pilih model Anda",
   "RESET": "RESET",
   "Policy": "Kebijakan",
-  "Compare": "Membandingkan",
   "Request": "Permintaan",
-  "Load": "Muat",
   "Enforcement Result": "Hasil penegakan",
   "Why this result": "Mengapa hasil ini",
   "RUN THE TEST": "JALANKAN UJI",
@@ -18,5 +16,6 @@
   "Share failed": "Membagikan gagal",
   "No content to share": "Tidak ada konten untuk dibagikan",
   "Link copied to clipboard": "Tautan disalin ke clipboard",
-  "Test completed successfully": "Uji berhasil"
+  "Test completed successfully": "Uji berhasil",
+  "Enter custom endpoint": "Masukkan endpoint kustom"
 }

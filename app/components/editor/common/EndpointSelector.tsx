@@ -1,6 +1,7 @@
 import React from 'react';
 import { clsx } from 'clsx';
 import { DEFAULT_ENDPOINT } from '@/app/components/hooks/useRemoteEnforcer';
+import { useLang } from '@/app/context/LangContext';
 
 const ENDPOINTS = [
   DEFAULT_ENDPOINT,
@@ -8,6 +9,7 @@ const ENDPOINTS = [
 ];
 
 export const EndpointSelector: React.FC = () => {
+  const { t } = useLang();
   const [isOpen, setIsOpen] = React.useState(false);
   const storedEndpoint = window.localStorage.getItem('casbinEndpoint') || DEFAULT_ENDPOINT;
   const [selectedEndpoint, setSelectedEndpoint] = React.useState(storedEndpoint);
@@ -105,7 +107,7 @@ export const EndpointSelector: React.FC = () => {
                   type="text"
                   value={customEndpoint}
                   onChange={handleCustomEndpointChange}
-                  placeholder="Enter custom endpoint"
+                  placeholder={t('Enter custom endpoint')}
                   className={clsx(
                     'border border-gray-300 rounded',
                     'px-2 py-1',
