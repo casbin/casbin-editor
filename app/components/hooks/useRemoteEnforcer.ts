@@ -34,6 +34,13 @@ export const getEndpoint = () => {
   }
 };
 
+const EDITOR_STATIC_IDENTIFIER = 'casbin-editor-v1';
+
+function generateEditorIdentifier(): string {
+  const timestamp = new Date().toISOString();
+  return `${EDITOR_STATIC_IDENTIFIER}|${timestamp}`;
+}
+
 export async function remoteEnforcer(props: RemoteEnforcerProps) {
   try {
     const baseUrl = `https://${getEndpoint()}/api/run-casbin-command`;
@@ -56,6 +63,7 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
       method: 'GET',
       headers: {
         Accept: 'application/json',
+        'X-Editor-Identifier': generateEditorIdentifier(),
       },
     });
 
@@ -99,7 +107,12 @@ export async function getRemoteVersion(language: 'java' | 'go'): Promise<Version
     url.searchParams.set('language', language);
     url.searchParams.set('args', JSON.stringify(['-v']));
 
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), {
+      headers: {
+        'X-Editor-Identifier': generateEditorIdentifier(),
+      },
+    });
+
     const result = await response.json();
     const versionInfo = result.data as string;
 
