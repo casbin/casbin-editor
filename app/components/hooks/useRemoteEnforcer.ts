@@ -34,32 +34,32 @@ export const getEndpoint = () => {
   }
 };
 
-async function generateIdentifierParam(params: Record<string, string>): Promise<{hash: string, timestamp: string}> {
+async function generateIdentifierParam(params: Record<string, string>): Promise<{ hash: string; timestamp: string }> {
   const timestamp = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
   const version = 'casbin-editor-v1';
-  
+
   const sortedKeys = Object.keys(params).sort();
-  
+
   const paramString = sortedKeys
     .map((key) => {
       return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
     })
     .join('&');
-  
+
   const rawString = `${version}|${timestamp}|${paramString}`;
-  
+
   const msgBuffer = new TextEncoder().encode(rawString);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  
+
   const hashHex = Array.from(new Uint8Array(hashBuffer))
     .map((b) => {
       return b.toString(16).padStart(2, '0');
     })
     .join('');
-  
+
   return {
     hash: hashHex,
-    timestamp
+    timestamp,
   };
 }
 
@@ -79,7 +79,7 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
 
     const params = {
       language: props.engine,
-      args: JSON.stringify(args)
+      args: JSON.stringify(args),
     };
 
     const url = new URL(baseUrl);
@@ -132,10 +132,10 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
 export async function getRemoteVersion(language: 'java' | 'go'): Promise<VersionInfo> {
   try {
     const baseUrl = `https://${getEndpoint()}/api/run-casbin-command`;
-    
+
     const params = {
       language,
-      args: JSON.stringify(['-v'])
+      args: JSON.stringify(['-v']),
     };
 
     const url = new URL(baseUrl);
