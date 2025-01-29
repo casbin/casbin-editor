@@ -34,10 +34,29 @@ export const getEndpoint = () => {
   }
 };
 
-async function generateIdentifierParam(): Promise<string> {
-  const timestamp = new Date().toISOString();
-  const identifier = `casbin-editor-v1|${timestamp}`;
-  return btoa(identifier);
+async function generateIdentifierParam(params: Record<string, string>): Promise<{hash: string, timestamp: string}> {
+  const timestamp = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+  const version = 'casbin-editor-v1';
+  
+  const sortedKeys = Object.keys(params).sort();
+  
+  const paramString = sortedKeys
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    .join('&');
+  
+  const rawString = `${version}|${timestamp}|${paramString}`;
+  
+  const msgBuffer = new TextEncoder().encode(rawString);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  
+  const hashHex = Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+  
+  return {
+    hash: hashHex,
+    timestamp
+  };
 }
 
 export async function remoteEnforcer(props: RemoteEnforcerProps) {
@@ -54,10 +73,17 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
       }),
     ];
 
+    const params = {
+      language: props.engine,
+      args: JSON.stringify(args)
+    };
+
     const url = new URL(baseUrl);
-    url.searchParams.set('language', props.engine);
-    url.searchParams.set('args', JSON.stringify(args));
-    url.searchParams.set('identifier', await generateIdentifierParam());
+    const { hash, timestamp } = await generateIdentifierParam(params);
+    url.searchParams.set('language', params.language);
+    url.searchParams.set('args', params.args);
+    url.searchParams.set('m', hash);
+    url.searchParams.set('t', timestamp);
 
     const response = await fetch(url.toString(), {
       method: 'GET',
@@ -102,10 +128,18 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
 export async function getRemoteVersion(language: 'java' | 'go'): Promise<VersionInfo> {
   try {
     const baseUrl = `https://${getEndpoint()}/api/run-casbin-command`;
+    
+    const params = {
+      language,
+      args: JSON.stringify(['-v'])
+    };
+
     const url = new URL(baseUrl);
-    url.searchParams.set('language', language);
-    url.searchParams.set('args', JSON.stringify(['-v']));
-    url.searchParams.set('identifier', await generateIdentifierParam());
+    const { hash, timestamp } = await generateIdentifierParam(params);
+    url.searchParams.set('language', params.language);
+    url.searchParams.set('args', params.args);
+    url.searchParams.set('m', hash);
+    url.searchParams.set('t', timestamp);
 
     const response = await fetch(url.toString());
     const result = await response.json();
