@@ -41,7 +41,9 @@ async function generateIdentifierParam(params: Record<string, string>): Promise<
   const sortedKeys = Object.keys(params).sort();
   
   const paramString = sortedKeys
-    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    .map((key) => {
+      return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
+    })
     .join('&');
   
   const rawString = `${version}|${timestamp}|${paramString}`;
@@ -50,7 +52,9 @@ async function generateIdentifierParam(params: Record<string, string>): Promise<
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
   
   const hashHex = Array.from(new Uint8Array(hashBuffer))
-    .map(b => b.toString(16).padStart(2, '0'))
+    .map((b) => {
+      return b.toString(16).padStart(2, '0');
+    })
     .join('');
   
   return {
