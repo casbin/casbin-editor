@@ -35,18 +35,17 @@ export const getEndpoint = () => {
 };
 
 async function generateIdentifierParam(params: Record<string, string>): Promise<{ hash: string; timestamp: string }> {
-  const timestamp = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+  const timestamp = new Date().toISOString();
   const version = 'casbin-editor-v1';
 
-  const sortedKeys = Object.keys(params).sort();
-
-  const paramString = sortedKeys
+  const sortedParams = Object.keys(params)
+    .sort()
     .map((key) => {
-      return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
+      return `${key}=${params[key]}`;
     })
     .join('&');
 
-  const rawString = `${version}|${timestamp}|${paramString}`;
+  const rawString = `${version}|${timestamp}|${sortedParams}`;
 
   const msgBuffer = new TextEncoder().encode(rawString);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
