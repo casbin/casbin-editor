@@ -70,7 +70,7 @@ export const EditorScreen = () => {
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
   });
-  const { javaVersion, goVersion, casbinVersion, engineGithubLinks } = useEngineVersions(isLoading);
+  const { javaVersion, goVersion, casbinVersion, rustVersion, engineGithubLinks } = useEngineVersions(isLoading);
   const { handleEnforcerCall } = useEnforceCall(enforcer, setEcho, setRequestResult, setRequestResults, setIsLoading, t);
   const openDrawerWithMessage = (message: string) => {
     if (sidePanelChatRef.current) {
@@ -282,6 +282,7 @@ export const EditorScreen = () => {
                 casbinVersion={casbinVersion}
                 javaVersion={javaVersion}
                 goVersion={goVersion}
+                rustVersion={rustVersion}
                 engineGithubLinks={engineGithubLinks}
               />
             </div>

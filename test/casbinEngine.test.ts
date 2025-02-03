@@ -18,6 +18,7 @@ describe('Casbin Engine Tests', () => {
         const remoteEngines = {
           java: new RemoteCasbinEngine('java'),
           go: new RemoteCasbinEngine('go'),
+          rust: new RemoteCasbinEngine('rust'),
         };
 
         const requests = testCase.request.split('\n').filter(Boolean);
