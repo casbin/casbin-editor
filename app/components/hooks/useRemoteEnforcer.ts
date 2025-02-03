@@ -16,7 +16,7 @@ interface RemoteEnforcerProps {
   model: string;
   policy: string;
   request: string;
-  engine: 'java' | 'go';
+  engine: 'java' | 'go' | 'rust';
 }
 
 export interface VersionInfo {
@@ -128,13 +128,13 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
   }
 }
 
-export async function getRemoteVersion(language: 'java' | 'go'): Promise<VersionInfo> {
+export async function getRemoteVersion(language: 'java' | 'go' | 'rust'): Promise<VersionInfo> {
   try {
     const baseUrl = `https://${getEndpoint()}/api/run-casbin-command`;
 
     const params = {
       language,
-      args: JSON.stringify(['-v']),
+      args: JSON.stringify(['--version']),
     };
 
     const url = new URL(baseUrl);

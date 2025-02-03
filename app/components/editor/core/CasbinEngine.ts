@@ -47,7 +47,7 @@ export class NodeCasbinEngine implements ICasbinEngine {
 
 // RemoteCasbinEngine
 export class RemoteCasbinEngine implements ICasbinEngine {
-  constructor(private engine: 'java' | 'go') {}
+  constructor(private engine: 'java' | 'go' | 'rust') {}
 
   async enforce(params) {
     try {
@@ -77,12 +77,13 @@ export class RemoteCasbinEngine implements ICasbinEngine {
   }
 }
 
-export function createCasbinEngine(type: 'node' | 'java' | 'go'): ICasbinEngine {
+export function createCasbinEngine(type: 'node' | 'java' | 'go' | 'rust'): ICasbinEngine {
   switch (type) {
     case 'node':
       return new NodeCasbinEngine();
     case 'java':
     case 'go':
+    case 'rust':
       return new RemoteCasbinEngine(type);
     default:
       throw new Error(`Unsupported engine type: ${type}`);

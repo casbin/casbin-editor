@@ -20,10 +20,16 @@ interface EngineSelectorProps {
   casbinVersion?: string;
   javaVersion?: EngineVersion;
   goVersion?: EngineVersion;
+  rustVersion?: EngineVersion;
   engineGithubLinks: Record<string, string>;
 }
 
-const AVAILABLE_ENGINES = (casbinVersion?: string, javaVersion?: EngineVersion, goVersion?: EngineVersion): EngineConfig[] => {
+const AVAILABLE_ENGINES = (
+  casbinVersion?: string,
+  javaVersion?: EngineVersion,
+  goVersion?: EngineVersion,
+  rustVersion?: EngineVersion,
+): EngineConfig[] => {
   return [
     {
       id: 'node',
@@ -40,6 +46,11 @@ const AVAILABLE_ENGINES = (casbinVersion?: string, javaVersion?: EngineVersion, 
       name: 'Casbin (Go)',
       version: goVersion,
     },
+    {
+      id: 'rust',
+      name: 'Casbin-rs (Rust)',
+      version: rustVersion,
+    },
   ];
 };
 
@@ -50,12 +61,13 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({
   casbinVersion,
   javaVersion,
   goVersion,
+  rustVersion,
   engineGithubLinks,
 }) => {
   const { t } = useLang();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const engines = AVAILABLE_ENGINES(casbinVersion, javaVersion, goVersion);
+  const engines = AVAILABLE_ENGINES(casbinVersion, javaVersion, goVersion, rustVersion);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

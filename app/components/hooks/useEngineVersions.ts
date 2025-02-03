@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { createCasbinEngine } from '@/app/components/editor/core/CasbinEngine';
 import { VersionInfo } from '@/app/components/hooks/useRemoteEnforcer';
 
-type EngineType = 'java' | 'go' | 'node';
+type EngineType = 'java' | 'go' | 'node' | 'rust';
 
 export interface EngineVersionsReturn {
   javaVersion: VersionInfo;
   goVersion: VersionInfo;
+  rustVersion: VersionInfo;
   casbinVersion: string | undefined;
   engineGithubLinks: Record<EngineType, string>;
 }
@@ -33,6 +34,12 @@ const ENGINE_CONFIGS: Record<EngineType, EngineConfig> = {
     githubRepo: 'casbin/node-casbin',
     createEngine: () => {
       return createCasbinEngine('node');
+    },
+  },
+  rust: {
+    githubRepo: 'casbin/casbin-rs',
+    createEngine: () => {
+      return createCasbinEngine('rust');
     },
   },
 };
@@ -90,6 +97,7 @@ export default function useEngineVersions(isEngineLoading: boolean): EngineVersi
   return {
     javaVersion: versions.java,
     goVersion: versions.go,
+    rustVersion: versions.rust,
     casbinVersion,
     engineGithubLinks,
   };

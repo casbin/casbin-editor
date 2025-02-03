@@ -6,7 +6,7 @@ export interface ResultsMap {
   [key: string]: EngineResult;
 }
 
-const ENGINE_ORDER = ['node', 'java', 'go'];
+const ENGINE_ORDER = ['node', 'java', 'go', 'rust'];
 
 export function formatEngineResults(results: ResultsMap, selectedEngine: string): string {
   const entries = Object.entries(results);
