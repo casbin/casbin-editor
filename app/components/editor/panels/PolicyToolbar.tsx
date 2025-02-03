@@ -16,6 +16,10 @@ interface PolicyToolbarProps {
     libVersion: string;
     engineVersion: string;
   };
+  rustVersion?: {
+    libVersion: string;
+    engineVersion: string;
+  };
   engineGithubLinks: Record<string, string>;
 }
 
@@ -27,6 +31,7 @@ export const PolicyToolbar: React.FC<PolicyToolbarProps> = ({
   casbinVersion,
   javaVersion,
   goVersion,
+  rustVersion,
   engineGithubLinks,
 }) => {
   return (
@@ -42,6 +47,7 @@ export const PolicyToolbar: React.FC<PolicyToolbarProps> = ({
         casbinVersion={casbinVersion}
         javaVersion={javaVersion}
         goVersion={goVersion}
+        rustVersion={rustVersion}
         engineGithubLinks={engineGithubLinks}
       />
     </div>

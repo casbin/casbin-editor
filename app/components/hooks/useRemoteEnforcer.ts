@@ -147,17 +147,17 @@ export async function getRemoteVersion(language: 'java' | 'go' | 'rust'): Promis
     const response = await fetch(url.toString());
     const result = await response.json();
     const versionInfo = result.data as string;
-
-    const [cliLine, libLine] = versionInfo.split('\n');
+    const lines = versionInfo.trim().split('\n');
 
     const getVersionNumber = (line: string) => {
+      if (!line) return 'unknown';
       const match = line.match(/(?:v|[\s])([\d.]+)/);
       return match ? `v${match[1]}` : 'unknown';
     };
 
     return {
-      engineVersion: getVersionNumber(cliLine),
-      libVersion: getVersionNumber(libLine),
+      engineVersion: getVersionNumber(lines[0]),
+      libVersion: lines[1] ? getVersionNumber(lines[1]) : 'unknown',
     };
   } catch (error) {
     console.error(`Error getting ${language} version:`, error);
