@@ -1,26 +1,16 @@
 import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
 import { EngineSelector } from '@/app/components/editor/common/EngineSelector';
 import { EndpointSelector } from '@/app/components/editor/common/EndpointSelector';
+import type { EngineType } from '@/app/config/engineConfig';
+import type { VersionInfo } from '@/app/components/hooks/useRemoteEnforcer';
 
 interface PolicyToolbarProps {
   setPolicyPersistent: (content: string) => void;
-  selectedEngine: string;
-  comparisonEngines: string[];
-  handleEngineChange: (newPrimary: string, newComparison: string[]) => void;
-  casbinVersion?: string;
-  javaVersion?: {
-    libVersion: string;
-    engineVersion: string;
-  };
-  goVersion?: {
-    libVersion: string;
-    engineVersion: string;
-  };
-  rustVersion?: {
-    libVersion: string;
-    engineVersion: string;
-  };
-  engineGithubLinks: Record<string, string>;
+  selectedEngine: EngineType;
+  comparisonEngines: EngineType[];
+  handleEngineChange: (newPrimary: EngineType, newComparison: EngineType[]) => void;
+  versions: Record<EngineType, VersionInfo>;
+  engineGithubLinks: Record<EngineType, string>;
 }
 
 export const PolicyToolbar: React.FC<PolicyToolbarProps> = ({
@@ -28,10 +18,7 @@ export const PolicyToolbar: React.FC<PolicyToolbarProps> = ({
   selectedEngine,
   comparisonEngines,
   handleEngineChange,
-  casbinVersion,
-  javaVersion,
-  goVersion,
-  rustVersion,
+  versions,
   engineGithubLinks,
 }) => {
   return (
@@ -44,10 +31,7 @@ export const PolicyToolbar: React.FC<PolicyToolbarProps> = ({
         selectedEngine={selectedEngine}
         comparisonEngines={comparisonEngines}
         onEngineChange={handleEngineChange}
-        casbinVersion={casbinVersion}
-        javaVersion={javaVersion}
-        goVersion={goVersion}
-        rustVersion={rustVersion}
+        versions={versions}
         engineGithubLinks={engineGithubLinks}
       />
     </div>

@@ -1,9 +1,10 @@
 import { newEnforcer, newModel, StringAdapter } from 'casbin';
 import { RemoteCasbinEngine } from '../app/components/editor/core/CasbinEngine';
 import { example } from '../app/components/editor/casbin-mode/example';
+import { EngineType, ENGINES } from '@/app/config/engineConfig';
 
 interface EngineResult {
-  engineType: string;
+  engineType: EngineType;
   allowed: boolean;
   reason?: string[];
   nodeResult: boolean;
@@ -15,11 +16,11 @@ describe('Casbin Engine Tests', () => {
       test(`should return consistent enforcement result for ${testCase.name}`, async () => {
         const nodeEnforcer = await newEnforcer(newModel(testCase.model), new StringAdapter(testCase.policy || ' '));
 
-        const remoteEngines = {
-          java: new RemoteCasbinEngine('java'),
-          go: new RemoteCasbinEngine('go'),
-          rust: new RemoteCasbinEngine('rust'),
-        };
+        const remoteEngines = Object.fromEntries(
+          Object.entries(ENGINES)
+            .filter(([_, config]) => config.isRemote)
+            .map(([id]) => [id, new RemoteCasbinEngine(id as Exclude<EngineType, 'node'>)]),
+        ) as Record<Exclude<EngineType, 'node'>, RemoteCasbinEngine>;
 
         const requests = testCase.request.split('\n').filter(Boolean);
 
@@ -59,7 +60,7 @@ describe('Casbin Engine Tests', () => {
               }
 
               engineResults.push({
-                engineType,
+                engineType: engineType as EngineType,
                 allowed: remoteResult.allowed,
                 reason: remoteResult.reason,
                 nodeResult,

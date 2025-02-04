@@ -1,73 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLang } from '@/app/context/LangContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/app/components/ui/tooltip';
-
-interface EngineVersion {
-  libVersion: string;
-  engineVersion: string;
-}
-
-interface EngineConfig {
-  id: string;
-  name: string;
-  version?: string | EngineVersion;
-}
+import { EngineType, ENGINES } from '@/app/config/engineConfig';
+import type { VersionInfo } from '@/app/components/hooks/useRemoteEnforcer';
 
 interface EngineSelectorProps {
-  selectedEngine: string;
-  comparisonEngines: string[];
-  onEngineChange: (primary: string, comparison: string[]) => void;
-  casbinVersion?: string;
-  javaVersion?: EngineVersion;
-  goVersion?: EngineVersion;
-  rustVersion?: EngineVersion;
-  engineGithubLinks: Record<string, string>;
+  selectedEngine: EngineType;
+  comparisonEngines: EngineType[];
+  onEngineChange: (primary: EngineType, comparison: EngineType[]) => void;
+  versions: Record<EngineType, VersionInfo>;
+  engineGithubLinks: Record<EngineType, string>;
 }
 
-const AVAILABLE_ENGINES = (
-  casbinVersion?: string,
-  javaVersion?: EngineVersion,
-  goVersion?: EngineVersion,
-  rustVersion?: EngineVersion,
-): EngineConfig[] => {
-  return [
-    {
-      id: 'node',
-      name: 'Node-Casbin (NodeJs)',
-      version: casbinVersion || '',
-    },
-    {
-      id: 'java',
-      name: 'jCasbin (Java)',
-      version: javaVersion,
-    },
-    {
-      id: 'go',
-      name: 'Casbin (Go)',
-      version: goVersion,
-    },
-    {
-      id: 'rust',
-      name: 'Casbin-rs (Rust)',
-      version: rustVersion,
-    },
-  ];
-};
-
-export const EngineSelector: React.FC<EngineSelectorProps> = ({
-  selectedEngine,
-  comparisonEngines,
-  onEngineChange,
-  casbinVersion,
-  javaVersion,
-  goVersion,
-  rustVersion,
-  engineGithubLinks,
-}) => {
+export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, comparisonEngines, onEngineChange, versions, engineGithubLinks }) => {
   const { t } = useLang();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const engines = AVAILABLE_ENGINES(casbinVersion, javaVersion, goVersion, rustVersion);
+  const engines = Object.entries(ENGINES).map(([id, config]) => ({
+    id,
+    name: config.name,
+    version: id === 'node' ? process.env.CASBIN_VERSION : versions[id as EngineType],
+  }));
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -83,15 +36,15 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({
   }, []);
 
   const handlePrimaryEngineChange = (engineId: string) => {
-    onEngineChange(engineId, []);
+    onEngineChange(engineId as EngineType, []);
   };
 
   const handleComparisonToggle = (engineId: string) => {
-    const newComparison = comparisonEngines.includes(engineId)
+    const newComparison = comparisonEngines.includes(engineId as EngineType)
       ? comparisonEngines.filter((id) => {
           return id !== engineId;
         })
-      : [...comparisonEngines, engineId];
+      : [...comparisonEngines, engineId as EngineType];
     onEngineChange(selectedEngine, newComparison);
   };
 
@@ -165,7 +118,7 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({
                   <div className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={isSelected || comparisonEngines.includes(engine.id)}
+                      checked={isSelected || comparisonEngines.includes(engine.id as EngineType)}
                       onChange={() => {
                         return handleComparisonToggle(engine.id);
                       }}
