@@ -10,7 +10,11 @@ export interface EngineVersionsReturn {
 
 export default function useEngineVersions(isEngineLoading: boolean): EngineVersionsReturn {
   const [versions, setVersions] = useState<Record<EngineType, VersionInfo>>(() => {
-    return Object.fromEntries(Object.keys(ENGINES).map((key) => [key, { engineVersion: '', libVersion: '' }])) as Record<EngineType, VersionInfo>;
+    return Object.fromEntries(
+      Object.keys(ENGINES).map((key) => {
+        return [key, { engineVersion: '', libVersion: '' }];
+      }),
+    ) as Record<EngineType, VersionInfo>;
   });
 
   const casbinVersion = process.env.CASBIN_VERSION;

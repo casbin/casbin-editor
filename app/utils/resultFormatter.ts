@@ -19,7 +19,9 @@ export function formatEngineResults(results: ResultsMap, selectedEngine: EngineT
       if (b[0] === selectedEngine) return 1;
       return ENGINES[a[0] as EngineType].order - ENGINES[b[0] as EngineType].order;
     })
-    .map(([engine, data]) => formatSingleResult(engine, data, engine === selectedEngine))
+    .map(([engine, data]) => {
+      return formatSingleResult(engine, data, engine === selectedEngine);
+    })
     .join('\n\n');
 }
 

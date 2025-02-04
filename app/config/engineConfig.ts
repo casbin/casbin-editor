@@ -17,7 +17,9 @@ export const ENGINES = {
     githubRepo: 'casbin/node-casbin',
     isRemote: false,
     order: 1,
-    createEngine: () => createCasbinEngine('node'),
+    createEngine: () => {
+      return createCasbinEngine('node');
+    },
   },
   java: {
     id: 'java',
@@ -25,7 +27,9 @@ export const ENGINES = {
     githubRepo: 'casbin/jcasbin',
     isRemote: true,
     order: 2,
-    createEngine: () => new RemoteCasbinEngine('java'),
+    createEngine: () => {
+      return new RemoteCasbinEngine('java');
+    },
   },
   go: {
     id: 'go',
@@ -33,7 +37,9 @@ export const ENGINES = {
     githubRepo: 'casbin/casbin',
     isRemote: true,
     order: 3,
-    createEngine: () => new RemoteCasbinEngine('go'),
+    createEngine: () => {
+      return new RemoteCasbinEngine('go');
+    },
   },
   rust: {
     id: 'rust',
@@ -41,7 +47,9 @@ export const ENGINES = {
     githubRepo: 'casbin/casbin-rs',
     isRemote: true,
     order: 4,
-    createEngine: () => new RemoteCasbinEngine('rust'),
+    createEngine: () => {
+      return new RemoteCasbinEngine('rust');
+    },
   },
 } as const;
 

@@ -16,11 +16,13 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
   const { t } = useLang();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const engines = Object.entries(ENGINES).map(([id, config]) => ({
-    id,
-    name: config.name,
-    version: id === 'node' ? process.env.CASBIN_VERSION : versions[id as EngineType],
-  }));
+  const engines = Object.entries(ENGINES).map(([id, config]) => {
+    return {
+      id,
+      name: config.name,
+      version: id === 'node' ? process.env.CASBIN_VERSION : versions[id as EngineType],
+    };
+  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
