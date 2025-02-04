@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import type { EngineType } from '@/app/config/engineConfig';
+
 interface RemoteEnforcerProps {
   model: string;
   policy: string;
   request: string;
-  engine: 'java' | 'go' | 'rust';
+  engine: Exclude<EngineType, 'node'>;
 }
 
 export interface VersionInfo {
@@ -128,7 +130,7 @@ export async function remoteEnforcer(props: RemoteEnforcerProps) {
   }
 }
 
-export async function getRemoteVersion(language: 'java' | 'go' | 'rust'): Promise<VersionInfo> {
+export async function getRemoteVersion(language: Exclude<EngineType, 'node'>): Promise<VersionInfo> {
   try {
     const baseUrl = `https://${getEndpoint()}/api/run-casbin-command`;
 
@@ -147,17 +149,16 @@ export async function getRemoteVersion(language: 'java' | 'go' | 'rust'): Promis
     const response = await fetch(url.toString());
     const result = await response.json();
     const versionInfo = result.data as string;
-    const lines = versionInfo.trim().split('\n');
+    const [cliLine, libLine] = versionInfo.trim().split('\n');
 
     const getVersionNumber = (line: string) => {
-      if (!line) return 'unknown';
       const match = line.match(/(?:v|[\s])([\d.]+)/);
       return match ? `v${match[1]}` : 'unknown';
     };
 
     return {
-      engineVersion: getVersionNumber(lines[0]),
-      libVersion: lines[1] ? getVersionNumber(lines[1]) : 'unknown',
+      engineVersion: getVersionNumber(cliLine),
+      libVersion: getVersionNumber(libLine),
     };
   } catch (error) {
     console.error(`Error getting ${language} version:`, error);

@@ -31,6 +31,7 @@ import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/context/LanguageMenu';
+import type { EngineType } from '@/app/config/engineConfig';
 
 export const EditorScreen = () => {
   const {
@@ -70,7 +71,7 @@ export const EditorScreen = () => {
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
   });
-  const { javaVersion, goVersion, casbinVersion, rustVersion, engineGithubLinks } = useEngineVersions(isLoading);
+  const { versions, engineGithubLinks } = useEngineVersions(isLoading);
   const { handleEnforcerCall } = useEnforceCall(enforcer, setEcho, setRequestResult, setRequestResults, setIsLoading, t);
   const openDrawerWithMessage = (message: string) => {
     if (sidePanelChatRef.current) {
@@ -130,7 +131,7 @@ export const EditorScreen = () => {
     setRequestResult,
   ]);
 
-  const handleEngineChange = (newPrimary: string, newComparison: string[]) => {
+  const handleEngineChange = (newPrimary: EngineType, newComparison: EngineType[]) => {
     skipNextEffectRef.current = true;
     setSelectedEngine(newPrimary);
     setComparisonEngines(newComparison);
@@ -279,10 +280,7 @@ export const EditorScreen = () => {
                 selectedEngine={selectedEngine}
                 comparisonEngines={comparisonEngines}
                 handleEngineChange={handleEngineChange}
-                casbinVersion={casbinVersion}
-                javaVersion={javaVersion}
-                goVersion={goVersion}
-                rustVersion={rustVersion}
+                versions={versions}
                 engineGithubLinks={engineGithubLinks}
               />
             </div>

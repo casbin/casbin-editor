@@ -14,6 +14,7 @@
 
 import { createCasbinEngine } from '@/app/components/editor/core/CasbinEngine';
 import { setError, parseError } from '@/app/utils/errorManager';
+import type { EngineType } from '@/app/config/engineConfig';
 
 interface RunTestProps {
   model: string;
@@ -22,7 +23,7 @@ interface RunTestProps {
   customConfig: string;
   request: string;
   enforceContextData: Map<string, string>;
-  selectedEngine: string;
+  selectedEngine: EngineType;
   onResponse: (com: JSX.Element | any[]) => void;
 }
 
@@ -30,7 +31,7 @@ async function enforcer(props: RunTestProps) {
   const startTime = performance.now();
 
   try {
-    const engine = createCasbinEngine(props.selectedEngine as 'node' | 'java' | 'go');
+    const engine = createCasbinEngine(props.selectedEngine);
 
     const requests = props.request.split('\n').filter((line) => {
       return line.trim();

@@ -2,6 +2,7 @@ import React, { isValidElement, ReactNode, useEffect, useRef, useState } from 'r
 import { defaultCustomConfig, defaultEnforceContext, example } from '@/app/components/editor/casbin-mode/example';
 import { ShareFormat } from '@/app/components/hooks/useShareInfo';
 import { defaultEnforceContextData } from '@/app/components/hooks/useSetupEnforceContext';
+import type { EngineType } from '@/app/config/engineConfig';
 
 export default function useIndex() {
   const [modelKind, setModelKind] = useState('basic');
@@ -13,11 +14,16 @@ export default function useIndex() {
   const [customConfig, setCustomConfig] = useState('');
   const [share, setShare] = useState('');
   const [enforceContextData, setEnforceContextData] = useState(new Map(defaultEnforceContextData));
-  const [selectedEngine, setSelectedEngine] = useState('node');
-  const [comparisonEngines, setComparisonEngines] = useState<string[]>([]);
+  const [selectedEngine, setSelectedEngineState] = useState<EngineType>('node');
+  const [comparisonEngines, setComparisonEngines] = useState<EngineType[]>([]);
   const loadState = useRef<{
     loadedHash?: string;
   }>({});
+
+  const setSelectedEngine = (engine: EngineType) => {
+    setSelectedEngineState(engine);
+    localStorage.setItem('selectedEngine', engine);
+  };
 
   function setPolicyPersistent(text: string): void {
     setPolicy(text);
@@ -53,10 +59,10 @@ export default function useIndex() {
     );
 
     if (shared?.selectedEngine) {
-      setSelectedEngine(shared.selectedEngine);
+      setSelectedEngine(shared.selectedEngine as EngineType);
     }
     if (shared?.comparisonEngines) {
-      setComparisonEngines(shared.comparisonEngines);
+      setComparisonEngines(shared.comparisonEngines as EngineType[]);
     }
   };
 
