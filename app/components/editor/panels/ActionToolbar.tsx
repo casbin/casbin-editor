@@ -1,7 +1,9 @@
 import { clsx } from 'clsx';
 import { useLang } from '@/app/context/LangContext';
+import { toast } from 'react-hot-toast';
 import type { EngineType } from '@/app/config/engineConfig';
 import type { ShareProps } from '@/app/components/hooks/useShareInfo';
+import { refreshEngines } from '@/app/components/hooks/useRemoteEnforcer';
 
 interface ActionToolbarProps {
   runTest: () => void;
@@ -32,8 +34,14 @@ export const ActionToolbar = ({
 }: ActionToolbarProps) => {
   const { t } = useLang();
 
-  const handleRefreshEngines = () => {
-    console.log('Refresh engines clicked');
+  const handleRefreshEngines = async () => {
+    const toastId = toast.loading(t('Refreshing engines...'));
+    try {
+      await refreshEngines();
+      toast.success(t('Engines refreshed successfully'), { id: toastId });
+    } catch (error) {
+      toast.error(t('Failed to refresh engines'), { id: toastId });
+    }
   };
 
   const handleShareClick = () => {
