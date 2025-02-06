@@ -12,7 +12,8 @@
     "dist": "yarn build && electron-builder",
     "release": "npx -p semantic-release -p @semantic-release/git -p @semantic-release/changelog -p @semantic-release/exec semantic-release",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\""
   },
   "build": {
     "appId": "org.casbin.editor",

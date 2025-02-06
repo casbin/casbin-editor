@@ -11,6 +11,7 @@
   "Enforcement Result": "Keputusan penguatkuasaan",
   "Why this result": "Mengapa keputusan ini",
   "RUN THE TEST": "JALANKAN UJIAN",
+  "Refresh Engines": "Memperbarui mesin",
   "SHARE": "KONGSI",
   "Sharing": "Mengongsikan...",
   "Share failed": "Mengongsikan gagal",
@@ -21,5 +22,8 @@
   "Upload File": "Unggah file",
   "Select Endpoint": "Pilih endpoint",
   "Compare Engines": "Bandingkan mesin",
-  "View Source Code": "Lihat kode sumber"
+  "View Source Code": "Lihat kode sumber",
+  "Refreshing engines...": "Memperbarui mesin...",
+  "Engines refreshed successfully": "Mesin berhasil diperbarui",
+  "Failed to refresh engines": "Gagal memperbarui mesin"
 }

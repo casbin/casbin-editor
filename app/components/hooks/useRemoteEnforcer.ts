@@ -36,30 +36,32 @@ export const getEndpoint = () => {
   }
 };
 
-async function generateIdentifierParam(params: Record<string, string>): Promise<{ hash: string; timestamp: string }> {
+async function generateIdentifierParam(params: Record<string, string> = {}): Promise<{ hash: string; timestamp: string }> {
   const timestamp = new Date().toISOString();
   const version = 'casbin-editor-v1';
 
-  const sortedParams = Object.keys(params)
-    .sort()
-    .map((key) => {
-      return `${key}=${params[key]}`;
-    })
-    .join('&');
+  let rawString = `${version}|${timestamp}`;
 
-  const rawString = `${version}|${timestamp}|${sortedParams}`;
+  if (Object.keys(params).length > 0) {
+    const sortedParams = Object.keys(params)
+      .sort()
+      .map((key) => {
+        return `${key}=${params[key]}`;
+      })
+      .join('&');
+    rawString = `${rawString}|${sortedParams}`;
+  }
 
   const msgBuffer = new TextEncoder().encode(rawString);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-
-  const hashHex = Array.from(new Uint8Array(hashBuffer))
+  const hash = Array.from(new Uint8Array(hashBuffer))
     .map((b) => {
       return b.toString(16).padStart(2, '0');
     })
     .join('');
 
   return {
-    hash: hashHex,
+    hash,
     timestamp,
   };
 }
@@ -166,5 +168,38 @@ export async function getRemoteVersion(language: Exclude<EngineType, 'node'>): P
       engineVersion: 'unknown',
       libVersion: 'unknown',
     };
+  }
+}
+
+export async function refreshEngines(): Promise<void> {
+  try {
+    const baseUrl = `https://${getEndpoint()}/api/refresh-engines`;
+    const url = new URL(baseUrl);
+
+    const { hash, timestamp } = await generateIdentifierParam();
+
+    url.searchParams.set('m', hash);
+    url.searchParams.set('t', timestamp);
+
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    if (result.status !== 'ok') {
+      throw new Error(result.msg || 'API request failed');
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('Error refreshing engines:', error);
+    throw error;
   }
 }

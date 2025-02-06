@@ -16,10 +16,6 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useLang } from '@/app/context/LangContext';
 
-interface ShareProps extends ShareFormat {
-  onResponse: (info: JSX.Element | string) => void;
-}
-
 export interface ShareFormat {
   modelKind?: string;
   model?: string;
@@ -30,6 +26,10 @@ export interface ShareFormat {
   enforceContext?: string;
   selectedEngine?: string;
   comparisonEngines?: string[];
+}
+
+export interface ShareProps extends ShareFormat {
+  onResponse: (info: JSX.Element | string) => void;
 }
 
 async function dpaste(content: string) {

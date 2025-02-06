@@ -11,6 +11,7 @@
   "Enforcement Result": "执行结果",
   "Why this result": "为何此结果？",
   "RUN THE TEST": "运行",
+  "Refresh Engines": "更新引擎",
   "SHARE": "分享",
   "Sharing": "分享中...",
   "Share failed": "分享失败",
@@ -21,5 +22,8 @@
   "Upload File": "上传文件",
   "Select Endpoint": "选择端点",
   "Compare Engines": "比较引擎",
-  "View Source Code": "查看源码"
+  "View Source Code": "查看源码",
+  "Refreshing engines...": "更新引擎中...",
+  "Engines refreshed successfully": "更新成功",
+  "Failed to refresh engines": "更新失败"
 }

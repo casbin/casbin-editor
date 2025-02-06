@@ -31,7 +31,6 @@ button:hover img {
 }
 /* ------------------------------ */
 
-
 /* ------------------------------ */
 .btn-active {
   @apply border-[#453d7d] text-[#453d7a] bg-[#efefef] hover:bg-[#453d7d] hover:text-white;

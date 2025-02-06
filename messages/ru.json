@@ -11,6 +11,7 @@
   "Enforcement Result": "Результат исполнения",
   "Why this result": "Почему этот результат",
   "RUN THE TEST": "ЗАПУСТИТЬ ТЕСТ",
+  "Refresh Engines": "Обновить движки",
   "SHARE": "ПОДЕЛИТЬСЯ",
   "Sharing": "Поделиться...",
   "Share failed": "Поделиться не удалось",
@@ -21,5 +22,8 @@
   "Upload File": "Загрузить файл",
   "Select Endpoint": "Выберите конечный пункт",
   "Compare Engines": "Сравнить движки",
-  "View Source Code": "Просмотреть исходный код"
+  "View Source Code": "Просмотреть исходный код",
+  "Refreshing engines...": "Обновление движков...",
+  "Engines refreshed successfully": "Движки обновлены успешно",
+  "Failed to refresh engines": "Ошибка при обновлении движков"
 }

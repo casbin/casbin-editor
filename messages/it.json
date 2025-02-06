@@ -11,6 +11,7 @@
   "Enforcement Result": "Risultato dell'applicazione",
   "Why this result": "Perché questo risultato",
   "RUN THE TEST": "ESEGUI IL TEST",
+  "Refresh Engines": "Aggiorna motori",
   "SHARE": "CONDIVIDI",
   "Sharing": "Condividendo...",
   "Share failed": "Condivisione fallita",
@@ -21,5 +22,8 @@
   "Upload File": "Carica file",
   "Select Endpoint": "Seleziona endpoint",
   "Compare Engines": "Confronta motori",
-  "View Source Code": "Visualizza codice sorgente"
+  "View Source Code": "Visualizza codice sorgente",
+  "Refreshing engines...": "Aggiornamento motori...",
+  "Engines refreshed successfully": "Motori aggiornati con successo",
+  "Failed to refresh engines": "Errore nell'aggiornamento motori"
 }
