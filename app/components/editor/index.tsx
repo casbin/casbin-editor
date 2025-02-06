@@ -32,6 +32,7 @@ import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLin
 import { useLang } from '@/app/context/LangContext';
 import LanguageMenu from '@/app/context/LanguageMenu';
 import type { EngineType } from '@/app/config/engineConfig';
+import { ActionToolbar } from '@/app/components/editor/panels/ActionToolbar';
 
 export const EditorScreen = () => {
   const {
@@ -422,51 +423,19 @@ export const EditorScreen = () => {
           </div>
         </div>
         <div className={clsx('pt-2 px-1 flex flex-col sm:flex-row items-start sm:items-center')}>
-          <div className="flex flex-row flex-wrap gap-2 mb-2 sm:mb-0 w-full sm:w-auto">
-            <button
-              className={clsx(
-                'rounded',
-                'px-2 py-1',
-                'border border-[#453d7d]',
-                'text-[#453d7a]',
-                'bg-[#efefef]',
-                'hover:bg-[#453d7d] hover:text-white',
-                'transition-colors duration-500',
-              )}
-              onClick={runTest}
-            >
-              {t('RUN THE TEST')}
-            </button>
-            <button
-              className={clsx(
-                'rounded',
-                'px-2 py-1',
-                'border border-[#453d7d]',
-                'text-[#453d7a]',
-                'bg-[#efefef]',
-                'hover:bg-[#453d7d] hover:text-white',
-                'transition-colors duration-500',
-              )}
-              onClick={() => {
-                shareInfo({
-                  onResponse: (v) => {
-                    return handleShare(v);
-                  },
-                  modelKind,
-                  model: modelText,
-                  policy,
-                  customConfig,
-                  request,
-                  requestResult: Array.from(enforceContextData.entries()),
-                  selectedEngine,
-                  comparisonEngines,
-                });
-              }}
-            >
-              {t('SHARE')}
-            </button>
-          </div>
-
+          <ActionToolbar
+            runTest={runTest}
+            shareInfo={shareInfo}
+            handleShare={handleShare}
+            modelKind={modelKind}
+            modelText={modelText}
+            policy={policy}
+            customConfig={customConfig}
+            request={request}
+            enforceContextData={enforceContextData}
+            selectedEngine={selectedEngine}
+            comparisonEngines={comparisonEngines}
+          />
           <div className="flex flex-row justify-between items-center w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
             <MessageWithTooltip message={echo} className={textClass} />
 
