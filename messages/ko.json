@@ -11,6 +11,7 @@
   "Enforcement Result": "집행 결과",
   "Why this result": "이 결과의 이유",
   "RUN THE TEST": "테스트 실행",
+  "Refresh Engines": "엔진 새로고침",
   "SHARE": "공유",
   "Sharing": "공유중...",
   "Share failed": "공유 실패",
@@ -21,5 +22,8 @@
   "Upload File": "파일 업로드",
   "Select Endpoint": "엔드포인트 선택",
   "Compare Engines": "엔진 비교",
-  "View Source Code": "소스 코드 보기"
+  "View Source Code": "소스 코드 보기",
+  "Refreshing engines...": "엔진을 새로고침 중...",
+  "Engines refreshed successfully": "엔진이 성공적으로 새로고침되었습니다",
+  "Failed to refresh engines": "엔진 새로고침에 실패했습니다"
 }
