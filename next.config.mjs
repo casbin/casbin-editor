@@ -5,12 +5,12 @@ const casbinVersion = require('./node_modules/casbin/package.json').version;
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // reactStrictMode: false,
+  
   /**
-   * Enable static exports for the App Router.
-   *
-   * @see https://nextjs.org/docs/app/building-your-application/deploying/static-exports
+   * Dynamically set output according to environment variables
+   * Use 'export' only at build time, not at development time
    */
-  output: "export",
+  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
 
   /**
    * Set base path. This is usually the slug of your repository.
@@ -33,7 +33,7 @@ const nextConfig = {
   assetPrefix: './',
   
   // for casbin browser
-  webpack: (config, { isServer,webpack }) => {
+  webpack: (config, { isServer, webpack }) => {
     if (!isServer) {
       config.resolve.fallback = { fs: false, ...config.resolve.fallback };
     }

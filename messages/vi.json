@@ -11,6 +11,7 @@
   "Enforcement Result": "Kết quả thi hành",
   "Why this result": "Tại sao kết quả này",
   "RUN THE TEST": "CHẠY THỬ",
+  "Refresh Engines": "Cập nhật máy",
   "SHARE": "CHIA SẺ",
   "Sharing": "Chia sẻ...",
   "Share failed": "Chia sẻ thất bại",
@@ -21,5 +22,8 @@
   "Upload File": "Tải lên tệp",
   "Select Endpoint": "Chọn điểm cuối",
   "Compare Engines": "So sánh máy",
-  "View Source Code": "Xem mã nguồn"
+  "View Source Code": "Xem mã nguồn",
+  "Refreshing engines...": "Đang cập nhật máy...",
+  "Engines refreshed successfully": "Máy đã được cập nhật thành công",
+  "Failed to refresh engines": "Không thể cập nhật máy"
 }

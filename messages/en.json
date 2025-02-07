@@ -11,6 +11,7 @@
   "Enforcement Result": "Enforcement Result",
   "Why this result": "Why this result",
   "RUN THE TEST": "RUN THE TEST",
+  "Refresh Engines": "Refresh Engines",
   "SHARE": "SHARE",
   "Sharing": "Sharing...",
   "Share failed": "Share failed",
@@ -21,5 +22,8 @@
   "Upload File": "Upload File",
   "Select Endpoint": "Select Endpoint",
   "Compare Engines": "Compare Engines",
-  "View Source Code": "View Source Code"
+  "View Source Code": "View Source Code",
+  "Refreshing engines...": "Refreshing engines...",
+  "Engines refreshed successfully": "Engines refreshed successfully",
+  "Failed to refresh engines": "Failed to refresh engines"
 }
