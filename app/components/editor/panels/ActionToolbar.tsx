@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import type { EngineType } from '@/app/config/engineConfig';
 import type { ShareProps } from '@/app/components/hooks/useShareInfo';
 import { refreshEngines } from '@/app/components/hooks/useRemoteEnforcer';
+import { useState, useEffect } from 'react';
 
 interface ActionToolbarProps {
   runTest: () => void;
@@ -33,12 +34,40 @@ export const ActionToolbar = ({
   comparisonEngines,
 }: ActionToolbarProps) => {
   const { t } = useLang();
+  const [showRefreshButton, setShowRefreshButton] = useState(false);
+  const [keyPressCount, setKeyPressCount] = useState(0);
+  const [lastKeyPressTime, setLastKeyPressTime] = useState(0);
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === '1') {
+        const currentTime = Date.now();
+        if (currentTime - lastKeyPressTime > 1000) {
+          setKeyPressCount(1);
+        } else {
+          setKeyPressCount(prev => prev + 1);
+        }
+        setLastKeyPressTime(currentTime);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [lastKeyPressTime]);
+
+  useEffect(() => {
+    if (keyPressCount === 3) {
+      setShowRefreshButton(true);
+      setKeyPressCount(0);
+    }
+  }, [keyPressCount]);
 
   const handleRefreshEngines = async () => {
     const toastId = toast.loading(t('Refreshing engines...'));
     try {
       await refreshEngines();
       toast.success(t('Engines refreshed successfully'), { id: toastId });
+      setShowRefreshButton(false);
     } catch (error) {
       toast.error(t('Failed to refresh engines'), { id: toastId });
     }
@@ -75,9 +104,11 @@ export const ActionToolbar = ({
       <button className={buttonClassName} onClick={runTest}>
         {t('RUN THE TEST')}
       </button>
-      <button className={buttonClassName} onClick={handleRefreshEngines}>
-        {t('Refresh Engines')}
-      </button>
+      {showRefreshButton && (
+        <button className={buttonClassName} onClick={handleRefreshEngines}>
+          {t('Refresh Engines')}
+        </button>
+      )}
       <button className={buttonClassName} onClick={handleShareClick}>
         {t('SHARE')}
       </button>
