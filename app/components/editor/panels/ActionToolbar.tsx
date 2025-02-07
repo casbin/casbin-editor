@@ -45,14 +45,14 @@ export const ActionToolbar = ({
         if (currentTime - lastKeyPressTime > 1000) {
           setKeyPressCount(1);
         } else {
-          setKeyPressCount(prev => prev + 1);
+          setKeyPressCount((prev) => {return prev + 1});
         }
         setLastKeyPressTime(currentTime);
       }
     };
 
     document.addEventListener('keydown', handleKeyPress);
-    return () => document.removeEventListener('keydown', handleKeyPress);
+    return () => {return document.removeEventListener('keydown', handleKeyPress)};
   }, [lastKeyPressTime]);
 
   useEffect(() => {
