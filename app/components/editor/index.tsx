@@ -64,7 +64,6 @@ export const EditorScreen = () => {
   const [open, setOpen] = useState(true);
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [showCustomConfig, setShowCustomConfig] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [requestResults, setRequestResults] = useState<ResultsMap>({});
   const skipNextEffectRef = useRef(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
@@ -72,8 +71,8 @@ export const EditorScreen = () => {
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
   });
-  const { versions, engineGithubLinks } = useEngineVersions(isLoading);
-  const { handleEnforcerCall } = useEnforceCall(enforcer, setEcho, setRequestResult, setRequestResults, setIsLoading, t);
+  const { versions, engineGithubLinks } = useEngineVersions();
+  const { handleEnforcerCall, isLoading } = useEnforceCall(enforcer, setEcho, setRequestResult, setRequestResults, t);
   const openDrawerWithMessage = (message: string) => {
     if (sidePanelChatRef.current) {
       sidePanelChatRef.current.openDrawer(message);

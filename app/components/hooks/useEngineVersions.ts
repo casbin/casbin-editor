@@ -8,7 +8,7 @@ export interface EngineVersionsReturn {
   engineGithubLinks: Record<EngineType, string>;
 }
 
-export default function useEngineVersions(isEngineLoading: boolean): EngineVersionsReturn {
+export default function useEngineVersions(): EngineVersionsReturn {
   const [versions, setVersions] = useState<Record<EngineType, VersionInfo>>(() => {
     return Object.fromEntries(
       Object.keys(ENGINES).map((key) => {
@@ -21,8 +21,6 @@ export default function useEngineVersions(isEngineLoading: boolean): EngineVersi
 
   useEffect(() => {
     const fetchVersions = async () => {
-      if (isEngineLoading) return;
-
       try {
         const versionEntries = await Promise.all(
           Object.entries(ENGINES).map(async ([type, config]) => {
@@ -44,7 +42,7 @@ export default function useEngineVersions(isEngineLoading: boolean): EngineVersi
     };
 
     fetchVersions();
-  }, [isEngineLoading]);
+  }, []);
 
   const getVersionedLink = (repo: string, version?: string | null) => {
     return version && version !== 'unknown'
