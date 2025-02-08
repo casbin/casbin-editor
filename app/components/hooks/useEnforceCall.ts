@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { formatResults, createResultsMap, ResultsMap } from '@/app/utils/resultFormatter';
 import { isValidElement } from 'react';
 import { toast } from 'react-hot-toast';
@@ -20,9 +20,10 @@ export function useEnforceCall(
   setEcho: (v: React.ReactNode) => void,
   setRequestResult: (v: string) => void,
   setRequestResults: (v: ResultsMap) => void,
-  setIsLoading: (v: boolean) => void,
   t: (key: string) => string,
 ) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleEnforcerCall = useCallback(
     async (params: EnforceCallParams) => {
       setRequestResult('');
@@ -69,8 +70,8 @@ export function useEnforceCall(
 
       setIsLoading(false);
     },
-    [enforcer, setEcho, setRequestResult, setRequestResults, setIsLoading, t],
+    [enforcer, setEcho, setRequestResult, setRequestResults, t],
   );
 
-  return { handleEnforcerCall };
+  return { handleEnforcerCall, isLoading };
 }
