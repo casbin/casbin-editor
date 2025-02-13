@@ -281,14 +281,16 @@ export const EditorScreen = () => {
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className="h-10 pl-2 font-bold flex items-center justify-between">
               <div className={textClass}>{t('Policy')}</div>
-              <PolicyToolbar
-                setPolicyPersistent={setPolicyPersistent}
-                selectedEngine={selectedEngine}
-                comparisonEngines={comparisonEngines}
-                handleEngineChange={handleEngineChange}
-                versions={versions}
-                engineGithubLinks={engineGithubLinks}
-              />
+              <div className="flex-1 overflow-x-auto">
+                <PolicyToolbar
+                  setPolicyPersistent={setPolicyPersistent}
+                  selectedEngine={selectedEngine}
+                  comparisonEngines={comparisonEngines}
+                  handleEngineChange={handleEngineChange}
+                  versions={versions}
+                  engineGithubLinks={engineGithubLinks}
+                />
+              </div>
             </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">

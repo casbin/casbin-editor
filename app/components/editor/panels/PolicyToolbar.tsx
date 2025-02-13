@@ -22,7 +22,7 @@ export const PolicyToolbar: React.FC<PolicyToolbarProps> = ({
   engineGithubLinks,
 }) => {
   return (
-    <div className="text-right mr-4 text-sm flex items-center justify-end gap-2">
+    <div className="text-right mr-4 text-sm flex items-center justify-end gap-2 min-w-max">
       <div className="font-normal text-base">
         <FileUploadButton onFileContent={setPolicyPersistent} accept=".csv" />
       </div>
