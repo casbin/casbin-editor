@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { Toaster } from 'react-hot-toast';
 import CodeMirror from '@uiw/react-codemirror';
@@ -15,7 +15,7 @@ import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-
 import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
 import { CustomConfigPanel } from '@/app/components/editor/panels/CustomConfigPanel';
 import { PolicyToolbar } from '@/app/components/editor/panels/PolicyToolbar';
-import { MessageWithTooltip } from '@/app/components/editor/common/MessageWithTooltip';
+import FooterToolbar from '@/app/components/editor/panels/FooterToolbar';
 import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
 import { e, m, p, r } from '@/app/components/hooks/useSetupEnforceContext';
 import useRunTest from '@/app/components/hooks/useRunTest';
@@ -30,9 +30,7 @@ import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
 import { useLang } from '@/app/context/LangContext';
-import LanguageMenu from '@/app/context/LanguageMenu';
 import type { EngineType } from '@/app/config/engineConfig';
-import { ActionToolbar } from '@/app/components/editor/panels/ActionToolbar';
 
 export const EditorScreen = () => {
   const {
@@ -421,42 +419,23 @@ export const EditorScreen = () => {
             </div>
           </div>
         </div>
-        <div className={clsx('pt-2 px-1 flex flex-col sm:flex-row items-start sm:items-center')}>
-          <ActionToolbar
-            runTest={runTest}
-            shareInfo={shareInfo}
-            handleShare={handleShare}
-            modelKind={modelKind}
-            modelText={modelText}
-            policy={policy}
-            customConfig={customConfig}
-            request={request}
-            enforceContextData={enforceContextData}
-            selectedEngine={selectedEngine}
-            comparisonEngines={comparisonEngines}
-          />
-          <div className="flex flex-row justify-between items-center w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
-            <MessageWithTooltip message={echo} className={textClass} />
-
-            <div className="flex flex-row items-center ml-auto sm:ml-3">
-              <button
-                onClick={toggleTheme}
-                aria-label={theme !== 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                className="theme-toggle-button mr-2"
-              >
-                <img
-                  src={theme !== 'dark' ? 'sun.svg' : 'moon.svg'}
-                  alt={theme !== 'dark' ? 'Light mode' : 'Dark mode'}
-                  className="w-6 h-6 transition-opacity duration-300"
-                  style={{
-                    filter: theme === 'dark' ? 'invert(1)' : 'invert(0)',
-                  }}
-                />
-              </button>
-              <LanguageMenu />
-            </div>
-          </div>
-        </div>
+        <FooterToolbar
+          runTest={runTest}
+          shareInfo={shareInfo}
+          handleShare={handleShare}
+          modelKind={modelKind}
+          modelText={modelText}
+          policy={policy}
+          customConfig={customConfig}
+          request={request}
+          enforceContextData={enforceContextData}
+          selectedEngine={selectedEngine}
+          comparisonEngines={comparisonEngines}
+          echo={echo}
+          textClass={textClass}
+          toggleTheme={toggleTheme}
+          theme={theme}
+        />
       </div>
     </div>
   );
