@@ -9,11 +9,11 @@ import { indentUnit } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
 import { linter, lintGutter } from '@codemirror/lint';
-import { example } from '@/app/components/editor/casbin-mode/example';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
 import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
 import { CustomConfigPanel } from '@/app/components/editor/panels/CustomConfigPanel';
+import { ModelToolbar } from '@/app/components/editor/panels/ModelToolbar';
 import { PolicyToolbar } from '@/app/components/editor/panels/PolicyToolbar';
 import FooterToolbar from '@/app/components/editor/panels/FooterToolbar';
 import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
@@ -184,45 +184,12 @@ export const EditorScreen = () => {
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
               <div className={clsx(textClass, 'font-bold')}>{t('Model')}</div>
-              <select
-                value={modelKind}
-                onChange={(e) => {
-                  setModelKind(e.target.value);
-                  setRequestResults({});
-                }}
-                className={'border-[#767676] border rounded w-[200px] sm:w-[300px]'}
-              >
-                <option value="" disabled>
-                  {t('Select your model')}
-                </option>
-                {Object.keys(example).map((n) => {
-                  return (
-                    <option key={n} value={n}>
-                      {example[n].name}
-                    </option>
-                  );
-                })}
-              </select>
-              <button
-                className={clsx(
-                  'rounded',
-                  'text-[#453d7d]',
-                  'px-1',
-                  'border border-[#453d7d]',
-                  'bg-[#efefef]',
-                  'hover:bg-[#453d7d] hover:text-white',
-                  'transition-colors duration-500',
-                )}
-                onClick={() => {
-                  const ok = window.confirm('Confirm Reset?');
-                  if (ok) {
-                    window.location.reload();
-                  }
-                }}
-              >
-                {t('RESET')}
-              </button>
-              <FileUploadButton onFileContent={setModelTextPersistent} accept=".conf" />
+              <ModelToolbar
+                modelKind={modelKind}
+                setModelKind={setModelKind}
+                setRequestResults={setRequestResults}
+                setModelTextPersistent={setModelTextPersistent}
+              />
               <div className="sm:hidden ml-auto mr-2">
                 <button
                   className={clsx(
@@ -281,16 +248,14 @@ export const EditorScreen = () => {
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className="h-10 pl-2 font-bold flex items-center justify-between">
               <div className={textClass}>{t('Policy')}</div>
-              <div className="flex-1 overflow-x-auto">
-                <PolicyToolbar
-                  setPolicyPersistent={setPolicyPersistent}
-                  selectedEngine={selectedEngine}
-                  comparisonEngines={comparisonEngines}
-                  handleEngineChange={handleEngineChange}
-                  versions={versions}
-                  engineGithubLinks={engineGithubLinks}
-                />
-              </div>
+              <PolicyToolbar
+                setPolicyPersistent={setPolicyPersistent}
+                selectedEngine={selectedEngine}
+                comparisonEngines={comparisonEngines}
+                handleEngineChange={handleEngineChange}
+                versions={versions}
+                engineGithubLinks={engineGithubLinks}
+              />
             </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
