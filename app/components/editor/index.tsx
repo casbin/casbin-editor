@@ -63,6 +63,7 @@ export const EditorScreen = () => {
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [showCustomConfig, setShowCustomConfig] = useState(false);
   const [requestResults, setRequestResults] = useState<ResultsMap>({});
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const skipNextEffectRef = useRef(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
   const { setupEnforceContextData, setupHandleEnforceContextChange } = useSetupEnforceContext({
@@ -149,17 +150,17 @@ export const EditorScreen = () => {
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
   return (
-    <div className="flex flex-col sm:flex-row h-full">
+    <div className="flex flex-col sm:flex-row h-full w-full overflow-hidden">
       <Toaster position="top-center" />
       <div
         className={clsx('sm:relative border-r border-[#dddddd]', 'transition-all duration-300', {
           'hidden sm:block': !showCustomConfig,
           block: showCustomConfig,
-          'sm:w-1/3': open,
+          'sm:w-[25%]': open,
           'sm:w-5': !open,
         })}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full w-full">
           <CustomConfigPanel
             open={open}
             setOpen={setOpen}
@@ -171,8 +172,15 @@ export const EditorScreen = () => {
           />
         </div>
       </div>
-      <div className={clsx('flex flex-col grow h-full w-full')}>
-        <div className="flex flex-col sm:flex-row gap-1 pt-4 flex-1 overflow-hidden">
+      <div
+        className={clsx('flex flex-col h-full min-w-0', 'transition-all duration-300', {
+          'sm:w-[60%]': open && isChatOpen,
+          'sm:w-[75%]': open && !isChatOpen,
+          'sm:w-[70%]': !open && isChatOpen,
+          'w-full': !open && !isChatOpen,
+        })}
+      >
+        <div className="flex flex-col sm:flex-row gap-1 pt-4 flex-1 overflow-hidden min-w-0">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
               <div className={clsx(textClass, 'font-bold')}>{t('Model')}</div>
@@ -310,7 +318,7 @@ export const EditorScreen = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-1 pt-2 flex-1 overflow-hidden">
+        <div className="flex flex-col sm:flex-row gap-1 pt-2 flex-1 overflow-hidden min-w-0">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
               <div className={clsx(textClass, 'font-bold')}>{t('Request')}</div>
@@ -383,10 +391,16 @@ export const EditorScreen = () => {
             <div className={clsx('h-10 pl-2 font-bold', 'flex items-center justify-between')}>
               <div className={textClass}>{t('Enforcement Result')}</div>
               <div className="mr-4">
-                <div className="text-red-600 flex items-center">
+                <div
+                  className="text-red-600 flex items-center cursor-pointer hover:text-red-700"
+                  onClick={() => {
+                    if (sidePanelChatRef.current) {
+                      sidePanelChatRef.current.openDrawer('');
+                    }
+                  }}
+                >
                   <span>{t('Why this result')}</span>
                 </div>
-                <SidePanelChat ref={sidePanelChatRef} />
               </div>
             </div>
             <div className="flex-grow overflow-auto h-full">
@@ -437,6 +451,12 @@ export const EditorScreen = () => {
           theme={theme}
         />
       </div>
+      <SidePanelChat
+        ref={sidePanelChatRef}
+        onOpenChange={(open: boolean) => {
+          setIsChatOpen(open);
+        }}
+      />
     </div>
   );
 };
