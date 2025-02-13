@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { Toaster } from 'react-hot-toast';
 import CodeMirror from '@uiw/react-codemirror';
@@ -9,15 +9,14 @@ import { indentUnit } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
 import { linter, lintGutter } from '@codemirror/lint';
-import { example } from '@/app/components/editor/casbin-mode/example';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
 import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
 import { CustomConfigPanel } from '@/app/components/editor/panels/CustomConfigPanel';
+import { ModelToolbar } from '@/app/components/editor/panels/ModelToolbar';
 import { PolicyToolbar } from '@/app/components/editor/panels/PolicyToolbar';
-import { MessageWithTooltip } from '@/app/components/editor/common/MessageWithTooltip';
-import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
-import { e, m, p, r } from '@/app/components/hooks/useSetupEnforceContext';
+import { RequestToolbar } from '@/app/components/editor/panels/RequestToolbar';
+import FooterToolbar from '@/app/components/editor/panels/FooterToolbar';
 import useRunTest from '@/app/components/hooks/useRunTest';
 import useShareInfo from '@/app/components/hooks/useShareInfo';
 import useSetupEnforceContext from '@/app/components/hooks/useSetupEnforceContext';
@@ -30,9 +29,7 @@ import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
 import { useLang } from '@/app/context/LangContext';
-import LanguageMenu from '@/app/context/LanguageMenu';
 import type { EngineType } from '@/app/config/engineConfig';
-import { ActionToolbar } from '@/app/components/editor/panels/ActionToolbar';
 
 export const EditorScreen = () => {
   const {
@@ -65,6 +62,7 @@ export const EditorScreen = () => {
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [showCustomConfig, setShowCustomConfig] = useState(false);
   const [requestResults, setRequestResults] = useState<ResultsMap>({});
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const skipNextEffectRef = useRef(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
   const { setupEnforceContextData, setupHandleEnforceContextChange } = useSetupEnforceContext({
@@ -151,17 +149,17 @@ export const EditorScreen = () => {
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
   return (
-    <div className="flex flex-col sm:flex-row h-full">
+    <div className="flex flex-col sm:flex-row h-full w-full overflow-hidden">
       <Toaster position="top-center" />
       <div
         className={clsx('sm:relative border-r border-[#dddddd]', 'transition-all duration-300', {
           'hidden sm:block': !showCustomConfig,
           block: showCustomConfig,
-          'sm:w-1/3': open,
+          'sm:w-[25%]': open,
           'sm:w-5': !open,
         })}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full w-full">
           <CustomConfigPanel
             open={open}
             setOpen={setOpen}
@@ -173,50 +171,24 @@ export const EditorScreen = () => {
           />
         </div>
       </div>
-      <div className={clsx('flex flex-col grow h-full w-full')}>
-        <div className="flex flex-col sm:flex-row gap-1 pt-4 flex-1 overflow-hidden">
+      <div
+        className={clsx('flex flex-col h-full min-w-0', 'transition-all duration-300', {
+          'sm:w-[60%]': open && isChatOpen,
+          'sm:w-[75%]': open && !isChatOpen,
+          'sm:w-[70%]': !open && isChatOpen,
+          'w-full': !open && !isChatOpen,
+        })}
+      >
+        <div className="flex flex-col sm:flex-row gap-1 pt-4 flex-1 overflow-hidden min-w-0">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
               <div className={clsx(textClass, 'font-bold')}>{t('Model')}</div>
-              <select
-                value={modelKind}
-                onChange={(e) => {
-                  setModelKind(e.target.value);
-                  setRequestResults({});
-                }}
-                className={'border-[#767676] border rounded w-[200px] sm:w-[300px]'}
-              >
-                <option value="" disabled>
-                  {t('Select your model')}
-                </option>
-                {Object.keys(example).map((n) => {
-                  return (
-                    <option key={n} value={n}>
-                      {example[n].name}
-                    </option>
-                  );
-                })}
-              </select>
-              <button
-                className={clsx(
-                  'rounded',
-                  'text-[#453d7d]',
-                  'px-1',
-                  'border border-[#453d7d]',
-                  'bg-[#efefef]',
-                  'hover:bg-[#453d7d] hover:text-white',
-                  'transition-colors duration-500',
-                )}
-                onClick={() => {
-                  const ok = window.confirm('Confirm Reset?');
-                  if (ok) {
-                    window.location.reload();
-                  }
-                }}
-              >
-                {t('RESET')}
-              </button>
-              <FileUploadButton onFileContent={setModelTextPersistent} accept=".conf" />
+              <ModelToolbar
+                modelKind={modelKind}
+                setModelKind={setModelKind}
+                setRequestResults={setRequestResults}
+                setModelTextPersistent={setModelTextPersistent}
+              />
               <div className="sm:hidden ml-auto mr-2">
                 <button
                   className={clsx(
@@ -312,45 +284,15 @@ export const EditorScreen = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-1 pt-2 flex-1 overflow-hidden">
+        <div className="flex flex-col sm:flex-row gap-1 pt-2 flex-1 overflow-hidden min-w-0">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
               <div className={clsx(textClass, 'font-bold')}>{t('Request')}</div>
-              <div className={'space-x-2'}>
-                <input
-                  className={clsx('w-7 pl-1', 'border border-black rounded')}
-                  value={setupEnforceContextData.get(r)}
-                  placeholder={r}
-                  onChange={(event) => {
-                    return setupHandleEnforceContextChange(r, event.target.value);
-                  }}
-                />
-                <input
-                  className={clsx('w-7 pl-1', 'border border-black rounded')}
-                  value={setupEnforceContextData.get(p)}
-                  placeholder={p}
-                  onChange={(event) => {
-                    return setupHandleEnforceContextChange(p, event.target.value);
-                  }}
-                />
-                <input
-                  className={clsx('w-7 pl-1', 'border border-black rounded')}
-                  value={setupEnforceContextData.get(e)}
-                  placeholder={e}
-                  onChange={(event) => {
-                    return setupHandleEnforceContextChange(e, event.target.value);
-                  }}
-                />
-                <input
-                  className={clsx('w-7 pl-1', 'border border-black rounded')}
-                  value={setupEnforceContextData.get(m)}
-                  placeholder={m}
-                  onChange={(event) => {
-                    return setupHandleEnforceContextChange(m, event.target.value);
-                  }}
-                />
-              </div>
-              <FileUploadButton onFileContent={setRequestPersistent} accept=".txt" />
+              <RequestToolbar
+                setupEnforceContextData={setupEnforceContextData}
+                setupHandleEnforceContextChange={setupHandleEnforceContextChange}
+                setRequestPersistent={setRequestPersistent}
+              />
             </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
@@ -385,10 +327,16 @@ export const EditorScreen = () => {
             <div className={clsx('h-10 pl-2 font-bold', 'flex items-center justify-between')}>
               <div className={textClass}>{t('Enforcement Result')}</div>
               <div className="mr-4">
-                <div className="text-red-600 flex items-center">
+                <div
+                  className="text-red-600 flex items-center cursor-pointer hover:text-red-700"
+                  onClick={() => {
+                    if (sidePanelChatRef.current) {
+                      sidePanelChatRef.current.openDrawer('');
+                    }
+                  }}
+                >
                   <span>{t('Why this result')}</span>
                 </div>
-                <SidePanelChat ref={sidePanelChatRef} />
               </div>
             </div>
             <div className="flex-grow overflow-auto h-full">
@@ -421,43 +369,30 @@ export const EditorScreen = () => {
             </div>
           </div>
         </div>
-        <div className={clsx('pt-2 px-1 flex flex-col sm:flex-row items-start sm:items-center')}>
-          <ActionToolbar
-            runTest={runTest}
-            shareInfo={shareInfo}
-            handleShare={handleShare}
-            modelKind={modelKind}
-            modelText={modelText}
-            policy={policy}
-            customConfig={customConfig}
-            request={request}
-            enforceContextData={enforceContextData}
-            selectedEngine={selectedEngine}
-            comparisonEngines={comparisonEngines}
-          />
-          <div className="flex flex-row justify-between items-center w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
-            <MessageWithTooltip message={echo} className={textClass} />
-
-            <div className="flex flex-row items-center ml-auto sm:ml-3">
-              <button
-                onClick={toggleTheme}
-                aria-label={theme !== 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                className="theme-toggle-button mr-2"
-              >
-                <img
-                  src={theme !== 'dark' ? 'sun.svg' : 'moon.svg'}
-                  alt={theme !== 'dark' ? 'Light mode' : 'Dark mode'}
-                  className="w-6 h-6 transition-opacity duration-300"
-                  style={{
-                    filter: theme === 'dark' ? 'invert(1)' : 'invert(0)',
-                  }}
-                />
-              </button>
-              <LanguageMenu />
-            </div>
-          </div>
-        </div>
+        <FooterToolbar
+          runTest={runTest}
+          shareInfo={shareInfo}
+          handleShare={handleShare}
+          modelKind={modelKind}
+          modelText={modelText}
+          policy={policy}
+          customConfig={customConfig}
+          request={request}
+          enforceContextData={enforceContextData}
+          selectedEngine={selectedEngine}
+          comparisonEngines={comparisonEngines}
+          echo={echo}
+          textClass={textClass}
+          toggleTheme={toggleTheme}
+          theme={theme}
+        />
       </div>
+      <SidePanelChat
+        ref={sidePanelChatRef}
+        onOpenChange={(open: boolean) => {
+          setIsChatOpen(open);
+        }}
+      />
     </div>
   );
 };

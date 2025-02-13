@@ -1,8 +1,10 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { useLang } from '@/app/context/LangContext';
+import { clsx } from 'clsx';
 
-const SidePanelChat = forwardRef((props, ref) => {
+const SidePanelChat = forwardRef<any, { onOpenChange?: (open: boolean) => void }>((props, ref) => {
+  const { onOpenChange } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [pageContent, setPageContent] = useState('');
@@ -10,13 +12,16 @@ const SidePanelChat = forwardRef((props, ref) => {
   const { t, lang } = useLang();
 
   const toggleDrawer = () => {
-    setIsOpen(!isOpen);
+    const newIsOpen = !isOpen;
+    setIsOpen(newIsOpen);
+    onOpenChange?.(newIsOpen);
   };
 
-  const openDrawer = (message, boxType) => {
+  const openDrawer = (message: string, boxType?: string) => {
     setMessage(message);
-    setBoxType(boxType);
+    setBoxType(boxType || '');
     setIsOpen(true);
+    onOpenChange?.(true);
   };
 
   useImperativeHandle(ref, () => {
@@ -34,20 +39,21 @@ const SidePanelChat = forwardRef((props, ref) => {
   }, [isOpen, boxType, t, lang]);
 
   return (
-    <>
-      {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleDrawer}></div>}
-      <div
-        className={`fixed top-0 right-0 w-full sm:w-[500px] h-full bg-white z-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
+    <div
+      className={clsx(
+        'h-full bg-white shadow-lg',
+        'transition-all duration-300',
+        isOpen ? 'fixed sm:relative top-0 left-0 w-full sm:w-[500px] z-50' : 'w-0',
+      )}
+    >
+      <div className={isOpen ? 'block h-full' : 'hidden'}>
         <div className="flex items-center justify-between p-4 border-b">
           <a href="https://casdoor.com" target="_blank" rel="noreferrer" className="inline-flex items-center">
             <img src="https://casbin.org/img/casbin.svg" alt="help" className="h-5 w-5 mr-2" />
             <div>AI Assistant</div>
           </a>
           <button onClick={toggleDrawer} className="text-gray-500 hover:text-gray-700">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -63,7 +69,7 @@ const SidePanelChat = forwardRef((props, ref) => {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 });
 

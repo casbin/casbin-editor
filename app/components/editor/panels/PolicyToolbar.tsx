@@ -22,18 +22,20 @@ export const PolicyToolbar: React.FC<PolicyToolbarProps> = ({
   engineGithubLinks,
 }) => {
   return (
-    <div className="text-right mr-4 text-sm flex items-center justify-end gap-2">
-      <div className="font-normal text-base">
-        <FileUploadButton onFileContent={setPolicyPersistent} accept=".csv" />
+    <div className="flex-1 overflow-x-auto">
+      <div className="text-right mr-4 text-sm flex items-center justify-end gap-2 min-w-max">
+        <div className="font-normal text-base">
+          <FileUploadButton onFileContent={setPolicyPersistent} accept=".csv" />
+        </div>
+        <EndpointSelector />
+        <EngineSelector
+          selectedEngine={selectedEngine}
+          comparisonEngines={comparisonEngines}
+          onEngineChange={handleEngineChange}
+          versions={versions}
+          engineGithubLinks={engineGithubLinks}
+        />
       </div>
-      <EndpointSelector />
-      <EngineSelector
-        selectedEngine={selectedEngine}
-        comparisonEngines={comparisonEngines}
-        onEngineChange={handleEngineChange}
-        versions={versions}
-        engineGithubLinks={engineGithubLinks}
-      />
     </div>
   );
 };
