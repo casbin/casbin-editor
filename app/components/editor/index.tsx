@@ -15,9 +15,8 @@ import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
 import { CustomConfigPanel } from '@/app/components/editor/panels/CustomConfigPanel';
 import { ModelToolbar } from '@/app/components/editor/panels/ModelToolbar';
 import { PolicyToolbar } from '@/app/components/editor/panels/PolicyToolbar';
+import { RequestToolbar } from '@/app/components/editor/panels/RequestToolbar';
 import FooterToolbar from '@/app/components/editor/panels/FooterToolbar';
-import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
-import { e, m, p, r } from '@/app/components/hooks/useSetupEnforceContext';
 import useRunTest from '@/app/components/hooks/useRunTest';
 import useShareInfo from '@/app/components/hooks/useShareInfo';
 import useSetupEnforceContext from '@/app/components/hooks/useSetupEnforceContext';
@@ -289,41 +288,11 @@ export const EditorScreen = () => {
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
               <div className={clsx(textClass, 'font-bold')}>{t('Request')}</div>
-              <div className={'space-x-2'}>
-                <input
-                  className={clsx('w-7 pl-1', 'border border-black rounded')}
-                  value={setupEnforceContextData.get(r)}
-                  placeholder={r}
-                  onChange={(event) => {
-                    return setupHandleEnforceContextChange(r, event.target.value);
-                  }}
-                />
-                <input
-                  className={clsx('w-7 pl-1', 'border border-black rounded')}
-                  value={setupEnforceContextData.get(p)}
-                  placeholder={p}
-                  onChange={(event) => {
-                    return setupHandleEnforceContextChange(p, event.target.value);
-                  }}
-                />
-                <input
-                  className={clsx('w-7 pl-1', 'border border-black rounded')}
-                  value={setupEnforceContextData.get(e)}
-                  placeholder={e}
-                  onChange={(event) => {
-                    return setupHandleEnforceContextChange(e, event.target.value);
-                  }}
-                />
-                <input
-                  className={clsx('w-7 pl-1', 'border border-black rounded')}
-                  value={setupEnforceContextData.get(m)}
-                  placeholder={m}
-                  onChange={(event) => {
-                    return setupHandleEnforceContextChange(m, event.target.value);
-                  }}
-                />
-              </div>
-              <FileUploadButton onFileContent={setRequestPersistent} accept=".txt" />
+              <RequestToolbar
+                setupEnforceContextData={setupEnforceContextData}
+                setupHandleEnforceContextChange={setupHandleEnforceContextChange}
+                setRequestPersistent={setRequestPersistent}
+              />
             </div>
             <div className="flex-grow overflow-auto h-full">
               <div className="flex flex-col h-full">
