@@ -477,6 +477,45 @@ bob, data3, read`,
     customConfig: undefined,
     enforceContext: undefined,
   },
+    rebac: {
+    name: 'ReBAC',
+    model: `[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = role, obj_type, act
+
+[role_definition]
+g = _, _, _
+g2 = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, r.obj, p.role) && g2(r.obj, p.obj_type) && r.act == p.act`,
+    policy: `p, collaborator, doc, read
+
+g, alice, doc1, collaborator
+g, bob, doc2, collaborator
+
+g2, doc1, doc
+g2, doc2, doc`,
+    request: `alice, doc1, read
+alice, doc1, write
+alice, doc2, read
+alice, doc2, write
+alice, doc3, read
+alice, doc3, write
+bob, doc1, read
+bob, doc1, write
+bob, doc2, read
+bob, doc2, write
+bob, doc3, read
+bob, doc3, write`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
   abac: {
     name: 'ABAC',
     model: `[request_definition]
