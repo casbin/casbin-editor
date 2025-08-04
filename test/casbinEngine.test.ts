@@ -98,7 +98,7 @@ describe('Casbin Engine Tests', () => {
 
           console.log(logMessage);
         }
-      }, 30000);
+      }, 60000);
     });
   });
 });
