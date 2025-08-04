@@ -51,6 +51,16 @@ export const ENGINES = {
       return new RemoteCasbinEngine('rust');
     },
   },
+  python: {  
+    id: 'python',  
+    name: 'PyCasbin (Python)',  
+    githubRepo: 'casbin/casbin-python-cli',  
+    isRemote: true,  
+    order: 5,  
+    createEngine: () => {  
+      return new RemoteCasbinEngine('python');  
+    },  
+  },
 } as const;
 
 export type EngineType = keyof typeof ENGINES;
