@@ -99,6 +99,36 @@ p, data2, write`,
     customConfig: undefined,
     enforceContext: undefined,
   },
+  blp: {
+    name: 'BLP',
+    model: `[request_definition]
+r = sub, sub_level, obj, obj_level, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = (r.act == "read" && r.sub_level >= r.obj_level) || (r.act == "write" && r.sub_level <= r.obj_level)`,
+    policy: '',
+    request: `alice, 3, data1, 1, read
+bob, 2, data2, 2, read
+charlie, 1, data1, 1, read
+bob, 2, data3, 3, read
+charlie, 1, data2, 2, read
+alice, 3, data3, 3, write
+bob, 2, data3, 3, write
+charlie, 1, data2, 2, write
+alice, 3, data1, 1, write
+bob, 2, data1, 1, write`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
   rbac: {
     name: 'RBAC',
     model: `[request_definition]
