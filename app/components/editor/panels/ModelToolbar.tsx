@@ -50,7 +50,7 @@ export const ModelToolbar = ({
             sideOffset={5}     
             className={  
               "bg-white rounded-lg border border-gray-200 shadow-lg z-50 " +  
-              "max-h-[90vh] overflow-y-auto min-w-[220px] sm:min-w-[300px]"  
+              "max-h-[90vh] overflow-y-auto min-w-[300px] sm:min-w-[380px]"  
             }  
           >    
             <div className="p-2">    
