@@ -1,26 +1,21 @@
-import { clsx } from 'clsx';    
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';    
-import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';    
-import { example } from '@/app/components/editor/casbin-mode/example';    
-import { useLang } from '@/app/context/LangContext';    
-    
-interface ModelSelectorProps {    
-  modelKind: string;    
-  setModelKind: (value: string) => void;    
-  setRequestResults: (value: {}) => void;    
-  setModelTextPersistent: (value: string) => void;    
-}    
-    
-export const ModelToolbar = ({   
-  modelKind,   
-  setModelKind,   
-  setRequestResults,   
-  setModelTextPersistent   
-}: ModelSelectorProps) => {    
-  const { t } = useLang();    
-    
-  return (    
-    <div className="flex-1 overflow-x-auto">    
+import { clsx } from 'clsx';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'; 
+import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
+import { example } from '@/app/components/editor/casbin-mode/example';
+import { useLang } from '@/app/context/LangContext';
+
+interface ModelSelectorProps {
+  modelKind: string;
+  setModelKind: (value: string) => void;
+  setRequestResults: (value: {}) => void;
+  setModelTextPersistent: (value: string) => void;
+}
+
+export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setModelTextPersistent }: ModelSelectorProps) => {
+  const { t } = useLang();
+
+  return (
+   <div className="flex-1 overflow-x-auto">    
       <div className="flex items-center gap-2 min-w-max">    
         {/* Radix UI Dropdown Menu with adjusted proportions */}    
         <DropdownMenu.Root>    
@@ -112,6 +107,6 @@ export const ModelToolbar = ({
         </button>    
         <FileUploadButton onFileContent={setModelTextPersistent} accept=".conf" />    
       </div>    
-    </div>    
-  );    
+    </div> 
+  );
 };

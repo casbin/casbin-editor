@@ -1,51 +1,44 @@
-import React, { useState } from 'react';          
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';          
-import { useLang } from '@/app/context/LangContext';          
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/app/components/ui/tooltip';          
-import { EngineType, ENGINES } from '@/app/config/engineConfig';          
-import type { VersionInfo } from '@/app/components/hooks/useRemoteEnforcer';          
-        
-interface EngineSelectorProps {          
-  selectedEngine: EngineType;          
-  comparisonEngines: EngineType[];          
-  onEngineChange: (primary: EngineType, comparison: EngineType[]) => void;          
-  versions: Record<EngineType, VersionInfo>;          
-  engineGithubLinks: Record<EngineType, string>;          
-}          
-        
-export const EngineSelector: React.FC<EngineSelectorProps> = ({           
-  selectedEngine,           
-  comparisonEngines,           
-  onEngineChange,           
-  versions,           
-  engineGithubLinks           
-}) => {          
-  const { t } = useLang();          
-  const [isOpen, setIsOpen] = useState(false);          
-  const [isComparisonOpen, setIsComparisonOpen] = useState(false);          
-            
-  const engines = Object.entries(ENGINES).map(([id, config]) => {          
-    return {          
-      id,          
-      name: config.name,          
-      version: id === 'node' ? process.env.CASBIN_VERSION : versions[id as EngineType],          
-    };          
-  });          
-        
-  const handlePrimaryEngineChange = (engineId: string) => {          
-    onEngineChange(engineId as EngineType, []);          
-    setIsOpen(false);          
-  };          
-        
-  const handleComparisonToggle = (engineId: string) => {          
-    const newComparison = comparisonEngines.includes(engineId as EngineType)          
-      ? comparisonEngines.filter((id) => {          
-          return id !== engineId;          
-        })          
-      : [...comparisonEngines, engineId as EngineType];          
-    onEngineChange(selectedEngine, newComparison);          
-  };          
-        
+import React, { useState, useRef, useEffect } from 'react';
+import { useLang } from '@/app/context/LangContext';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'; 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/app/components/ui/tooltip';
+import { EngineType, ENGINES } from '@/app/config/engineConfig';
+import type { VersionInfo } from '@/app/components/hooks/useRemoteEnforcer';
+
+interface EngineSelectorProps {
+  selectedEngine: EngineType;
+  comparisonEngines: EngineType[];
+  onEngineChange: (primary: EngineType, comparison: EngineType[]) => void;
+  versions: Record<EngineType, VersionInfo>;
+  engineGithubLinks: Record<EngineType, string>;
+}
+
+export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, comparisonEngines, onEngineChange, versions, engineGithubLinks }) => {
+  const { t } = useLang();
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isComparisonOpen, setIsComparisonOpen] = useState(false);
+  const engines = Object.entries(ENGINES).map(([id, config]) => {
+    return {
+      id,
+      name: config.name,
+      version: id === 'node' ? process.env.CASBIN_VERSION : versions[id as EngineType],
+    };
+  });
+
+  const handlePrimaryEngineChange = (engineId: string) => {
+    onEngineChange(engineId as EngineType, []);
+    setIsOpen(false);
+  };
+
+  const handleComparisonToggle = (engineId: string) => {
+    const newComparison = comparisonEngines.includes(engineId as EngineType)
+      ? comparisonEngines.filter((id) => {
+          return id !== engineId;
+        })
+      : [...comparisonEngines, engineId as EngineType];
+    onEngineChange(selectedEngine, newComparison);
+  };
   const selectedEngineData = engines.find((engine) => {    
     return engine.id === selectedEngine;    
   });          
@@ -57,9 +50,9 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({
             ? selectedEngineData.version          
             : `${selectedEngineData.version.libVersion} | (CLI ${selectedEngineData.version.engineVersion})`          
       }`          
-    : selectedEngine;          
-        
-  return (          
+    : selectedEngine;    
+
+  return (
     <div className="relative flex items-center gap-2">             
       <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>          
         <DropdownMenu.Trigger asChild>          
@@ -226,6 +219,6 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({
           </TooltipContent>          
         </Tooltip>          
       </TooltipProvider>        
-    </div>          
-  );          
+    </div>   
+  );
 };
