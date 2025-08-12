@@ -174,9 +174,9 @@ g = _, _
 e = some(where (p.eft == allow))
 
 [matchers]
-m = (r.act == "read" && r.subject_confidentiality >= r.object_confidentiality && 
-     r.subject_integrity >= r.object_integrity) || 
-     (r.act == "write" && r.subject_confidentiality <= r.object_confidentiality && 
+m = (r.act == "read" && r.subject_confidentiality >= r.object_confidentiality && \
+     r.subject_integrity >= r.object_integrity) || \
+     (r.act == "write" && r.subject_confidentiality <= r.object_confidentiality && \
      r.subject_integrity <= r.object_integrity)`,
     policy: '',
     request: `admin, 5, 5, file_topsecret, 3, 3, read
