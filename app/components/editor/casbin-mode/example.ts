@@ -159,6 +159,45 @@ bob, 2, data1, 1, write`,
     customConfig: undefined,
     enforceContext: undefined,
   },
+  lbac: {
+    name: 'LBAC',
+    model: `[request_definition]
+r = sub, subject_confidentiality, subject_integrity, obj, object_confidentiality, object_integrity, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = (r.act == "read" && r.subject_confidentiality >= r.object_confidentiality && ` +
+     `r.subject_integrity >= r.object_integrity) || ` +
+     `(r.act == "write" && r.subject_confidentiality <= r.object_confidentiality && ` +
+     `r.subject_integrity <= r.object_integrity)`,
+    policy: '',
+    request: `admin, 5, 5, file_topsecret, 3, 3, read
+manager, 4, 4, file_secret, 4, 2, read
+staff, 3, 3, file_internal, 2, 3, read
+guest, 2, 2, file_public, 2, 2, read
+staff, 3, 3, file_secret, 4, 2, read
+manager, 4, 4, file_sensitive, 3, 5, read
+guest, 2, 2, file_internal, 3, 1, read
+staff, 3, 3, file_protected, 1, 4, read
+guest, 2, 2, file_public, 2, 2, write
+staff, 3, 3, file_internal, 5, 4, write
+manager, 4, 4, file_secret, 4, 5, write
+admin, 5, 5, file_archive, 5, 5, write
+manager, 4, 4, file_internal, 3, 5, write
+staff, 3, 3, file_public, 2, 2, write
+admin, 5, 5, file_secret, 5, 4, write
+guest, 2, 2, file_private, 1, 3, write`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
   rbac: {
     name: 'RBAC',
     model: `[request_definition]
