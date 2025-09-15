@@ -23,6 +23,11 @@ describe('Casbin Engine Tests', () => {
     Object.entries(example).forEach(([key, testCase]) => {
       Object.entries(remoteEngines).forEach(([engineType, engine]) => {
         test(`should return consistent enforcement result for ${testCase.name} with ${engineType} engine`, async () => {
+          // Add delay for Python engine to avoid DLL conflicts
+          if (engineType === 'python') {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+          }
+          
           const nodeEnforcer = await newEnforcer(newModel(testCase.model), new StringAdapter(testCase.policy || ' '));
           const requests = testCase.request.split('\n').filter(Boolean);
 
@@ -85,7 +90,7 @@ describe('Casbin Engine Tests', () => {
               throw engineError;
             }
           }
-        }, 40000); // 40 seconds timeout for each engine test
+        }, engineType === 'python' ? 80000 : 40000); //  Python: 80s, Others: 40s
       });
     });
   });
