@@ -47,8 +47,8 @@ describe('Casbin Engine Tests', () => {
 
           const engineResults: EngineResult[] = [];
 
-          // Set timeout for each engine individually
-          const enginePromises = Object.entries(remoteEngines).map(async ([engineType, engine]) => {
+          // Set timeout for each engine individually (serial execution to avoid resource conflicts)
+          for (const [engineType, engine] of Object.entries(remoteEngines)) {
             try {
               // 15 second timeout for each engine
               const remoteResult = await Promise.race([
@@ -66,12 +66,14 @@ describe('Casbin Engine Tests', () => {
                 throw new Error(`${engineType} engine error: ${remoteResult.error}`);
               }
 
-              return {
+              engineResults.push({
                 engineType: engineType as EngineType,
                 allowed: remoteResult.allowed,
                 reason: remoteResult.reason,
                 nodeResult,
-              };
+              });
+
+              expect(remoteResult.allowed).toBe(nodeResult);
             } catch (engineError: any) {
               const errorMessage = [
                 `\n=== Error in [${testCase.name}] ([${engineType}]) ===`,
@@ -83,25 +85,7 @@ describe('Casbin Engine Tests', () => {
               ].join('\n');
 
               console.error(errorMessage);
-              throw engineError; // Re-throw to maintain original behavior
-            }
-          });
-
-          // Wait for all engines to complete
-          const results = await Promise.allSettled(enginePromises);
-          
-          // Process results
-          for (const result of results) {
-            if (result.status === 'fulfilled') {
-              engineResults.push({
-                engineType: result.value.engineType,
-                allowed: result.value.allowed,
-                reason: result.value.reason,
-                nodeResult: result.value.nodeResult,
-              });
-              expect(result.value.allowed).toBe(result.value.nodeResult);
-            } else {
-              throw result.reason; // Re-throw the original error
+              throw engineError;
             }
           }
 
