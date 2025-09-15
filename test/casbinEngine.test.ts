@@ -71,7 +71,6 @@ describe('Casbin Engine Tests', () => {
                 allowed: remoteResult.allowed,
                 reason: remoteResult.reason,
                 nodeResult,
-                success: true
               };
             } catch (engineError: any) {
               const errorMessage = [
@@ -84,30 +83,25 @@ describe('Casbin Engine Tests', () => {
               ].join('\n');
 
               console.error(errorMessage);
-              return {
-                engineType: engineType as EngineType,
-                error: engineError.message,
-                nodeResult,
-                success: false
-              };
+              throw engineError; // Re-throw to maintain original behavior
             }
           });
 
           // Wait for all engines to complete
-          const results = await Promise.all(enginePromises);
+          const results = await Promise.allSettled(enginePromises);
           
           // Process results
           for (const result of results) {
-            if (result.success) {
+            if (result.status === 'fulfilled') {
               engineResults.push({
-                engineType: result.engineType,
-                allowed: result.allowed,
-                reason: result.reason,
-                nodeResult: result.nodeResult,
+                engineType: result.value.engineType,
+                allowed: result.value.allowed,
+                reason: result.value.reason,
+                nodeResult: result.value.nodeResult,
               });
-              expect(result.allowed).toBe(result.nodeResult);
+              expect(result.value.allowed).toBe(result.value.nodeResult);
             } else {
-              throw new Error(`${result.engineType} engine failed: ${result.error}`);
+              throw result.reason; // Re-throw the original error
             }
           }
 
