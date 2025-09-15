@@ -61,6 +61,16 @@ export const ENGINES = {
       return new RemoteCasbinEngine('python');  
     },  
   },
+  dotnet: {    
+    id: 'dotnet',    
+    name: 'Casbin.NET (C#)',    
+    githubRepo: 'casbin-net/casbin-dotnet-cli',  
+    isRemote: true,    
+    order: 6,    
+    createEngine: () => {
+      return new RemoteCasbinEngine('dotnet'); 
+    },  
+  },
 } as const;
 
 export type EngineType = keyof typeof ENGINES;
