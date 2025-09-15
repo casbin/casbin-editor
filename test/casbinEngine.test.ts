@@ -12,42 +12,46 @@ interface EngineResult {
 
 describe('Casbin Engine Tests', () => {
   describe('Cross-engine enforcement consistency', () => {
+    // Get all remote engines
+    const remoteEngines = Object.fromEntries(
+      Object.entries(ENGINES)
+        .filter(([_, config]) => config.isRemote)
+        .map(([id]) => [id, new RemoteCasbinEngine(id as Exclude<EngineType, 'node'>)]),
+    ) as Record<Exclude<EngineType, 'node'>, RemoteCasbinEngine>;
+
+    // Test each engine for each test case
     Object.entries(example).forEach(([key, testCase]) => {
-      test(`should return consistent enforcement result for ${testCase.name}`, async () => {
-        const nodeEnforcer = await newEnforcer(newModel(testCase.model), new StringAdapter(testCase.policy || ' '));
+      Object.entries(remoteEngines).forEach(([engineType, engine]) => {
+        test(`should return consistent enforcement result for ${testCase.name} with ${engineType} engine`, async () => {
+          // Add delay for Python engine to avoid DLL conflicts
+          if (engineType === 'python') {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+          }
+          
+          const nodeEnforcer = await newEnforcer(newModel(testCase.model), new StringAdapter(testCase.policy || ' '));
+          const requests = testCase.request.split('\n').filter(Boolean);
 
-        const remoteEngines = Object.fromEntries(
-          Object.entries(ENGINES)
-            .filter(([_, config]) => config.isRemote)
-            .map(([id]) => [id, new RemoteCasbinEngine(id as Exclude<EngineType, 'node'>)]),
-        ) as Record<Exclude<EngineType, 'node'>, RemoteCasbinEngine>;
-
-        const requests = testCase.request.split('\n').filter(Boolean);
-
-        for (const request of requests) {
-          const requestParams = request.split(',').map((param) => {
-            const trimmed = param.trim();
-            if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-              try {
-                return JSON.parse(trimmed);
-              } catch {
-                return trimmed;
+          for (const request of requests) {
+            const requestParams = request.split(',').map((param) => {
+              const trimmed = param.trim();
+              if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+                try {
+                  return JSON.parse(trimmed);
+                } catch {
+                  return trimmed;
+                }
               }
-            }
-            return trimmed;
-          });
+              return trimmed;
+            });
 
-          const remoteRequest = requestParams
-            .map((param) => {
-              return typeof param === 'object' ? JSON.stringify(param) : param;
-            })
-            .join(',');
+            const remoteRequest = requestParams
+              .map((param) => {
+                return typeof param === 'object' ? JSON.stringify(param) : param;
+              })
+              .join(',');
 
-          const nodeResult = await nodeEnforcer.enforce(...requestParams);
+            const nodeResult = await nodeEnforcer.enforce(...requestParams);
 
-          const engineResults: EngineResult[] = [];
-
-          for (const [engineType, engine] of Object.entries(remoteEngines)) {
             try {
               const remoteResult = await engine.enforce({
                 model: testCase.model,
@@ -59,12 +63,17 @@ describe('Casbin Engine Tests', () => {
                 throw new Error(`${engineType} engine error: ${remoteResult.error}`);
               }
 
-              engineResults.push({
-                engineType: engineType as EngineType,
-                allowed: remoteResult.allowed,
-                reason: remoteResult.reason,
-                nodeResult,
-              });
+              const logMessage = [
+                `\n=== Test Case: [${testCase.name}] (${engineType}) ===`,
+                `Request params: [${requestParams.join(', ')}]`,
+                `[${engineType.toUpperCase()}] Result:`,
+                `  Allowed: [${remoteResult.allowed}]`,
+                `  Reason: [${remoteResult.reason?.join(', ')}]`,
+                `  Node Result: [${nodeResult}]`,
+                `=======================================\n`,
+              ].join('\n');
+
+              console.log(logMessage);
 
               expect(remoteResult.allowed).toBe(nodeResult);
             } catch (engineError: any) {
@@ -81,24 +90,8 @@ describe('Casbin Engine Tests', () => {
               throw engineError;
             }
           }
-
-          const logMessage = [
-            `\n=== Test Case: [${testCase.name}] ===`,
-            `Request params: [${requestParams.join(', ')}]`,
-            ...engineResults.map((result) => {
-              return (
-                `[${result.engineType.toUpperCase()}] Result:\n` +
-                `  Allowed: [${result.allowed}]\n` +
-                `  Reason: [${result.reason?.join(', ')}]\n` +
-                `  Node Result: [${result.nodeResult}]`
-              );
-            }),
-            `=======================================\n`,
-          ].join('\n');
-
-          console.log(logMessage);
-        }
-      }, 60000);
+        }, engineType === 'python' ? 80000 : 40000); //  Python: 80s, Others: 40s
+      });
     });
   });
 });
