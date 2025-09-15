@@ -47,26 +47,32 @@ describe('Casbin Engine Tests', () => {
 
           const engineResults: EngineResult[] = [];
 
-          for (const [engineType, engine] of Object.entries(remoteEngines)) {
+          // Set timeout for each engine individually
+          const enginePromises = Object.entries(remoteEngines).map(async ([engineType, engine]) => {
             try {
-              const remoteResult = await engine.enforce({
-                model: testCase.model,
-                policy: testCase.policy || '',
-                request: remoteRequest,
-              });
+              // 15 second timeout for each engine
+              const remoteResult = await Promise.race([
+                engine.enforce({
+                  model: testCase.model,
+                  policy: testCase.policy || '',
+                  request: remoteRequest,
+                }),
+                new Promise<never>((_, reject) => 
+                  setTimeout(() => reject(new Error(`${engineType} engine timeout after 15s`)), 15000)
+                )
+              ]);
 
               if (remoteResult.error) {
                 throw new Error(`${engineType} engine error: ${remoteResult.error}`);
               }
 
-              engineResults.push({
+              return {
                 engineType: engineType as EngineType,
                 allowed: remoteResult.allowed,
                 reason: remoteResult.reason,
                 nodeResult,
-              });
-
-              expect(remoteResult.allowed).toBe(nodeResult);
+                success: true
+              };
             } catch (engineError: any) {
               const errorMessage = [
                 `\n=== Error in [${testCase.name}] ([${engineType}]) ===`,
@@ -78,7 +84,30 @@ describe('Casbin Engine Tests', () => {
               ].join('\n');
 
               console.error(errorMessage);
-              throw engineError;
+              return {
+                engineType: engineType as EngineType,
+                error: engineError.message,
+                nodeResult,
+                success: false
+              };
+            }
+          });
+
+          // Wait for all engines to complete
+          const results = await Promise.all(enginePromises);
+          
+          // Process results
+          for (const result of results) {
+            if (result.success) {
+              engineResults.push({
+                engineType: result.engineType,
+                allowed: result.allowed,
+                reason: result.reason,
+                nodeResult: result.nodeResult,
+              });
+              expect(result.allowed).toBe(result.nodeResult);
+            } else {
+              throw new Error(`${result.engineType} engine failed: ${result.error}`);
             }
           }
 
