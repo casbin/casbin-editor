@@ -7,6 +7,7 @@ import { indentUnit } from '@codemirror/language';
 import { StreamLanguage } from '@codemirror/language';
 import { go } from '@codemirror/legacy-modes/mode/go';
 import { EditorView } from '@codemirror/view';
+import { RoleInheritanceGraph } from '../role-inheritance-graph/RoleInheritanceGraph';
 
 interface FunctionConfig {
   id: string;
@@ -22,6 +23,8 @@ interface CustomConfigPanelProps {
   setCustomConfigPersistent: (value: string) => void;
   textClass: string;
   t: (key: string) => string;
+  policy: string;  
+  modelKind: string;
 }
 
 export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
@@ -32,6 +35,8 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
   setCustomConfigPersistent,
   textClass,
   t,
+  policy,  
+  modelKind, 
 }) => {
   const [functions, setFunctions] = useState<FunctionConfig[]>([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -236,105 +241,94 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
         </svg>
       </button>
 
-      {(showCustomConfig || open) && (
-        <div className="flex flex-col h-full">
-          <div className={'pt-6 h-12 pl-2 flex items-center font-bold'}>
-            <div className={textClass}>{t('Custom Functions')}</div>
-          </div>
-
-          <div className="flex-1 overflow-auto min-h-0">
-            {functions.map((func) => {
-              return (
-                <div key={func.id} className="bg-gray-100 rounded-lg flex flex-col">
-                  <div className="flex justify-between items-center p-2">
-                    <input
-                      type="text"
-                      value={func.name}
-                      onChange={(e) => {
-                        return updateFunction(func.id, 'name', e.target.value);
-                      }}
-                      className="px-2 py-1 border rounded w-64"
-                      placeholder={t('Function name')}
-                      disabled={func.name === 'matchingForGFunction' || func.name === 'matchingDomainForGFunction'}
-                    />
-                    <button
-                      onClick={() => {
-                        return deleteFunction(func.id);
-                      }}
-                      className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors"
-                      title={t('Delete')}
-                    >
-                      <svg viewBox="0 0 24 24" className="w-4 h-4">
-                        <path
-                          fill="currentColor"
-                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-
-                  <div className="flex-1 overflow-auto">
-                    <CodeMirror
-                      value={func.body}
-                      height="100%"
-                      theme={monokai}
-                      onChange={(value) => {
-                        return updateFunction(func.id, 'body', value);
-                      }}
-                      basicSetup={{
-                        lineNumbers: true,
-                        highlightActiveLine: true,
-                        bracketMatching: true,
-                        indentOnInput: true,
-                      }}
-                      extensions={[basicSetup, StreamLanguage.define(go), indentUnit.of('    '), EditorView.lineWrapping]}
-                      className="h-full"
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex gap-2 m-1 mb-0 text-xs">
-            <button
-              onClick={addNewFunction}
-              className={clsx(
-                'px-3 py-1',
-                'border border-[#453d7d]',
-                'text-[#453d7a]',
-                'bg-[#efefef]',
-                'rounded',
-                'hover:bg-[#453d7d] hover:text-white',
-                'transition-colors duration-500',
-              )}
-            >
-              {t('Add Function')}
-            </button>
-
-            <button
-              onClick={addMatchingFunction}
-              disabled={hasMatchingFunction('matchingForGFunction')}
-              className={clsx('px-3 py-1', 'border', 'rounded', 'transition-colors duration-500', {
-                'btn-active': !hasMatchingFunction('matchingForGFunction'),
-                'btn-disabled': hasMatchingFunction('matchingForGFunction'),
-              })}
-            >
-              {t('Add Role Matching')}
-            </button>
-
-            <button
-              onClick={addMatchingDomainFunction}
-              disabled={hasMatchingFunction('matchingDomainForGFunction')}
-              className={clsx('px-3 py-1', 'border', 'rounded', 'transition-colors duration-500', {
-                'btn-active': !hasMatchingFunction('matchingDomainForGFunction'),
-                'btn-disabled': hasMatchingFunction('matchingDomainForGFunction'),
-              })}
-            >
-              {t('Add Domain Matching')}
-            </button>
-          </div>
-        </div>
+      {(showCustomConfig || open) && (  
+        <div className="flex flex-col h-full">  
+          <div className={'pt-6 h-12 pl-2 flex items-center font-bold'}>  
+            <div className={textClass}>{t('Custom Functions')}</div>  
+          </div>  
+  
+          {/* Custom Functions Area - Restricted to the height of a function */}  
+          <div className="h-32 overflow-auto min-h-0 flex-shrink-0">  
+            {functions.slice(0, 1).map((func) => {  
+              return (  
+                <div key={func.id} className="bg-gray-100 rounded-lg flex flex-col">  
+                  <div className="flex justify-between items-center p-2">  
+                    <input  
+                      type="text"  
+                      value={func.name}  
+                      onChange={(e) => {  
+                        return updateFunction(func.id, 'name', e.target.value);  
+                      }}  
+                      className="px-2 py-1 border rounded w-64"  
+                      placeholder={t('Function name')}  
+                      disabled={func.name === 'matchingForGFunction' || func.name === 'matchingDomainForGFunction'}  
+                    />  
+                    <button  
+                      onClick={() => {  
+                        return deleteFunction(func.id);  
+                      }}  
+                      className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors"  
+                      title={t('Delete')}  
+                    >  
+                      <svg viewBox="0 0 24 24" className="w-4 h-4">  
+                        <path  
+                          fill="currentColor"  
+                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"  
+                        />  
+                      </svg>  
+                    </button>  
+                  </div>  
+  
+                  <div className="flex-1 overflow-auto">  
+                    <CodeMirror  
+                      value={func.body}  
+                      height="100%"  
+                      theme={monokai}  
+                      onChange={(value) => {  
+                        return updateFunction(func.id, 'body', value);  
+                      }}  
+                      basicSetup={{  
+                        lineNumbers: true,  
+                        highlightActiveLine: true,  
+                        bracketMatching: true,  
+                        indentOnInput: true,  
+                      }}  
+                      extensions={[basicSetup, StreamLanguage.define(go), indentUnit.of('    '), EditorView.lineWrapping]}  
+                      className="h-full"  
+                    />  
+                  </div>  
+                </div>  
+              );  
+            })}  
+              
+            {/* If there is no function, display the Add button */}  
+            {functions.length === 0 && (  
+              <div className="flex gap-2 m-1 mb-0 text-xs">  
+                <button  
+                  onClick={addNewFunction}  
+                  className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"  
+                >  
+                  {t('Add Function')}  
+                </button>  
+              </div>  
+            )}  
+          </div>  
+  
+          {/* Role inheritance diagram area - Occupies all remaining space */}  
+          <div className="border-t border-gray-200 mt-2 pt-2 flex-1 min-h-0">  
+            <div className="h-6 pl-2 flex items-center font-bold mb-2">  
+              <div className={textClass}>{t('Role Inheritance Graph')}</div>  
+            </div>  
+            <div className="h-full overflow-auto">  
+              {modelKind && policy && (  
+                <RoleInheritanceGraph   
+                  policy={policy}   
+                  className="h-full"  
+                />  
+              )}  
+            </div>  
+          </div>  
+        </div>  
       )}
     </>
   );

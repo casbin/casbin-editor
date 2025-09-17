@@ -59,8 +59,8 @@ export const EditorScreen = () => {
   const { shareInfo } = useShareInfo();
   const { t, lang, theme, toggleTheme } = useLang();
   const [open, setOpen] = useState(true);
-  const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [showCustomConfig, setShowCustomConfig] = useState(false);
+  const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [requestResults, setRequestResults] = useState<ResultsMap>({});
   const [isChatOpen, setIsChatOpen] = useState(false);
   const skipNextEffectRef = useRef(false);
@@ -168,6 +168,8 @@ export const EditorScreen = () => {
             setCustomConfigPersistent={setCustomConfigPersistent}
             textClass={textClass}
             t={t}
+            policy={policy}  
+            modelKind={modelKind}
           />
         </div>
       </div>

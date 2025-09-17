@@ -25,5 +25,17 @@
   "View Source Code": "View Source Code",
   "Refreshing engines...": "Refreshing engines...",
   "Engines refreshed successfully": "Engines refreshed successfully",
-  "Failed to refresh engines": "Failed to refresh engines"
+  "Failed to refresh engines": "Failed to refresh engines",
+  "Role Graph": "Role Graph",  
+  "Show Role Inheritance Graph": "Show Role Inheritance Graph",  
+  "Role Inheritance Graph": "Role Inheritance Graph",  
+  "User": "User",  
+  "Role": "Role",   
+  "Resource": "Resource",  
+  "Circular dependency detected": "Circular dependency detected:",  
+  "No role inheritance relationships found": "No role inheritance relationships found. Please ensure the policy contains g, or g2, rules.",  
+  "Legend": "Legend",  
+  "Actual user entity": "Actual user entity",  
+  "Permission set": "Permission set",  
+  "Resource role (g2)": "Resource role (g2)"  
 }
