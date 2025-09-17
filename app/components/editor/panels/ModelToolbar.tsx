@@ -103,9 +103,8 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
             }    
           }}    
         >    
-          {t('RESET')}    
-        </button>    
-        <FileUploadButton onFileContent={setModelTextPersistent} accept=".conf" />    
+          {t('RESET')} 
+        </button>      
       </div>    
     </div> 
   );
