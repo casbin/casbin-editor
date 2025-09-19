@@ -161,7 +161,8 @@ bob, 2, data1, 1, write`,
   },
   lbac: {
     name: 'LBAC',
-    model: `[request_definition]
+    model:
+      `[request_definition]
 r = sub, subject_confidentiality, subject_integrity, obj, object_confidentiality, object_integrity, act
 
 [policy_definition]
@@ -175,9 +176,9 @@ e = some(where (p.eft == allow))
 
 [matchers]
 m = (r.act == "read" && r.subject_confidentiality >= r.object_confidentiality && ` +
-     `r.subject_integrity >= r.object_integrity) || ` +
-     `(r.act == "write" && r.subject_confidentiality <= r.object_confidentiality && ` +
-     `r.subject_integrity <= r.object_integrity)`,
+      `r.subject_integrity >= r.object_integrity) || ` +
+      `(r.act == "write" && r.subject_confidentiality <= r.object_confidentiality && ` +
+      `r.subject_integrity <= r.object_integrity)`,
     policy: '',
     request: `admin, 5, 5, file_topsecret, 3, 3, read
 manager, 4, 4, file_secret, 4, 2, read
@@ -576,7 +577,7 @@ bob, data3, read`,
     customConfig: undefined,
     enforceContext: undefined,
   },
-    rebac: {
+  rebac: {
     name: 'ReBAC',
     model: `[request_definition]
 r = sub, obj, act
@@ -650,6 +651,36 @@ m = eval(p.sub_rule) && r.obj == p.obj && r.act == p.act`,
     policy: `p, r.sub.Age > 18 && r.sub.Age < 60, /data1, read
 `,
     request: `{ "Age": 30}, /data1, read`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
+  pbac: {
+    name: 'PBAC',
+    model: `[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub_rule, obj_rule, act
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = eval(p.sub_rule) && eval(p.obj_rule) && r.act == p.act`,
+    policy: `p, r.sub.Age >= 18, r.obj.Level >= 1, play`,
+    request: `{"Age":25}, {"Level":2}, read
+{"Age":25}, {"Level":2}, read
+{"Age":30}, {"Level":2}, read
+{"Age":16}, {"Level":2}, play
+{"Age":17}, {"Level":2}, play
+{"Age":20}, {"Level":2}, play
+{"Age":25}, {"Level":2}, play
+{"Age":30}, {"Level":2}, write
+{"Age":35}, {"Level":2}, delete
+{"Age":40}, {"Level":2}, read
+{"Age":45}, {"Level":2}, read
+{"Age":50}, {"Level":2}, read
+{"Age":55}, {"Level":2}, play`,
     customConfig: undefined,
     enforceContext: undefined,
   },
