@@ -11,6 +11,9 @@ interface EngineResult {
 }
 
 // Mutex to ensure only one Python test runs at a time
+// This prevents multiple simultaneous calls to the remote Python engine,
+// which can cause DLL loading conflicts on the remote Windows server
+// when PyInstaller executables try to extract to the same temp directory
 class PythonTestMutex {
   private locked = false;
   private queue: Array<() => void> = [];
