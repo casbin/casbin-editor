@@ -152,7 +152,7 @@ export const EditorScreen = () => {
     <div className="flex flex-col sm:flex-row h-full w-full overflow-hidden">
       <Toaster position="top-center" />
       <div
-        className={clsx('sm:relative border-r border-[#dddddd]', 'transition-all duration-300', {
+        className={clsx('sm:relative border-r border-border shadow-sm', 'transition-all duration-300', {
           'hidden sm:block': !showCustomConfig,
           block: showCustomConfig,
           'sm:w-[25%]': open,
@@ -181,10 +181,10 @@ export const EditorScreen = () => {
           'w-full': !open && !isChatOpen,
         })}
       >
-        <div className="flex flex-col sm:flex-row gap-1 pt-4 flex-1 overflow-hidden min-w-0">
+        <div className="flex flex-col sm:flex-row gap-2 pt-4 px-2 flex-1 overflow-hidden min-w-0">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
-              <div className={clsx(textClass, 'font-bold')}>{t('Model')}</div>
+              <div className={clsx(textClass, 'font-bold text-lg')}>{t('Model')}</div>
               <ModelToolbar
                 modelKind={modelKind}
                 setModelKind={setModelKind}
@@ -194,20 +194,22 @@ export const EditorScreen = () => {
               <div className="sm:hidden ml-auto mr-2">
                 <button
                   className={clsx(
-                    'rounded',
+                    'rounded-lg',
                     'flex items-center justify-center',
-                    'border border-[#453d7d]',
-                    'text-[#453d7a]',
-                    'bg-[#efefef]',
-                    'hover:bg-[#453d7d] hover:text-white',
-                    'transition-colors duration-500',
+                    'border border-primary',
+                    'text-primary',
+                    'bg-secondary',
+                    'hover:bg-primary hover:text-primary-foreground',
+                    'transition-all duration-200',
+                    'shadow-sm hover:shadow-md',
+                    'p-2',
                   )}
                   onClick={() => {
                     return setShowCustomConfig(!showCustomConfig);
                   }}
                 >
                   <svg
-                    className={clsx('h-6 w-6')}
+                    className={clsx('h-5 w-5')}
                     style={{
                       transform: showCustomConfig ? 'rotateZ(90deg)' : 'rotateZ(-90deg)',
                     }}
@@ -219,7 +221,7 @@ export const EditorScreen = () => {
               </div>
             </div>
 
-            <div className="flex-grow overflow-auto h-full">
+            <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
               <div className="flex flex-col h-full">
                 <CodeMirror
                   height="100%"
@@ -247,7 +249,7 @@ export const EditorScreen = () => {
             </div>
           </div>
           <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className="h-10 pl-2 font-bold flex items-center justify-between">
+            <div className="h-10 pl-2 font-bold text-lg flex items-center justify-between">
               <div className={textClass}>{t('Policy')}</div>
               <PolicyToolbar
                 setPolicyPersistent={setPolicyPersistent}
@@ -258,7 +260,7 @@ export const EditorScreen = () => {
                 engineGithubLinks={engineGithubLinks}
               />
             </div>
-            <div className="flex-grow overflow-auto h-full">
+            <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
               <div className="flex flex-col h-full">
                 <CodeMirror
                   height="100%"
@@ -286,17 +288,17 @@ export const EditorScreen = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-1 pt-2 flex-1 overflow-hidden min-w-0">
+        <div className="flex flex-col sm:flex-row gap-2 pt-2 px-2 flex-1 overflow-hidden min-w-0">
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
-              <div className={clsx(textClass, 'font-bold')}>{t('Request')}</div>
+              <div className={clsx(textClass, 'font-bold text-lg')}>{t('Request')}</div>
               <RequestToolbar
                 setupEnforceContextData={setupEnforceContextData}
                 setupHandleEnforceContextChange={setupHandleEnforceContextChange}
                 setRequestPersistent={setRequestPersistent}
               />
             </div>
-            <div className="flex-grow overflow-auto h-full">
+            <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
               <div className="flex flex-col h-full">
                 <CodeMirror
                   height="100%"
@@ -326,11 +328,11 @@ export const EditorScreen = () => {
             </div>
           </div>
           <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className={clsx('h-10 pl-2 font-bold', 'flex items-center justify-between')}>
+            <div className={clsx('h-10 pl-2 font-bold text-lg', 'flex items-center justify-between')}>
               <div className={textClass}>{t('Enforcement Result')}</div>
               <div className="mr-4">
                 <div
-                  className="text-red-600 flex items-center cursor-pointer hover:text-red-700"
+                  className="text-primary flex items-center cursor-pointer hover:text-primary/80 transition-colors font-medium"
                   onClick={() => {
                     if (sidePanelChatRef.current) {
                       sidePanelChatRef.current.openDrawer('');
@@ -341,7 +343,7 @@ export const EditorScreen = () => {
                 </div>
               </div>
             </div>
-            <div className="flex-grow overflow-auto h-full">
+            <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
               <div className="flex flex-col h-full">
                 <CodeMirror
                   height="100%"

@@ -41,12 +41,12 @@ const FooterToolbar = ({
           <button
             onClick={toggleTheme}
             aria-label={theme !== 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            className="theme-toggle-button mr-2"
+            className="theme-toggle-button mr-2 p-2 rounded-lg hover:bg-secondary transition-all duration-200 hover:shadow-sm"
           >
             <img
               src={theme !== 'dark' ? 'sun.svg' : 'moon.svg'}
               alt={theme !== 'dark' ? 'Light mode' : 'Dark mode'}
-              className="w-6 h-6 transition-opacity duration-300"
+              className="w-5 h-5 transition-opacity duration-300"
               style={{ filter: theme === 'dark' ? 'invert(1)' : 'invert(0)' }}
             />
           </button>

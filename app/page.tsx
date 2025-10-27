@@ -20,15 +20,34 @@ import { useLang } from '@/app/context/LangContext';
 export default function Home() {
   const { theme } = useLang();
   return (
-    <main className={clsx('flex flex-col sm:h-screen', 'min-h-screen sm:min-h-0', theme === 'dark' ? 'bg-customDark' : 'bg-white')}>
+    <main
+      className={clsx(
+        'flex flex-col sm:h-screen',
+        'min-h-screen sm:min-h-0',
+        theme === 'dark' ? 'bg-customDark' : 'bg-gradient-to-br from-slate-50 to-slate-100',
+      )}
+    >
       <div className={clsx('flex-grow', 'overflow-auto sm:overflow-hidden')}>
         <EditorScreen />
       </div>
-      <div className={clsx('bg-[#222222] px-2 py-3 mt-2', 'flex flex-row items-center justify-between')}>
-        <a target="_blank" rel="noopener noreferrer" href="https://github.com/casbin/casbin-editor" className="mr-2">
+      <div
+        className={clsx(
+          'bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-4 mt-2',
+          'flex flex-row items-center justify-between',
+          'border-t border-slate-700 shadow-lg',
+        )}
+      >
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/casbin/casbin-editor"
+          className="mr-2 transition-transform hover:scale-105"
+        >
           <img alt="GitHub stars" src="https://img.shields.io/github/stars/casbin/casbin-editor?style=social" />
         </a>
-        <span className="text-white text-sm">Copyright © {new Date().getFullYear()} Casbin contributors.</span>
+        <span className="text-slate-300 text-sm font-medium">
+          Copyright © {new Date().getFullYear()} Casbin contributors.
+        </span>
       </div>
     </main>
   );

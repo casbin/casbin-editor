@@ -38,3 +38,6 @@ next-env.d.ts
 
 # editor
 .idea
+
+# screenshots
+/screenshots
