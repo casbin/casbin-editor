@@ -519,7 +519,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
   return (
     <div ref={containerRef} className={`flex flex-col h-full ${className}`}>
-      {/*legeng */}
+      {/*legend */}
       {(treeData.length > 0 || Object.keys(relations).length > 0) && (
         <div className="flex-shrink-0 mb-2 p-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-xs">
           <div className="grid grid-cols-2 gap-2">
