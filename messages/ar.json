@@ -25,5 +25,7 @@
   "View Source Code": "عرض الكود المصدري",
   "Refreshing engines...": "يتم تحديث المحركات...",
   "Engines refreshed successfully": "تم تحديث المحركات بنجاح",
-  "Failed to refresh engines": "فشل تحديث المحركات"
+  "Failed to refresh engines": "فشل تحديث المحركات",
+  "Shared at": "Shared at",
+  "Done in": "Done in"
 }

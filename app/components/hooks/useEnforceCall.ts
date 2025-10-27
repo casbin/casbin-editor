@@ -40,6 +40,7 @@ export function useEnforceCall(
             enforcer({
               ...params,
               selectedEngine: engine,
+              t,
               onResponse: (v: any) => {
                 if (isValidElement(v)) {
                   lastEcho = v;

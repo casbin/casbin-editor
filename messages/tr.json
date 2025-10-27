@@ -25,5 +25,7 @@
   "View Source Code": "Kaynak kodu görüntüle",
   "Refreshing engines...": "Motorlar yeniliyor...",
   "Engines refreshed successfully": "Motorlar başarıyla yenildi",
-  "Failed to refresh engines": "Motorları yenileme hatası"
+  "Failed to refresh engines": "Motorları yenileme hatası",
+  "Shared at": "Paylaşıldı",
+  "Done in": "Tamamlandı"
 }

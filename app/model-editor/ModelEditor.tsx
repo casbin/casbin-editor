@@ -159,11 +159,11 @@ export const ModelEditor = () => {
           <button
             className={clsx(
               'rounded',
-              'text-[#453d7d]',
+              'text-[#5734D3]',
               'px-1',
-              'border border-[#453d7d]',
+              'border border-[#5734D3]',
               'bg-[#efefef]',
-              'hover:bg-[#453d7d] hover:text-white',
+              'hover:bg-[#5734D3] hover:text-white',
               'transition-colors duration-500',
             )}
             onClick={() => {

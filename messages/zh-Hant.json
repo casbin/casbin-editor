@@ -25,5 +25,7 @@
   "View Source Code": "查看原始碼",
   "Refreshing engines...": "更新引擎中...",
   "Engines refreshed successfully": "引擎已更新成功",
-  "Failed to refresh engines": "更新引擎失敗"
+  "Failed to refresh engines": "更新引擎失敗",
+  "Shared at": "分享地址",
+  "Done in": "完成於"
 }

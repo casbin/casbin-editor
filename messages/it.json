@@ -25,5 +25,7 @@
   "View Source Code": "Visualizza codice sorgente",
   "Refreshing engines...": "Aggiornamento motori...",
   "Engines refreshed successfully": "Motori aggiornati con successo",
-  "Failed to refresh engines": "Errore nell'aggiornamento motori"
+  "Failed to refresh engines": "Errore nell'aggiornamento motori",
+  "Shared at": "Condiviso su",
+  "Done in": "Completato in"
 }

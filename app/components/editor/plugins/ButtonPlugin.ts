@@ -17,8 +17,8 @@ class ButtonWidget extends WidgetType {
 
   toDOM() {
     const button = document.createElement('button');
-    button.className = `flex items-center rounded text-[#453d7d] px-1 border border-[#453d7d] 
-      bg-[#efefef] hover:bg-[#453d7d] hover:text-white transition-colors duration-500 
+    button.className = `flex items-center rounded text-[#5734D3] px-1 border border-[#5734D3] 
+      bg-[#efefef] hover:bg-[#5734D3] hover:text-white transition-colors duration-500 
       font-medium whitespace-nowrap overflow-hidden`;
     button.innerHTML = '<img src="openai.svg" alt="" class="w-4 h-4 mr-1" /> Ask AI';
     button.style.position = 'absolute';

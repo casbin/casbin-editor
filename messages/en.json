@@ -46,5 +46,7 @@
   "G (Role)": "G (Role)",
   "G2 (Resource)": "G2 (Resource)",
   "G3 (Domain)": "G3 (Domain)",
-  "No policy relationships found": "No policy relationships found"
+  "No policy relationships found": "No policy relationships found",
+  "Shared at": "Shared at",
+  "Done in": "Done in"
 }
