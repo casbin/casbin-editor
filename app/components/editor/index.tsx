@@ -163,7 +163,7 @@ export const EditorScreen = () => {
           alt="Casbin Logo"
           className="h-8 w-auto"
         />
-        <span className={clsx('text-xl font-semibold', textClass)}>Policy Editor</span>
+        <span className={clsx('text-xl font-semibold', textClass)}>{t('Policy Editor')}</span>
       </div>
       {/* Main content area */}
       <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
