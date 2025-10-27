@@ -164,6 +164,28 @@ export const EditorScreen = () => {
           className="h-8 w-auto"
         />
         <span className={clsx('text-xl font-semibold', textClass)}>{t('Policy Editor')}</span>
+        <a
+          href="/gallery"
+          className={clsx(
+            'ml-auto px-4 py-2 rounded-lg font-medium transition-all duration-200',
+            'bg-primary text-primary-foreground',
+            'hover:bg-primary/90 shadow-sm hover:shadow-md',
+            'flex items-center gap-2',
+          )}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z
+                M14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z
+                M4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z
+                M14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+            />
+          </svg>
+          <span>{t('Model Gallery')}</span>
+        </a>
       </div>
       {/* Main content area */}
       <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
