@@ -3,8 +3,10 @@ import { defaultCustomConfig, defaultEnforceContext, example } from '@/app/compo
 import { ShareFormat } from '@/app/components/hooks/useShareInfo';
 import { defaultEnforceContextData } from '@/app/components/hooks/useSetupEnforceContext';
 import type { EngineType } from '@/app/config/engineConfig';
+import { useLang } from '@/app/context/LangContext';
 
 export default function useIndex() {
+  const { t } = useLang();
   const [modelKind, setModelKind] = useState('basic');
   const [modelText, setModelText] = useState('');
   const [policy, setPolicy] = useState('');
@@ -98,7 +100,7 @@ export default function useIndex() {
     } else {
       const currentPath = window.location.origin + window.location.pathname;
       setShare(v as string);
-      setEcho(<div className="text-green-500">{`Shared at ${currentPath}#${v}`}</div>);
+      setEcho(<div className="text-green-500">{t('Shared at') + ' ' + `${currentPath}#${v}`}</div>);
     }
   }
 

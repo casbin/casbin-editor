@@ -54,10 +54,10 @@ const LanguageMenu = () => {
             'transition-colors duration-500',
             'rounded',
             'px-2 py-1',
-            'border border-[#453d7d]',
-            'text-[#453d7a]',
+            'border border-[#5734D3]',
+            'text-[#5734D3]',
             'bg-[#efefef]',
-            'hover:bg-[#453d7d] hover:text-white',
+            'hover:bg-[#5734D3] hover:text-white',
             textClass,
           )}
         >
@@ -80,7 +80,7 @@ const LanguageMenu = () => {
               onSelect={() => {
                 handleLangChange(code);
               }}
-              className="p-2 cursor-pointer"
+              className="p-2 cursor-pointer hover:bg-secondary rounded transition-colors duration-200"
             >
               {languageNames[code]}
             </DropdownMenu.Item>

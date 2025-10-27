@@ -25,6 +25,7 @@ interface RunTestProps {
   enforceContextData: Map<string, string>;
   selectedEngine: EngineType;
   onResponse: (com: JSX.Element | any[]) => void;
+  t?: (key: string) => string;
 }
 
 async function enforcer(props: RunTestProps) {
@@ -60,7 +61,10 @@ async function enforcer(props: RunTestProps) {
     );
 
     const stopTime = performance.now();
-    props.onResponse(<div className="text-green-500">{'Done in ' + (stopTime - startTime).toFixed(2) + 'ms'}</div>);
+    const t = props.t || ((key: string) => {
+      return key;
+    });
+    props.onResponse(<div className="text-green-500">{t('Done in') + ' ' + (stopTime - startTime).toFixed(2) + 'ms'}</div>);
 
     const hasError = results.some((r) => {
       return r.reason.some((reason) => {

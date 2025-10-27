@@ -25,5 +25,7 @@
   "View Source Code": "Просмотреть исходный код",
   "Refreshing engines...": "Обновление движков...",
   "Engines refreshed successfully": "Движки обновлены успешно",
-  "Failed to refresh engines": "Ошибка при обновлении движков"
+  "Failed to refresh engines": "Ошибка при обновлении движков",
+  "Shared at": "Поделиться по адресу",
+  "Done in": "Выполнено за"
 }

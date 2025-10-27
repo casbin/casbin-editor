@@ -33,7 +33,7 @@ export default function Home() {
       <div
         className={clsx(
           'bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-4 mt-2',
-          'flex flex-row items-center justify-between',
+          'flex flex-col sm:flex-row items-center justify-center gap-4',
           'border-t border-slate-700 shadow-lg',
         )}
       >
@@ -41,7 +41,7 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
           href="https://github.com/casbin/casbin-editor"
-          className="mr-2 transition-transform hover:scale-105"
+          className="transition-transform hover:scale-105 rounded-lg overflow-hidden shadow-md hover:shadow-xl"
         >
           <img alt="GitHub stars" src="https://img.shields.io/github/stars/casbin/casbin-editor?style=social" />
         </a>

@@ -46,5 +46,7 @@
   "G (Role)": "G (角色)",
   "G2 (Resource)": "G2 (资源)",
   "G3 (Domain)": "G3 (域)",
-  "No policy relationships found": "未找到策略关系"
+  "No policy relationships found": "未找到策略关系",
+  "Shared at": "分享地址",
+  "Done in": "完成于"
 }
