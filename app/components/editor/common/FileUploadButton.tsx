@@ -45,14 +45,15 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onFileConten
               onClick={handleClick}
               className={clsx(
                 'flex items-center gap-1',
-                'rounded',
+                'rounded-lg',
                 'px-2',
                 'py-1',
-                'border border-[#453d7d]',
-                'text-[#453d7a]',
-                'bg-[#efefef]',
-                'hover:bg-[#453d7d] hover:text-white',
-                'transition-colors duration-500',
+                'border border-primary',
+                'text-primary',
+                'bg-secondary',
+                'hover:bg-primary hover:text-primary-foreground',
+                'transition-all duration-200',
+                'shadow-sm hover:shadow-md',
               )}
             >
               <svg className="w-4 h-4" viewBox="0 0 1051 1024" fill="currentColor">
@@ -61,7 +62,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onFileConten
               </svg>
             </button>
           </TooltipTrigger>
-          <TooltipContent className="bg-white text-[#453d7d] border border-[#453d7d]">
+          <TooltipContent className="bg-white text-primary border border-primary shadow-lg">
             <p>{t('Upload File')}</p>
           </TooltipContent>
         </Tooltip>

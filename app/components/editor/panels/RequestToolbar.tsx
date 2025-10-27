@@ -14,7 +14,13 @@ export const RequestToolbar = ({ setupEnforceContextData, setupHandleEnforceCont
       <div className="flex items-center gap-2 min-w-max">
         <div className={'space-x-2'}>
           <input
-            className={clsx('w-7 pl-1', 'border border-black rounded')}
+            className={clsx(
+              'w-8 px-1.5 py-0.5',
+              'border border-border rounded-md',
+              'text-sm',
+              'focus:outline-none focus:ring-2 focus:ring-primary/50',
+              'transition-all',
+            )}
             value={setupEnforceContextData.get(r)}
             placeholder={r}
             onChange={(event) => {
@@ -22,7 +28,13 @@ export const RequestToolbar = ({ setupEnforceContextData, setupHandleEnforceCont
             }}
           />
           <input
-            className={clsx('w-7 pl-1', 'border border-black rounded')}
+            className={clsx(
+              'w-8 px-1.5 py-0.5',
+              'border border-border rounded-md',
+              'text-sm',
+              'focus:outline-none focus:ring-2 focus:ring-primary/50',
+              'transition-all',
+            )}
             value={setupEnforceContextData.get(p)}
             placeholder={p}
             onChange={(event) => {
@@ -30,7 +42,13 @@ export const RequestToolbar = ({ setupEnforceContextData, setupHandleEnforceCont
             }}
           />
           <input
-            className={clsx('w-7 pl-1', 'border border-black rounded')}
+            className={clsx(
+              'w-8 px-1.5 py-0.5',
+              'border border-border rounded-md',
+              'text-sm',
+              'focus:outline-none focus:ring-2 focus:ring-primary/50',
+              'transition-all',
+            )}
             value={setupEnforceContextData.get(e)}
             placeholder={e}
             onChange={(event) => {
@@ -38,7 +56,13 @@ export const RequestToolbar = ({ setupEnforceContextData, setupHandleEnforceCont
             }}
           />
           <input
-            className={clsx('w-7 pl-1', 'border border-black rounded')}
+            className={clsx(
+              'w-8 px-1.5 py-0.5',
+              'border border-border rounded-md',
+              'text-sm',
+              'focus:outline-none focus:ring-2 focus:ring-primary/50',
+              'transition-all',
+            )}
             value={setupEnforceContextData.get(m)}
             placeholder={m}
             onChange={(event) => {
