@@ -83,7 +83,7 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
         <DropdownMenu.Content           
           sideOffset={5}           
           className={          
-            "bg-white rounded-lg border border-gray-200 shadow-lg z-50 " +          
+            "bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg z-50 " +          
             "max-h-[40vh] overflow-y-auto min-w-[200px] sm:min-w-[360px]"          
           }          
         >          
@@ -96,8 +96,11 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
                     return handlePrimaryEngineChange(engine.id);          
                   }}          
                   className={          
-                    `px-3 py-2 hover:bg-gray-100 cursor-pointer rounded outline-none text-sm text-left ${          
-                      selectedEngine === engine.id ? 'bg-red-50 text-red-700' : ''          
+                    `px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer ` +
+                    `rounded outline-none text-sm text-left dark:text-gray-200 ${          
+                      selectedEngine === engine.id 
+                        ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400' 
+                        : ''          
                     }`          
                   }          
                 >          
@@ -139,7 +142,12 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
                 </button>          
               </DropdownMenu.Trigger>        
             </TooltipTrigger>          
-            <TooltipContent className="bg-white text-[#e13c3c] border border-[#e13c3c]">          
+            <TooltipContent 
+              className={
+                "bg-white dark:bg-gray-800 text-[#e13c3c] dark:text-[#ff6666] " +
+                "border border-[#e13c3c] dark:border-[#ff6666]"
+              }
+            >          
               <p>{t('Compare Engines')}</p>          
             </TooltipContent>          
           </Tooltip>          
@@ -148,7 +156,7 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
         <DropdownMenu.Content         
           sideOffset={5}         
           align="end"        
-          className="bg-white rounded-lg border border-gray-200 shadow-lg z-50 min-w-[200px]"        
+          className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg z-50 min-w-[200px]"        
         >        
           <div className="p-2">        
             {engines.map((engine) => {        
@@ -163,8 +171,8 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
                     return handleComparisonToggle(engine.id);        
                   }}        
                   className={    
-                    "px-3 py-2 hover:bg-gray-100 cursor-pointer rounded outline-none " +    
-                    "flex items-center gap-2"    
+                    "px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer rounded outline-none " +    
+                    "flex items-center gap-2 dark:text-gray-200"    
                   }        
                 >        
                   <input        
@@ -174,10 +182,10 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
                     readOnly        
                     className={      
                       "form-checkbox h-4 w-4 text-[#e13c3c] rounded " +      
-                      "border-gray-300 focus:ring-[#e13c3c] accent-[#e13c3c]"      
+                      "border-gray-300 dark:border-gray-600 focus:ring-[#e13c3c] accent-[#e13c3c]"      
                     }      
                   />        
-                  <span className={isSelected ? 'text-gray-500' : ''}>{engine.name}</span>        
+                  <span className={isSelected ? 'text-gray-500 dark:text-gray-400' : ''}>{engine.name}</span>        
                 </DropdownMenu.Item>        
               );        
             })}        
@@ -214,7 +222,12 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
               </svg>          
             </a>          
           </TooltipTrigger>          
-          <TooltipContent className="bg-white text-[#e13c3c] border border-[#e13c3c]">          
+          <TooltipContent 
+            className={
+              "bg-white dark:bg-gray-800 text-[#e13c3c] dark:text-[#ff6666] " +
+              "border border-[#e13c3c] dark:border-[#ff6666]"
+            }
+          >          
             <p>{t('View Source Code')}</p>          
           </TooltipContent>          
         </Tooltip>          
