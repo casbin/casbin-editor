@@ -60,10 +60,11 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
                       setModelKind(n);    
                       setRequestResults({});    
                     }}    
-                    className={  
-                      `px-3 py-2 hover:bg-primary/20 dark:hover:bg-primary/30 cursor-pointer rounded outline-none text-sm transition-colors dark:text-gray-200 ${    
-                        modelKind === n ? 'bg-primary/10 text-primary font-medium' : ''    
-                      }`  
+                    className={
+                      `px-3 py-2 hover:bg-primary/20 dark:hover:bg-primary/30 cursor-pointer ` +
+                      `rounded outline-none text-sm transition-colors dark:text-gray-200 ${
+                        modelKind === n ? 'bg-primary/10 text-primary font-medium' : ''
+                      }`
                     }  
                   >    
                     {example[n]?.name || n}    
