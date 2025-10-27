@@ -15,6 +15,7 @@ export const RequestToolbar = ({ setupEnforceContextData, setupHandleEnforceCont
     'text-sm',
     'focus:outline-none focus:ring-2 focus:ring-primary/50',
     'transition-all',
+    'bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100',
   );
 
   return (

@@ -369,16 +369,35 @@ export const EditorScreen = () => {
             <div className={clsx('h-10 pl-2 font-bold text-lg', 'flex items-center justify-between')}>
               <div className={textClass}>{t('Enforcement Result')}</div>
               <div className="mr-4">
-                <div
-                  className="text-primary flex items-center cursor-pointer hover:text-primary/80 transition-colors font-medium"
+                <button
+                  className={clsx(
+                    'px-3 py-1.5 rounded-lg',
+                    'text-primary border border-primary',
+                    'bg-secondary hover:bg-primary hover:text-primary-foreground',
+                    'transition-all duration-200',
+                    'shadow-sm hover:shadow-md',
+                    'font-medium text-sm',
+                    'flex items-center gap-2',
+                  )}
                   onClick={() => {
                     if (sidePanelChatRef.current) {
                       sidePanelChatRef.current.openDrawer('');
                     }
                   }}
                 >
-                  <span>{t('Why this result')}</span>
-                </div>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d={
+                        'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907' +
+                        '-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                      }
+                    />
+                  </svg>
+                  <span>{t('Explain it')}</span>
+                </button>
               </div>
             </div>
             <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">

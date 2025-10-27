@@ -44,7 +44,7 @@ const FooterToolbar = ({
             className={clsx(
               'theme-toggle-button mr-2 p-2 rounded-lg',
               'hover:bg-secondary/50 hover:border hover:border-primary/30',
-              'transition-all duration-200 hover:shadow-md hover:scale-105',
+              'transition-all duration-200 hover:shadow-md',
             )}
           >
             <img

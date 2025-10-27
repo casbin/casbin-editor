@@ -58,9 +58,9 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
         <DropdownMenu.Trigger asChild>          
           <button           
             className={          
-              "bg-transparent border border-[#e13c3c] rounded px-2 py-1 " +          
-              "text-[#e13c3c] focus:outline-none hover:bg-[#e13c3c] hover:text-white " +          
-              "w-[200px] sm:w-[360px] text-left flex justify-between items-center"          
+              "bg-secondary border border-primary rounded-lg px-2 py-1 " +          
+              "text-primary focus:outline-none hover:bg-primary hover:text-primary-foreground " +          
+              "w-[200px] sm:w-[360px] text-left flex justify-between items-center transition-all duration-200"          
             }          
           >          
             <span className="truncate text-sm">          
@@ -96,10 +96,10 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
                     return handlePrimaryEngineChange(engine.id);          
                   }}          
                   className={          
-                    `px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer ` +
+                    `px-3 py-2 hover:bg-primary/20 dark:hover:bg-primary/30 cursor-pointer ` +
                     `rounded outline-none text-sm text-left dark:text-gray-200 ${          
                       selectedEngine === engine.id 
-                        ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400' 
+                        ? 'bg-primary/10 text-primary font-medium' 
                         : ''          
                     }`          
                   }          
@@ -124,8 +124,8 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
               <DropdownMenu.Trigger asChild>        
                 <button          
                   className={          
-                    "border border-[#e13c3c] rounded px-2 py-1 text-[#e13c3c] " +          
-                    "hover:bg-[#e13c3c] hover:text-white"          
+                    "border border-primary rounded-lg px-2 py-1 text-primary bg-secondary " +          
+                    "hover:bg-primary hover:text-primary-foreground transition-all duration-200"          
                   }          
                 >          
                   <svg className="w-4 h-4" viewBox="0 0 1024 1024" fill="currentColor">          
@@ -144,8 +144,8 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
             </TooltipTrigger>          
             <TooltipContent 
               className={
-                "bg-white dark:bg-gray-800 text-[#e13c3c] dark:text-[#ff6666] " +
-                "border border-[#e13c3c] dark:border-[#ff6666]"
+                "bg-white dark:bg-gray-800 text-primary " +
+                "border border-primary"
               }
             >          
               <p>{t('Compare Engines')}</p>          
@@ -171,7 +171,7 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
                     return handleComparisonToggle(engine.id);        
                   }}        
                   className={    
-                    "px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer rounded outline-none " +    
+                    "px-3 py-2 hover:bg-primary/20 dark:hover:bg-primary/30 cursor-pointer rounded outline-none " +    
                     "flex items-center gap-2 dark:text-gray-200"    
                   }        
                 >        
@@ -181,8 +181,8 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
                     disabled={isSelected}        
                     readOnly        
                     className={      
-                      "form-checkbox h-4 w-4 text-[#e13c3c] rounded " +      
-                      "border-gray-300 dark:border-gray-600 focus:ring-[#e13c3c] accent-[#e13c3c]"      
+                      "form-checkbox h-4 w-4 text-primary rounded " +      
+                      "border-gray-300 dark:border-gray-600 focus:ring-primary accent-primary"      
                     }      
                   />        
                   <span className={isSelected ? 'text-gray-500 dark:text-gray-400' : ''}>{engine.name}</span>        
@@ -200,7 +200,7 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
               href={engineGithubLinks[selectedEngine]}           
               target="_blank"           
               rel="noopener noreferrer"           
-              className="text-[#e13c3c] hover:text-[#ff4d4d]"          
+              className="text-primary hover:text-primary/80 transition-colors"          
             >          
               <svg     
                 xmlns="http://www.w3.org/2000/svg"     
@@ -224,8 +224,8 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
           </TooltipTrigger>          
           <TooltipContent 
             className={
-              "bg-white dark:bg-gray-800 text-[#e13c3c] dark:text-[#ff6666] " +
-              "border border-[#e13c3c] dark:border-[#ff6666]"
+              "bg-white dark:bg-gray-800 text-primary " +
+              "border border-primary"
             }
           >          
             <p>{t('View Source Code')}</p>          
