@@ -11,6 +11,9 @@ on:
 jobs:
   build-macos:
     runs-on: macos-latest
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && startsWith(github.event.pull_request.title, 'feat:'))
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -32,6 +35,9 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && startsWith(github.event.pull_request.title, 'feat:'))
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -53,6 +59,9 @@ jobs:
 
   build-linux:
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && startsWith(github.event.pull_request.title, 'feat:'))
     steps:
       - name: Check out code
         uses: actions/checkout@v4
