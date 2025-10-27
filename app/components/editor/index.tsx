@@ -149,16 +149,32 @@ export const EditorScreen = () => {
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
   return (
-    <div className="flex flex-col sm:flex-row h-full w-full overflow-hidden">
+    <div className="flex flex-col h-full w-full overflow-hidden">
       <Toaster position="top-center" />
+      {/* Header with Casbin logo and Policy Editor text */}
       <div
-        className={clsx('sm:relative border-r border-border shadow-sm', 'transition-all duration-300', {
-          'hidden sm:block': !showCustomConfig,
-          block: showCustomConfig,
-          'sm:w-[25%]': open,
-          'sm:w-5': !open,
-        })}
+        className={clsx(
+          'flex items-center gap-3 px-4 py-2 border-b border-border',
+          theme === 'dark' ? 'bg-slate-900' : 'bg-white',
+        )}
       >
+        <img
+          src="https://cdn.casbin.org/img/casbin_logo_1024x256.png"
+          alt="Casbin Logo"
+          className="h-8 w-auto"
+        />
+        <span className={clsx('text-xl font-semibold', textClass)}>Policy Editor</span>
+      </div>
+      {/* Main content area */}
+      <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
+        <div
+          className={clsx('sm:relative border-r border-border shadow-sm', 'transition-all duration-300', {
+            'hidden sm:block': !showCustomConfig,
+            block: showCustomConfig,
+            'sm:w-[25%]': open,
+            'sm:w-5': !open,
+          })}
+        >
         <div className="flex flex-col h-full w-full">
           <CustomConfigPanel
             open={open}
@@ -391,12 +407,13 @@ export const EditorScreen = () => {
           theme={theme}
         />
       </div>
-      <SidePanelChat
-        ref={sidePanelChatRef}
-        onOpenChange={(open: boolean) => {
-          setIsChatOpen(open);
-        }}
-      />
+        <SidePanelChat
+          ref={sidePanelChatRef}
+          onOpenChange={(open: boolean) => {
+            setIsChatOpen(open);
+          }}
+        />
+      </div>
     </div>
   );
 };
