@@ -32,6 +32,9 @@ export const MessageWithTooltip: React.FC<MessageWithTooltipProps> = ({ message,
     }
   };
 
+  // Check if message contains timing information (e.g., "Done in 2439.20ms")
+  const isDoneMessage = typeof message === 'string' && message.includes('Done in') && message.includes('ms');
+
   return (
     <div className="relative">
       <div
@@ -41,11 +44,26 @@ export const MessageWithTooltip: React.FC<MessageWithTooltipProps> = ({ message,
           {
             'cursor-help': typeof message === 'string' && message.length > 50,
           },
-          className,
+          // Better UI for "Done in X ms" messages
+          isDoneMessage && clsx(
+            'px-3 py-1.5 rounded-lg',
+            'bg-green-50 dark:bg-green-900/20',
+            'border border-green-200 dark:border-green-800',
+            'text-green-700 dark:text-green-400',
+            'font-medium text-sm',
+            'shadow-sm',
+            'flex items-center gap-2',
+          ),
+          !isDoneMessage && className,
         )}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
+        {isDoneMessage && (
+          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        )}
         {message}
       </div>
 

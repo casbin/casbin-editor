@@ -24,8 +24,9 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
             <button   
               className={clsx(
                 "border-border border rounded-lg w-[300px] sm:w-[380px]",
-                "h-9 px-3 py-2 text-left bg-white hover:bg-secondary",
+                "h-9 px-3 py-2 text-left bg-white dark:bg-slate-700 hover:bg-secondary",
                 "flex justify-between items-center shadow-sm hover:shadow transition-all duration-200",
+                "text-gray-900 dark:text-gray-100",
               )}
             >    
               <span className="truncate text-sm">    
@@ -45,7 +46,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
           <DropdownMenu.Content     
             sideOffset={5}     
             className={  
-              "bg-white rounded-lg border border-border shadow-xl z-50 " +  
+              "bg-white dark:bg-slate-800 rounded-lg border border-border shadow-xl z-50 " +  
               "max-h-[90vh] overflow-y-auto min-w-[300px] sm:min-w-[380px]"  
             }  
           >    
@@ -58,7 +59,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
                 }}    
                 className={  
                   "px-3 py-2 hover:bg-secondary cursor-pointer rounded " +  
-                  "text-muted-foreground outline-none text-sm transition-colors"  
+                  "text-muted-foreground outline-none text-sm transition-colors dark:text-gray-300"  
                 }  
               >    
                 {t('Select your model')}    
@@ -74,7 +75,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
                       setRequestResults({});    
                     }}    
                     className={  
-                      `px-3 py-2 hover:bg-secondary cursor-pointer rounded outline-none text-sm transition-colors ${    
+                      `px-3 py-2 hover:bg-secondary cursor-pointer rounded outline-none text-sm transition-colors dark:text-gray-200 ${    
                         modelKind === n ? 'bg-primary/10 text-primary font-medium' : ''    
                       }`  
                     }  
