@@ -90,13 +90,15 @@ export const ActionToolbar = ({
   };
 
   const buttonClassName = clsx(
-    'rounded',
-    'px-2 py-1',
-    'border border-[#453d7d]',
-    'text-[#453d7a]',
-    'bg-[#efefef]',
-    'hover:bg-[#453d7d] hover:text-white',
-    'transition-colors duration-500',
+    'rounded-lg',
+    'px-4 py-2',
+    'border border-primary',
+    'text-primary',
+    'bg-secondary',
+    'hover:bg-primary hover:text-primary-foreground',
+    'transition-all duration-200',
+    'shadow-sm hover:shadow-md',
+    'font-medium text-sm',
   );
 
   return (

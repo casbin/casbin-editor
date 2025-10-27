@@ -220,20 +220,24 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
       <button
         className={clsx(
           'absolute top-.5 right-0 translate-x-1/2',
-          'h-7 w-7',
-          'bg-[#ffffff]',
-          'border-[1.5px] rounded-full',
+          'h-8 w-8',
+          'bg-white',
+          'border border-border rounded-full',
           'items-center justify-center',
           'hidden sm:flex',
+          'shadow-md hover:shadow-lg',
+          'transition-all duration-200',
+          'hover:bg-secondary',
         )}
         onClick={() => {
           return setOpen(!open);
         }}
       >
         <svg
-          className={clsx('h-8 w-8')}
+          className={clsx('h-5 w-5 text-primary')}
           style={{
             transform: open ? 'rotateZ(0deg)' : 'rotateZ(180deg)',
+            transition: 'transform 0.2s',
           }}
           viewBox="0 0 24 24"
         >
@@ -242,16 +246,16 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
       </button>
 
       {(showCustomConfig || open) && (  
-        <div className="flex flex-col h-full">  
-          <div className={'pt-6 h-12 pl-2 flex items-center font-bold'}>  
+        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900">  
+          <div className={'pt-6 h-12 pl-3 flex items-center font-bold text-lg'}>  
             <div className={textClass}>{t('Custom Functions')}</div>  
           </div>  
   
           {/* Custom Functions Area - Restricted to the height of a function */}  
-          <div className="h-32 overflow-auto min-h-0 flex-shrink-0">  
+          <div className="h-32 overflow-auto min-h-0 flex-shrink-0 px-2">  
             {functions.slice(0, 1).map((func) => {  
               return (  
-                <div key={func.id} className="bg-gray-100 rounded-lg flex flex-col">  
+                <div key={func.id} className="bg-white dark:bg-slate-800 rounded-lg flex flex-col shadow-sm border border-border">  
                   <div className="flex justify-between items-center p-2">  
                     <input  
                       type="text"  
@@ -259,15 +263,25 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
                       onChange={(e) => {  
                         return updateFunction(func.id, 'name', e.target.value);  
                       }}  
-                      className="px-2 py-1 border rounded w-64"  
+                      className={clsx(
+                        "px-3 py-1.5 border border-border rounded-lg w-64",
+                        "focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all",
+                      )}
                       placeholder={t('Function name')}  
-                      disabled={func.name === 'matchingForGFunction' || func.name === 'matchingDomainForGFunction'}  
+                      disabled={
+                        func.name === 'matchingForGFunction' ||
+                        func.name === 'matchingDomainForGFunction'
+                      }
                     />  
                     <button  
                       onClick={() => {  
                         return deleteFunction(func.id);  
                       }}  
-                      className="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors"  
+                      className={clsx(
+                        "w-7 h-7 flex items-center justify-center",
+                        "text-muted-foreground hover:text-destructive transition-colors",
+                        "rounded-lg hover:bg-destructive/10",
+                      )}
                       title={t('Delete')}  
                     >  
                       <svg viewBox="0 0 24 24" className="w-4 h-4">  
@@ -306,7 +320,10 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
               <div className="flex gap-2 m-1 mb-0 text-xs">  
                 <button  
                   onClick={addNewFunction}  
-                  className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"  
+                  className={clsx(
+                    "px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-sm",
+                    "hover:bg-primary/90 transition-all shadow-sm hover:shadow-md font-medium",
+                  )}
                 >  
                   {t('Add Function')}  
                 </button>  
@@ -315,11 +332,16 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
           </div>  
   
           {/* Role inheritance diagram area - Occupies all remaining space */}  
-          <div className="border-t border-gray-200 mt-2 pt-2 flex-1 min-h-0">  
-            <div className="h-6 pl-2 flex items-center font-bold mb-2">  
+          <div className="border-t border-border mt-2 pt-4 flex-1 min-h-0 px-2">  
+            <div className="h-8 pl-2 flex items-center font-bold text-lg mb-2">  
               <div className={textClass}>{t('Role Inheritance Graph')}</div>  
             </div>  
-            <div className="h-full overflow-auto">  
+            <div
+              className={clsx(
+                "h-full overflow-auto bg-white dark:bg-slate-800",
+                "rounded-lg border border-border shadow-sm",
+              )}
+            >  
               {modelKind && policy && (  
                 <RoleInheritanceGraph   
                   policy={policy}   

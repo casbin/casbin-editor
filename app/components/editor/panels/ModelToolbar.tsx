@@ -22,10 +22,11 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
           <DropdownMenu.Trigger asChild>    
             {/* Longer and narrower button for better proportions */}    
             <button   
-              className={  
-                "border-[#767676] border rounded-lg w-[300px] sm:w-[380px] " +  
-                "h-8 px-3 py-1 text-left bg-white flex justify-between items-center hover:bg-gray-50"  
-              }  
+              className={clsx(
+                "border-border border rounded-lg w-[300px] sm:w-[380px]",
+                "h-9 px-3 py-2 text-left bg-white hover:bg-secondary",
+                "flex justify-between items-center shadow-sm hover:shadow transition-all duration-200",
+              )}
             >    
               <span className="truncate text-sm">    
                 {modelKind ? example[modelKind]?.name : t('Select your model')}    
@@ -44,7 +45,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
           <DropdownMenu.Content     
             sideOffset={5}     
             className={  
-              "bg-white rounded-lg border border-gray-200 shadow-lg z-50 " +  
+              "bg-white rounded-lg border border-border shadow-xl z-50 " +  
               "max-h-[90vh] overflow-y-auto min-w-[300px] sm:min-w-[380px]"  
             }  
           >    
@@ -56,8 +57,8 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
                   setRequestResults({});    
                 }}    
                 className={  
-                  "px-3 py-2 hover:bg-gray-100 cursor-pointer rounded " +  
-                  "text-gray-500 outline-none text-sm"  
+                  "px-3 py-2 hover:bg-secondary cursor-pointer rounded " +  
+                  "text-muted-foreground outline-none text-sm transition-colors"  
                 }  
               >    
                 {t('Select your model')}    
@@ -73,8 +74,8 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
                       setRequestResults({});    
                     }}    
                     className={  
-                      `px-3 py-2 hover:bg-gray-100 cursor-pointer rounded outline-none text-sm ${    
-                        modelKind === n ? 'bg-blue-50 text-blue-700' : ''    
+                      `px-3 py-2 hover:bg-secondary cursor-pointer rounded outline-none text-sm transition-colors ${    
+                        modelKind === n ? 'bg-primary/10 text-primary font-medium' : ''    
                       }`  
                     }  
                   >    
@@ -88,13 +89,15 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
     
         <button    
           className={clsx(    
-            'rounded',    
-            'text-[#453d7d]',    
-            'px-1',    
-            'border border-[#453d7d]',    
-            'bg-[#efefef]',    
-            'hover:bg-[#453d7d] hover:text-white',    
-            'transition-colors duration-500',    
+            'rounded-lg',    
+            'text-primary',    
+            'px-3 py-1',    
+            'border border-primary',    
+            'bg-secondary',    
+            'hover:bg-primary hover:text-primary-foreground',    
+            'transition-all duration-200',
+            'shadow-sm hover:shadow-md',
+            'font-medium text-sm',
           )}    
           onClick={() => {    
             const ok = window.confirm('Confirm Reset?');    
