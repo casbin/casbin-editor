@@ -46,13 +46,13 @@ export const MessageWithTooltip: React.FC<MessageWithTooltipProps> = ({ message,
           },
           // Better UI for "Done in X ms" messages
           isDoneMessage && clsx(
-            'px-3 py-1.5 rounded-lg',
-            'bg-green-50 dark:bg-green-900/20',
-            'border border-green-200 dark:border-green-800',
-            'text-green-700 dark:text-green-400',
-            'font-medium text-sm',
-            'shadow-sm',
-            'flex items-center gap-2',
+            'inline-flex items-center gap-2',
+            'px-4 py-2 rounded-full',
+            'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30',
+            'border-2 border-green-300 dark:border-green-700',
+            'text-green-700 dark:text-green-300',
+            'font-semibold text-sm',
+            'shadow-md',
           ),
           !isDoneMessage && className,
         )}
@@ -60,8 +60,8 @@ export const MessageWithTooltip: React.FC<MessageWithTooltipProps> = ({ message,
         onMouseLeave={handleMouseLeave}
       >
         {isDoneMessage && (
-          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
           </svg>
         )}
         {message}

@@ -51,20 +51,6 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
             }  
           >    
             <div className="p-2">    
-              {/* Default option */}    
-              <DropdownMenu.Item    
-                onSelect={() => {    
-                  setModelKind('');    
-                  setRequestResults({});    
-                }}    
-                className={  
-                  "px-3 py-2 hover:bg-secondary cursor-pointer rounded " +  
-                  "text-muted-foreground outline-none text-sm transition-colors dark:text-gray-300"  
-                }  
-              >    
-                {t('Select your model')}    
-              </DropdownMenu.Item>    
-                  
               {/* Model options */}    
               {Object.keys(example).map((n) => {  
                 return (  
@@ -75,7 +61,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
                       setRequestResults({});    
                     }}    
                     className={  
-                      `px-3 py-2 hover:bg-secondary cursor-pointer rounded outline-none text-sm transition-colors dark:text-gray-200 ${    
+                      `px-3 py-2 hover:bg-primary/20 dark:hover:bg-primary/30 cursor-pointer rounded outline-none text-sm transition-colors dark:text-gray-200 ${    
                         modelKind === n ? 'bg-primary/10 text-primary font-medium' : ''    
                       }`  
                     }  

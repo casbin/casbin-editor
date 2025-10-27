@@ -48,16 +48,15 @@ const LanguageMenu = () => {
       <DropdownMenu.Trigger>
         <button
           className={clsx(
-            'bg-transparent',
+            'bg-secondary',
             'cursor-pointer',
             'flex items-center',
-            'transition-colors duration-500',
-            'rounded',
+            'transition-colors duration-200',
+            'rounded-lg',
             'px-2 py-1',
-            'border border-[#5734D3]',
-            'text-[#5734D3]',
-            'bg-[#efefef]',
-            'hover:bg-[#5734D3] hover:text-white',
+            'border border-primary',
+            'text-primary',
+            'hover:bg-primary hover:text-primary-foreground',
             textClass,
           )}
         >
@@ -80,7 +79,7 @@ const LanguageMenu = () => {
               onSelect={() => {
                 handleLangChange(code);
               }}
-              className="p-2 cursor-pointer hover:bg-secondary rounded transition-colors duration-200 dark:text-gray-200"
+              className="p-2 cursor-pointer hover:bg-primary/20 dark:hover:bg-primary/30 rounded transition-colors duration-200 dark:text-gray-200"
             >
               {languageNames[code]}
             </DropdownMenu.Item>
