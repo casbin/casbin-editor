@@ -20,6 +20,7 @@ export default function useIndex() {
   const [comparisonEngines, setComparisonEngines] = useState<EngineType[]>([]);
   const loadState = useRef<{
     loadedHash?: string;
+    loadedFromUrl?: boolean;
   }>({});
 
   const setSelectedEngine = (engine: EngineType) => {
@@ -69,6 +70,17 @@ export default function useIndex() {
   };
 
   useEffect(() => {
+    // Check for URL query parameter for model selection
+    const urlParams = new URLSearchParams(window.location.search);
+    const modelParam = urlParams.get('model');
+    if (modelParam && modelParam in example) {
+      loadState.current.loadedFromUrl = true;
+      updateAllStates(modelParam);
+      // Remove the query parameter from the URL
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+
     const hash = window.location.hash.slice(1);
     if (hash && hash !== loadState.current.loadedHash) {
       loadState.current.loadedHash = hash;
@@ -89,7 +101,7 @@ export default function useIndex() {
   }, []);
 
   useEffect(() => {
-    if (!modelText && !policy && !request) {
+    if (!modelText && !policy && !request && !loadState.current.loadedFromUrl) {
       updateAllStates(modelKind);
     }
   }, [modelKind, modelText, policy, request]);
