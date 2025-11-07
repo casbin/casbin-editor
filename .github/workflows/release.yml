@@ -25,7 +25,7 @@ jobs:
         run: yarn install
       - name: Build Electron app for macOS
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: yarn dist --mac
       - name: Upload macOS build artifacts
         uses: actions/upload-artifact@v4
@@ -49,7 +49,7 @@ jobs:
         run: yarn install
       - name: Build Electron app for Windows
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: yarn dist --win
       - name: Upload Windows build artifacts
         uses: actions/upload-artifact@v4
@@ -73,7 +73,7 @@ jobs:
         run: yarn install
       - name: Build Electron app for Linux
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: yarn dist --linux
       - name: Upload Linux build artifacts
         uses: actions/upload-artifact@v4
@@ -110,5 +110,5 @@ jobs:
           path: dist/linux
       - name: Run semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: yarn release
