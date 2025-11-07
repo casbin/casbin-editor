@@ -519,53 +519,53 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
   return (
     <div ref={containerRef} className={`flex flex-col h-full ${className}`}>
-      {/*legeng */}
+      {/*legend */}
       {(treeData.length > 0 || Object.keys(relations).length > 0) && (
-        <div className="flex-shrink-0 mb-2 p-2 bg-gray-50 border border-gray-200 rounded text-xs">
+        <div className="flex-shrink-0 mb-2 p-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-xs">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <div className="font-medium mb-1">{t('Node Types')}</div>
+              <div className="font-medium mb-1 dark:text-white">{t('Node Types')}</div>
               <div className="flex flex-wrap gap-2">
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: medicalColorScheme.user }}></div>
-                  <span>{t('User')}</span>
+                  <span className="dark:text-gray-300">{t('User')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: medicalColorScheme.role }}></div>
-                  <span>{t('Role')}</span>
+                  <span className="dark:text-gray-300">{t('Role')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: medicalColorScheme.resource }}></div>
-                  <span>{t('Resource')}</span>
+                  <span className="dark:text-gray-300">{t('Resource')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: medicalColorScheme.object }}></div>
-                  <span>{t('Object')}</span>
+                  <span className="dark:text-gray-300">{t('Object')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: medicalColorScheme.action }}></div>
-                  <span>{t('Action')}</span>
+                  <span className="dark:text-gray-300">{t('Action')}</span>
                 </div>
               </div>
             </div>
             <div>
-              <div className="font-medium mb-1">{t('Connection Types')}</div>
+              <div className="font-medium mb-1 dark:text-white">{t('Connection Types')}</div>
               <div className="flex flex-wrap gap-2">
                 <div className="flex items-center gap-1">
                   <div className="w-4 h-0.5" style={{ backgroundColor: medicalColorScheme.policyLine }}></div>
-                  <span>{t('P (Policy)')}</span>
+                  <span className="dark:text-gray-300">{t('P (Policy)')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-4 h-0.5" style={{ backgroundColor: medicalColorScheme.roleInheritance }}></div>
-                  <span>{t('G (Role)')}</span>
+                  <span className="dark:text-gray-300">{t('G (Role)')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-4 h-0.5 border-t-2 border-dashed" style={{ borderColor: medicalColorScheme.resourceInheritance }}></div>
-                  <span>{t('G2 (Resource)')}</span>
+                  <span className="dark:text-gray-300">{t('G2 (Resource)')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-4 h-0.5 border-t-2 border-dotted" style={{ borderColor: medicalColorScheme.domainInheritance }}></div>
-                  <span>{t('G3 (Domain)')}</span>
+                  <span className="dark:text-gray-300">{t('G3 (Domain)')}</span>
                 </div>
               </div>
             </div>
@@ -588,7 +588,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       )}
 
       {/* SVG graphics - Occupy all remaining space */}
-      <div className="flex-1 min-h-0 border border-gray-200 rounded bg-white overflow-hidden">
+      <div className="flex-1 min-h-0 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-900 overflow-hidden">
         <svg ref={svgRef} className="w-full h-full"></svg>
       </div>
 

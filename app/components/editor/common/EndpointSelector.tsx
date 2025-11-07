@@ -65,7 +65,12 @@ export const EndpointSelector: React.FC = () => {
               </svg>
             </button>
           </TooltipTrigger>
-          <TooltipContent className="bg-white text-[#e13c3c] border border-[#e13c3c]">
+          <TooltipContent 
+            className={
+              "bg-white dark:bg-gray-800 text-[#e13c3c] dark:text-[#ff6666] " +
+              "border border-[#e13c3c] dark:border-[#ff6666]"
+            }
+          >
             <p>{t('Select Endpoint')}</p>
           </TooltipContent>
         </Tooltip>
@@ -73,7 +78,7 @@ export const EndpointSelector: React.FC = () => {
 
       {isOpen && (
         <div
-          className="fixed mt-1 bg-white border border-gray-200 rounded shadow-lg z-[100]"
+          className="fixed mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-[100]"
           style={{
             top: 'auto',
             left: 'auto',
@@ -84,7 +89,7 @@ export const EndpointSelector: React.FC = () => {
             {ENDPOINTS.map((endpoint) => {
               const isSelected = endpoint === selectedEndpoint;
               return (
-                <label key={endpoint} className="flex items-center gap-2 p-2 hover:bg-gray-100">
+                <label key={endpoint} className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700">
                   <div className="flex items-center">
                     <input
                       type="checkbox"
@@ -92,14 +97,17 @@ export const EndpointSelector: React.FC = () => {
                       onChange={() => {
                         return handleEndpointSelect(endpoint);
                       }}
-                      className="form-checkbox h-4 w-4 text-[#e13c3c] rounded border-gray-300 focus:ring-[#e13c3c] accent-[#e13c3c]"
+                      className={
+                        "form-checkbox h-4 w-4 text-[#e13c3c] rounded " +
+                        "border-gray-300 dark:border-gray-600 focus:ring-[#e13c3c] accent-[#e13c3c]"
+                      }
                     />
                   </div>
-                  <span className="text-sm whitespace-nowrap">{endpoint}</span>
+                  <span className="text-sm whitespace-nowrap dark:text-gray-200">{endpoint}</span>
                 </label>
               );
             })}
-            <div className="p-2 border-t">
+            <div className="p-2 border-t dark:border-gray-700">
               <div className="flex items-center gap-2">
                 <div className="flex items-center">
                   <input
@@ -110,7 +118,10 @@ export const EndpointSelector: React.FC = () => {
                       })
                     }
                     onChange={() => {}}
-                    className="form-checkbox h-4 w-4 text-[#e13c3c] rounded border-gray-300 focus:ring-[#e13c3c] accent-[#e13c3c]"
+                    className={
+                      "form-checkbox h-4 w-4 text-[#e13c3c] rounded " +
+                      "border-gray-300 dark:border-gray-600 focus:ring-[#e13c3c] accent-[#e13c3c]"
+                    }
                   />
                 </div>
                 <input
@@ -119,11 +130,13 @@ export const EndpointSelector: React.FC = () => {
                   onChange={handleCustomEndpointChange}
                   placeholder={t('Enter custom endpoint')}
                   className={clsx(
-                    'border border-gray-300 rounded',
+                    'border border-gray-300 dark:border-gray-600 rounded',
                     'px-2 py-1',
                     'text-sm',
                     'flex-1',
                     'focus:outline-none focus:ring-2 focus:ring-[#e13c3c]',
+                    'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100',
+                    'placeholder:text-gray-500 dark:placeholder:text-gray-400'
                   )}
                 />
               </div>
