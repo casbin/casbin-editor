@@ -266,6 +266,7 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
                       className={clsx(
                         "px-3 py-1.5 border border-border rounded-lg w-64",
                         "focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all",
+                        "bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100",
                       )}
                       placeholder={t('Function name')}  
                       disabled={
