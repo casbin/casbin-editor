@@ -1,5 +1,7 @@
+'use client';
 import React from 'react';
+import { LangProvider } from '@/app/context/LangContext';
 
 export default function ModelEditorLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <LangProvider>{children}</LangProvider>;
 }

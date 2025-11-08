@@ -11,14 +11,25 @@ import { linter, lintGutter } from '@codemirror/lint';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { example } from '@/app/components/editor/casbin-mode/example';
 import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
+import { ModelToolbar } from '@/app/components/editor/panels/ModelToolbar';
 import { buttonPlugin } from '@/app/components/editor/plugins/ButtonPlugin';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { casbinLinter } from '@/app/utils/casbinLinter';
 import { parseError, setError } from '@/app/utils/errorManager';
 import { useLang } from '@/app/context/LangContext';
 
-export const ModelEditor = () => {
-  const [modelText, setModelText] = useState('');
+interface ModelEditorPanelProps {
+  isIframeMode?: boolean;
+  modelText?: string;
+  onModelTextChange?: (text: string) => void;
+}
+
+export const ModelEditorPanel = ({ 
+  isIframeMode = false,
+  modelText: externalModelText,
+  onModelTextChange
+}: ModelEditorPanelProps) => {
+  const [modelText, setModelText] = useState(externalModelText || '');
   const [modelKind, setModelKind] = useState('');
   const [initialText, setInitialText] = useState('');
   const editorRef = useRef<EditorView | null>(null);
@@ -51,8 +62,11 @@ export const ModelEditor = () => {
     validateModel(modelText);
   }, [modelText, validateModel]);
 
+  // Iframe communication handling
   const handleMessage = useCallback(
     (event: MessageEvent) => {
+      if (!isIframeMode) return;
+
       if (event.data.type === 'initializeModel') {
         if (event.data.modelText) {
           setModelText(event.data.modelText);
@@ -79,29 +93,38 @@ export const ModelEditor = () => {
         }
       }
     },
-    [modelText, setLang],
+    [modelText, setLang, isIframeMode],
   );
 
   useEffect(() => {
-    window.addEventListener('message', handleMessage);
-    window.parent.postMessage({ type: 'iframeReady' }, '*');
+    if (isIframeMode) {
+      window.addEventListener('message', handleMessage);
+      window.parent.postMessage({ type: 'iframeReady' }, '*');
 
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
-  }, [handleMessage]);
+      return () => {
+        window.removeEventListener('message', handleMessage);
+      };
+    }
+  }, [handleMessage, isIframeMode]);
 
   const handleModelTextChange = useCallback((value: string, viewUpdate: any) => {
     setModelText(value);
     cursorPosRef.current = viewUpdate.state.selection.main;
-    window.parent.postMessage(
-      {
-        type: 'modelUpdate',
-        modelText: value,
-      },
-      '*',
-    );
-  }, []);
+    
+    if (onModelTextChange) {
+      onModelTextChange(value);
+    }
+
+    if (isIframeMode) {
+      window.parent.postMessage(
+        {
+          type: 'modelUpdate',
+          modelText: value,
+        },
+        '*',
+      );
+    }
+  }, [onModelTextChange, isIframeMode]);
 
   useEffect(() => {
     if (editorRef.current && cursorPosRef.current) {
@@ -118,104 +141,92 @@ export const ModelEditor = () => {
 
   useEffect(() => {
     if (modelKind && example[modelKind]) {
-      setModelText(example[modelKind].model);
+      const newModelText = example[modelKind].model;
+      setModelText(newModelText);
+      
+      if (isIframeMode) {
+        window.parent.postMessage(
+          {
+            type: 'modelUpdate',
+            modelText: newModelText,
+          },
+          '*',
+        );
+      }
     }
-  }, [modelKind]);
+  }, [modelKind, isIframeMode]);
+
+  // Sync external changes
+  useEffect(() => {
+    if (externalModelText !== undefined && externalModelText !== modelText) {
+      setModelText(externalModelText);
+    }
+  }, [externalModelText, modelText]);
+
+  const setModelTextPersistent = (value: string) => {
+    setModelText(value);
+    if (onModelTextChange) {
+      onModelTextChange(value);
+    }
+    if (isIframeMode) {
+      window.parent.postMessage(
+        {
+          type: 'modelUpdate',
+          modelText: value,
+        },
+        '*',
+      );
+    }
+  };
 
   return (
-    <div className="flex-grow overflow-auto h-full">
-      <div className="flex flex-col h-full">
-        <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
-          <div className={clsx(textClass, 'font-bold')}>{t('Model')}</div>
-          <select
-            value={modelKind}
-            onChange={(e) => {
-              const selectedKind = e.target.value;
-              if (selectedKind && example[selectedKind]) {
-                setModelText(example[selectedKind].model);
-                setModelKind('');
-                window.parent.postMessage(
-                  {
-                    type: 'modelUpdate',
-                    modelText: example[selectedKind].model,
-                  },
-                  '*',
-                );
-              }
-            }}
-            className={'border-[#767676] border rounded'}
-          >
-            <option value="" disabled>
-              {t('Select your model')}
-            </option>
-            {Object.keys(example).map((n) => {
-              return (
-                <option key={n} value={n}>
-                  {example[n].name}
-                </option>
-              );
-            })}
-          </select>
-          <button
-            className={clsx(
-              'rounded',
-              'text-[#5734D3]',
-              'px-1',
-              'border border-[#5734D3]',
-              'bg-[#efefef]',
-              'hover:bg-[#5734D3] hover:text-white',
-              'transition-colors duration-500',
-            )}
-            onClick={() => {
-              const ok = window.confirm('Confirm Reset?');
-              if (ok) {
-                const rbacModel = example['rbac'].model;
-                setModelText(rbacModel);
-                setModelKind('');
-                window.parent.postMessage(
-                  {
-                    type: 'modelUpdate',
-                    modelText: rbacModel,
-                  },
-                  '*',
-                );
-              }
-            }}
-          >
-            {t('RESET')}
-          </button>
-        </div>
-        <CodeMirror
-          height="100%"
-          theme={monokai}
-          onChange={handleModelTextChange}
-          basicSetup={{
-            lineNumbers: true,
-            highlightActiveLine: true,
-            bracketMatching: true,
-            indentOnInput: true,
-          }}
-          extensions={[
-            basicSetup,
-            CasbinConfSupport(),
-            indentUnit.of('    '),
-            EditorView.lineWrapping,
-            linter(casbinLinter),
-            lintGutter(),
-            buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
-            EditorView.updateListener.of((update) => {
-              if (update.docChanged) {
-                editorRef.current = update.view;
-              }
-            }),
-          ]}
-          className={'function flex-grow h-[300px]'}
-          value={modelText}
+    <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
+        <div className={clsx(textClass, 'font-bold text-lg')}>{t('Model')}</div>
+        <ModelToolbar
+          modelKind={modelKind}
+          setModelKind={setModelKind}
+          setRequestResults={() => {}}
+          setModelTextPersistent={setModelTextPersistent}
         />
+      </div>
+
+      <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
+        <div className="flex flex-col h-full">
+          <CodeMirror
+            height="100%"
+            theme={monokai}
+            onChange={handleModelTextChange}
+            basicSetup={{
+              lineNumbers: true,
+              highlightActiveLine: true,
+              bracketMatching: true,
+              indentOnInput: true,
+            }}
+            extensions={[
+              basicSetup,
+              CasbinConfSupport(),
+              indentUnit.of('    '),
+              EditorView.lineWrapping,
+              buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
+              linter(casbinLinter),
+              lintGutter(),
+              EditorView.updateListener.of((update) => {
+                if (update.docChanged) {
+                  editorRef.current = update.view;
+                }
+              }),
+            ]}
+            className={'function flex-grow h-[300px]'}
+            value={modelText}
+          />
+        </div>
+      </div>
+      {isIframeMode && (
         <div className="mr-4">
           <SidePanelChat ref={sidePanelChatRef} />
         </div>
-      </div>
+      )}
     </div>
   );
 };
