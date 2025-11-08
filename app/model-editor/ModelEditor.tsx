@@ -1,43 +1,16 @@
 'use client';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { clsx } from 'clsx';
+import { useState, useEffect, useCallback } from 'react';
 import { newModel } from 'casbin';
 import { Toaster } from 'react-hot-toast';
-import CodeMirror from '@uiw/react-codemirror';
-import { monokai } from '@uiw/codemirror-theme-monokai';
-import { basicSetup } from 'codemirror';
-import { indentUnit } from '@codemirror/language';
-import { EditorView } from '@codemirror/view';
-import { linter, lintGutter } from '@codemirror/lint';
-import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
+import { ModelEditorSection } from '@/app/components/editor/ModelEditorSection';
 import { example } from '@/app/components/editor/casbin-mode/example';
-import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
-import { buttonPlugin } from '@/app/components/editor/plugins/ButtonPlugin';
-import { extractPageContent } from '@/app/utils/contentExtractor';
-import { casbinLinter } from '@/app/utils/casbinLinter';
 import { parseError, setError } from '@/app/utils/errorManager';
 import { useLang } from '@/app/context/LangContext';
 
 export const ModelEditor = () => {
   const [modelText, setModelText] = useState('');
   const [modelKind, setModelKind] = useState('');
-  const [initialText, setInitialText] = useState('');
-  const editorRef = useRef<EditorView | null>(null);
-  const cursorPosRef = useRef<{ from: number; to: number } | null>(null);
-  const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
-  const { t, lang, theme, setLang } = useLang();
-  const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
-
-  const openDrawerWithMessage = (message: string) => {
-    if (sidePanelChatRef.current) {
-      sidePanelChatRef.current.openDrawer(message);
-    }
-  };
-
-  const extractContent = (boxType: string) => {
-    const { message } = extractPageContent(boxType, t, lang);
-    return message;
-  };
+  const { setLang } = useLang();
 
   const validateModel = useCallback(async (text: string) => {
     try {
@@ -57,7 +30,6 @@ export const ModelEditor = () => {
       if (event.data.type === 'initializeModel') {
         if (event.data.modelText) {
           setModelText(event.data.modelText);
-          setInitialText(event.data.modelText);
         }
         if (event.data.lang) {
           setLang(event.data.lang);
@@ -92,9 +64,8 @@ export const ModelEditor = () => {
     };
   }, [handleMessage]);
 
-  const handleModelTextChange = useCallback((value: string, viewUpdate: any) => {
+  const handleModelTextChange = useCallback((value: string) => {
     setModelText(value);
-    cursorPosRef.current = viewUpdate.state.selection.main;
     window.parent.postMessage(
       {
         type: 'modelUpdate',
@@ -105,19 +76,6 @@ export const ModelEditor = () => {
   }, []);
 
   useEffect(() => {
-    if (editorRef.current && cursorPosRef.current) {
-      const { from, to } = cursorPosRef.current;
-      const docLength = editorRef.current.state.doc.length;
-      editorRef.current.dispatch({
-        selection: {
-          anchor: Math.min(from, docLength),
-          head: Math.min(to, docLength),
-        },
-      });
-    }
-  }, [modelText]);
-
-  useEffect(() => {
     if (modelKind && example[modelKind]) {
       setModelText(example[modelKind].model);
     }
@@ -126,122 +84,14 @@ export const ModelEditor = () => {
   return (
     <div className="flex flex-col h-full w-full overflow-hidden">
       <Toaster position="top-center" />
-      {/* Header with Casbin logo and Model Editor text */}
-      <div
-        className={clsx(
-          'flex items-center gap-3 px-4 py-2 border-b border-border',
-          theme === 'dark' ? 'bg-slate-900' : 'bg-white',
-        )}
-      >
-        <img
-          src="https://cdn.casbin.org/img/casbin_logo_1024x256.png"
-          alt="Casbin Logo"
-          className="h-8 w-auto"
-        />
-        <span className={clsx('text-xl font-semibold', textClass)}>{t('Model Editor')}</span>
-      </div>
-      {/* Main content area */}
-      <div className="flex-grow overflow-auto h-full p-4">
-        <div className="flex flex-col h-full">
-          <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
-            <div className={clsx(textClass, 'font-bold text-lg')}>{t('Model')}</div>
-            <select
-              value={modelKind}
-              onChange={(e) => {
-                const selectedKind = e.target.value;
-                if (selectedKind && example[selectedKind]) {
-                  setModelText(example[selectedKind].model);
-                  setModelKind('');
-                  window.parent.postMessage(
-                    {
-                      type: 'modelUpdate',
-                      modelText: example[selectedKind].model,
-                    },
-                    '*',
-                  );
-                }
-              }}
-              className={clsx(
-                'px-3 py-1.5 rounded-lg border border-border',
-                'bg-secondary text-foreground',
-                'hover:bg-accent hover:text-accent-foreground',
-                'transition-colors duration-200',
-                'font-medium text-sm',
-              )}
-            >
-              <option value="" disabled>
-                {t('Select your model')}
-              </option>
-              {Object.keys(example).map((n) => {
-                return (
-                  <option key={n} value={n}>
-                    {example[n].name}
-                  </option>
-                );
-              })}
-            </select>
-            <button
-              className={clsx(
-                'px-3 py-1.5 rounded-lg',
-                'text-primary border border-primary',
-                'bg-secondary hover:bg-primary hover:text-primary-foreground',
-                'transition-all duration-200',
-                'shadow-sm hover:shadow-md',
-                'font-medium text-sm',
-              )}
-              onClick={() => {
-                const ok = window.confirm('Confirm Reset?');
-                if (ok) {
-                  const rbacModel = example['rbac'].model;
-                  setModelText(rbacModel);
-                  setModelKind('');
-                  window.parent.postMessage(
-                    {
-                      type: 'modelUpdate',
-                      modelText: rbacModel,
-                    },
-                    '*',
-                  );
-                }
-              }}
-            >
-              {t('RESET')}
-            </button>
-          </div>
-          <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800 mt-2">
-            <div className="flex flex-col h-full">
-              <CodeMirror
-                height="100%"
-                theme={monokai}
-                onChange={handleModelTextChange}
-                basicSetup={{
-                  lineNumbers: true,
-                  highlightActiveLine: true,
-                  bracketMatching: true,
-                  indentOnInput: true,
-                }}
-                extensions={[
-                  basicSetup,
-                  CasbinConfSupport(),
-                  indentUnit.of('    '),
-                  EditorView.lineWrapping,
-                  linter(casbinLinter),
-                  lintGutter(),
-                  buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
-                  EditorView.updateListener.of((update) => {
-                    if (update.docChanged) {
-                      editorRef.current = update.view;
-                    }
-                  }),
-                ]}
-                className={'function flex-grow h-[300px]'}
-                value={modelText}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <SidePanelChat ref={sidePanelChatRef} />
+      <ModelEditorSection
+        modelText={modelText}
+        modelKind={modelKind}
+        setModelKind={setModelKind}
+        onModelTextChange={handleModelTextChange}
+        showHeader={true}
+        showSidePanel={true}
+      />
     </div>
   );
 };

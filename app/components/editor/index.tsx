@@ -9,11 +9,10 @@ import { indentUnit } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
 import { linter, lintGutter } from '@codemirror/lint';
-import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
 import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
 import { CustomConfigPanel } from '@/app/components/editor/panels/CustomConfigPanel';
-import { ModelToolbar } from '@/app/components/editor/panels/ModelToolbar';
+import { ModelEditorSection } from '@/app/components/editor/ModelEditorSection';
 import { PolicyToolbar } from '@/app/components/editor/panels/PolicyToolbar';
 import { RequestToolbar } from '@/app/components/editor/panels/RequestToolbar';
 import FooterToolbar from '@/app/components/editor/panels/FooterToolbar';
@@ -27,7 +26,7 @@ import { buttonPlugin } from '@/app/components/editor/plugins/ButtonPlugin';
 import { loadingOverlay } from '@/app/components/editor/plugins/LoadingOverlayExtension';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
-import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
+import { policyLinter, requestLinter } from '@/app/utils/casbinLinter';
 import { useLang } from '@/app/context/LangContext';
 import type { EngineType } from '@/app/config/engineConfig';
 
@@ -220,71 +219,44 @@ export const EditorScreen = () => {
         })}
       >
         <div className="flex flex-col sm:flex-row gap-2 pt-4 px-2 flex-1 overflow-hidden min-w-0">
-          <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
-              <div className={clsx(textClass, 'font-bold text-lg')}>{t('Model')}</div>
-              <ModelToolbar
-                modelKind={modelKind}
-                setModelKind={setModelKind}
-                setRequestResults={setRequestResults}
-                setModelTextPersistent={setModelTextPersistent}
-              />
-              <div className="sm:hidden ml-auto mr-2">
-                <button
-                  className={clsx(
-                    'rounded-lg',
-                    'flex items-center justify-center',
-                    'border border-primary',
-                    'text-primary',
-                    'bg-secondary',
-                    'hover:bg-primary hover:text-primary-foreground',
-                    'transition-all duration-200',
-                    'shadow-sm hover:shadow-md',
-                    'p-2',
-                  )}
-                  onClick={() => {
-                    return setShowCustomConfig(!showCustomConfig);
+          <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+            {/* Mobile toggle button for custom config */}
+            <div className="sm:hidden absolute top-2 right-2 z-10">
+              <button
+                className={clsx(
+                  'rounded-lg',
+                  'flex items-center justify-center',
+                  'border border-primary',
+                  'text-primary',
+                  'bg-secondary',
+                  'hover:bg-primary hover:text-primary-foreground',
+                  'transition-all duration-200',
+                  'shadow-sm hover:shadow-md',
+                  'p-2',
+                )}
+                onClick={() => {
+                  return setShowCustomConfig(!showCustomConfig);
+                }}
+              >
+                <svg
+                  className={clsx('h-5 w-5')}
+                  style={{
+                    transform: showCustomConfig ? 'rotateZ(90deg)' : 'rotateZ(-90deg)',
                   }}
+                  viewBox="0 0 24 24"
                 >
-                  <svg
-                    className={clsx('h-5 w-5')}
-                    style={{
-                      transform: showCustomConfig ? 'rotateZ(90deg)' : 'rotateZ(-90deg)',
-                    }}
-                    viewBox="0 0 24 24"
-                  >
-                    <path fill={'currentColor'} d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
-                  </svg>
-                </button>
-              </div>
+                  <path fill={'currentColor'} d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+                </svg>
+              </button>
             </div>
-
-            <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
-              <div className="flex flex-col h-full">
-                <CodeMirror
-                  height="100%"
-                  theme={monokai}
-                  onChange={setModelTextPersistent}
-                  basicSetup={{
-                    lineNumbers: true,
-                    highlightActiveLine: true,
-                    bracketMatching: true,
-                    indentOnInput: true,
-                  }}
-                  extensions={[
-                    basicSetup,
-                    CasbinConfSupport(),
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                    buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
-                    linter(casbinLinter),
-                    lintGutter(),
-                  ]}
-                  className={'function flex-grow h-[300px]'}
-                  value={modelText}
-                />
-              </div>
-            </div>
+            <ModelEditorSection
+              modelText={modelText}
+              modelKind={modelKind}
+              setModelKind={setModelKind}
+              onModelTextChange={setModelTextPersistent}
+              setRequestResults={setRequestResults}
+              showSidePanel={false}
+            />
           </div>
           <div className="flex-1 flex flex-col h-full overflow-hidden">
             <div className="h-10 pl-2 font-bold text-lg flex items-center justify-between">
