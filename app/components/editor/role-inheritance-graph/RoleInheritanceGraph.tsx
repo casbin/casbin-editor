@@ -253,6 +253,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
             type: type,
             action: rel.action,
             domain: rel.domain,
+            effect: rel.effect,
           });
         }
       });
@@ -402,6 +403,29 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         return d.action;
       });
 
+    // Add deny indicators for deny relationships
+    const denyIndicators = g
+      .append('g')
+      .attr('class', 'deny-indicators')
+      .selectAll('text')
+      .data(
+        allLinks.filter((d: any) => {
+          return d.effect === 'deny';
+        }),
+      )
+      .enter()
+      .append('text')
+      .attr('class', 'deny-indicator')
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('font-size', '20px')
+      .attr('font-weight', 'bold')
+      .attr('fill', '#dc2626')
+      .attr('stroke', 'white')
+      .attr('stroke-width', '2')
+      .attr('paint-order', 'stroke')
+      .text('✕');
+
     // OnCustomDrawItem
     const nodes = g.append('g').attr('class', 'nodes').selectAll('g').data(allNodes).enter().append('g').call(drag);
 
@@ -479,6 +503,14 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         });
 
       linkLabels
+        .attr('x', (d: any) => {
+          return (d.source.x + d.target.x) / 2;
+        })
+        .attr('y', (d: any) => {
+          return (d.source.y + d.target.y) / 2;
+        });
+
+      denyIndicators
         .attr('x', (d: any) => {
           return (d.source.x + d.target.x) / 2;
         })
