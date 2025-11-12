@@ -446,6 +446,7 @@ export const EditorScreen = () => {
           textClass={textClass}
           toggleTheme={toggleTheme}
           theme={theme}
+          requestResult={requestResult}
         />
       </div>
         <SidePanelChat

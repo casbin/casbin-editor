@@ -29,5 +29,8 @@
   "Engines refreshed successfully": "Engines wurden erfolgreich aktualisiert",
   "Failed to refresh engines": "Fehler beim Aktualisieren der Engines",
   "Shared at": "Geteilt unter",
-  "Done in": "Abgeschlossen in"
+  "Done in": "Abgeschlossen in",
+  "COPY": "KOPIEREN",
+  "Content copied to clipboard": "Inhalt in die Zwischenablage kopiert",
+  "Failed to copy content": "Fehler beim Kopieren des Inhalts"
 }

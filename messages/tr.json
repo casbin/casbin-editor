@@ -29,5 +29,8 @@
   "Engines refreshed successfully": "Motorlar başarıyla yenildi",
   "Failed to refresh engines": "Motorları yenileme hatası",
   "Shared at": "Paylaşıldı",
-  "Done in": "Tamamlandı"
+  "Done in": "Tamamlandı",
+  "COPY": "KOPYALA",
+  "Content copied to clipboard": "İçerik panoya kopyalandı",
+  "Failed to copy content": "İçerik kopyalanamadı"
 }

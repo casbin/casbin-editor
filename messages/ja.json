@@ -29,5 +29,8 @@
   "Engines refreshed successfully": "エンジンが更新されました",
   "Failed to refresh engines": "エンジンの更新に失敗しました",
   "Shared at": "共有先",
-  "Done in": "完了時間"
+  "Done in": "完了時間",
+  "COPY": "コピー",
+  "Content copied to clipboard": "内容がクリップボードにコピーされました",
+  "Failed to copy content": "コピーに失敗しました"
 }

@@ -51,5 +51,8 @@
   "G3 (Domain)": "G3 (Domain)",
   "No policy relationships found": "No policy relationships found",
   "Shared at": "Shared at",
-  "Done in": "Done in"
+  "Done in": "Done in",
+  "COPY": "COPY",
+  "Content copied to clipboard": "Content copied to clipboard",
+  "Failed to copy content": "Failed to copy content"
 }

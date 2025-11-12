@@ -29,5 +29,8 @@
   "Engines refreshed successfully": "Máy đã được cập nhật thành công",
   "Failed to refresh engines": "Không thể cập nhật máy",
   "Shared at": "Chia sẻ tại",
-  "Done in": "Hoàn thành trong"
+  "Done in": "Hoàn thành trong",
+  "COPY": "SAO CHÉP",
+  "Content copied to clipboard": "Nội dung đã được sao chép vào clipboard",
+  "Failed to copy content": "Không thể sao chép nội dung"
 }

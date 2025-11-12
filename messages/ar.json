@@ -29,5 +29,8 @@
   "Engines refreshed successfully": "تم تحديث المحركات بنجاح",
   "Failed to refresh engines": "فشل تحديث المحركات",
   "Shared at": "Shared at",
-  "Done in": "Done in"
+  "Done in": "Done in",
+  "COPY": "نسخ",
+  "Content copied to clipboard": "تم نسخ المحتوى إلى الحافظة",
+  "Failed to copy content": "فشل نسخ المحتوى"
 }
