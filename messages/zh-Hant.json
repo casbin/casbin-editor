@@ -29,5 +29,8 @@
   "Engines refreshed successfully": "引擎已更新成功",
   "Failed to refresh engines": "更新引擎失敗",
   "Shared at": "分享地址",
-  "Done in": "完成於"
+  "Done in": "完成於",
+  "COPY": "複製",
+  "Content copied to clipboard": "內容已複製到剪貼簿",
+  "Failed to copy content": "複製失敗"
 }

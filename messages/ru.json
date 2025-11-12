@@ -29,5 +29,8 @@
   "Engines refreshed successfully": "Движки обновлены успешно",
   "Failed to refresh engines": "Ошибка при обновлении движков",
   "Shared at": "Поделиться по адресу",
-  "Done in": "Выполнено за"
+  "Done in": "Выполнено за",
+  "COPY": "КОПИРОВАТЬ",
+  "Content copied to clipboard": "Содержимое скопировано в буфер обмена",
+  "Failed to copy content": "Не удалось скопировать содержимое"
 }

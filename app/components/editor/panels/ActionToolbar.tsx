@@ -18,6 +18,7 @@ interface ActionToolbarProps {
   enforceContextData: Map<string, string>;
   selectedEngine: EngineType;
   comparisonEngines: EngineType[];
+  requestResult?: string;
 }
 
 export const ActionToolbar = ({
@@ -32,6 +33,7 @@ export const ActionToolbar = ({
   enforceContextData,
   selectedEngine,
   comparisonEngines,
+  requestResult,
 }: ActionToolbarProps) => {
   const { t } = useLang();
   const [showRefreshButton, setShowRefreshButton] = useState(false);
@@ -89,6 +91,43 @@ export const ActionToolbar = ({
     });
   };
 
+  const handleCopyClick = () => {
+    const content = [
+      '# Casbin Policy Configuration',
+      '',
+      '## Model',
+      '```',
+      modelText,
+      '```',
+      '',
+      '## Policy',
+      '```',
+      policy || '(empty)',
+      '```',
+      '',
+      '## Request',
+      '```',
+      request || '(empty)',
+      '```',
+      '',
+      '## Enforcement Result',
+      '```',
+      requestResult || '(empty)',
+      '```',
+    ].join('\n');
+
+    navigator.clipboard
+      .writeText(content)
+      .then(() => {
+        toast.success(t('Content copied to clipboard'), {
+          duration: 3000,
+        });
+      })
+      .catch(() => {
+        toast.error(t('Failed to copy content'));
+      });
+  };
+
   const buttonClassName = clsx(
     'rounded-lg',
     'px-4 py-2',
@@ -111,6 +150,9 @@ export const ActionToolbar = ({
           {t('Refresh Engines')}
         </button>
       )}
+      <button className={buttonClassName} onClick={handleCopyClick}>
+        {t('COPY')}
+      </button>
       <button className={buttonClassName} onClick={handleShareClick}>
         {t('SHARE')}
       </button>

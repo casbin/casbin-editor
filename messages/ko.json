@@ -29,5 +29,8 @@
   "Engines refreshed successfully": "엔진이 성공적으로 새로고침되었습니다",
   "Failed to refresh engines": "엔진 새로고침에 실패했습니다",
   "Shared at": "공유 위치",
-  "Done in": "완료 시간"
+  "Done in": "완료 시간",
+  "COPY": "복사",
+  "Content copied to clipboard": "내용이 클립보드에 복사되었습니다",
+  "Failed to copy content": "복사 실패"
 }

@@ -19,6 +19,7 @@ const FooterToolbar = ({
   textClass,
   toggleTheme,
   theme,
+  requestResult,
 }) => {
   return (
     <div className={clsx('pt-2 px-1 flex flex-col sm:flex-row items-start sm:items-center')}>
@@ -34,6 +35,7 @@ const FooterToolbar = ({
         enforceContextData={enforceContextData}
         selectedEngine={selectedEngine}
         comparisonEngines={comparisonEngines}
+        requestResult={requestResult}
       />
       <div className="flex flex-row justify-between items-center w-full sm:w-auto sm:ml-auto mt-2 sm:mt-0">
         <MessageWithTooltip message={echo} className={textClass} />

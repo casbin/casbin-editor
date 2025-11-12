@@ -29,5 +29,8 @@
   "Engines refreshed successfully": "Mesin berhasil diperbarui",
   "Failed to refresh engines": "Gagal memperbarui mesin",
   "Shared at": "Dikongsi di",
-  "Done in": "Selesai dalam"
+  "Done in": "Selesai dalam",
+  "COPY": "SALIN",
+  "Content copied to clipboard": "Kandungan disalin ke papan keratan",
+  "Failed to copy content": "Gagal menyalin kandungan"
 }
