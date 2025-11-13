@@ -379,20 +379,37 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         d.fy = null;
       });
 
+    // For each link that has an action, create a group that contains
+    // a short line segment (along the link) and a text label placed
+    // alongside the link. We will position both in the simulation tick.
     const linkLabels = g
       .append('g')
       .attr('class', 'link-labels')
-      .selectAll('text')
+      .selectAll('g')
       .data(
         allLinks.filter((d: any) => {
           return d.action;
         }),
       )
       .enter()
+      .append('g')
+      .attr('class', 'link-label-group');
+
+    // short line (centered on the link middle, along the link direction)
+    linkLabels
+      .append('line')
+      .attr('class', 'link-label-line')
+      .attr('stroke', '#666')
+      .attr('stroke-width', 2)
+      .attr('stroke-linecap', 'round')
+      .attr('opacity', 0.9);
+
+    // label text placed alongside the link using a perpendicular offset
+    linkLabels
       .append('text')
       .attr('class', 'link-label')
       .attr('text-anchor', 'middle')
-      .attr('dominant-baseline', 'middle')
+      .attr('dominant-baseline', 'central')
       .attr('font-size', '10px')
       .attr('font-weight', 'bold')
       .attr('fill', '#333')
@@ -502,13 +519,43 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
           return d.target.y - (dy / distance) * (nodeRadius + arrowSpace);
         });
 
-      linkLabels
-        .attr('x', (d: any) => {
-          return (d.source.x + d.target.x) / 2;
-        })
-        .attr('y', (d: any) => {
-          return (d.source.y + d.target.y) / 2;
-        });
+      // Position label groups: place text alongside the link (perpendicular offset)
+      const labelOffset = 16; // px distance from the link
+      const labelLineLen = 40; // px length of short line drawn on the link under the label
+
+      linkLabels.each(function (d: any) {
+        const midX = (d.source.x + d.target.x) / 2;
+        const midY = (d.source.y + d.target.y) / 2;
+
+        const dx = d.target.x - d.source.x;
+        const dy = d.target.y - d.source.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+        // unit direction vector along the link
+        const ux = dx / dist;
+        const uy = dy / dist;
+
+        // unit normal (perpendicular) vector (rotate by -90°)
+        const nx = -uy;
+        const ny = ux;
+
+        // label position = midpoint + normal * offset
+        const lx = midX + nx * labelOffset;
+        const ly = midY + ny * labelOffset;
+
+        // short line on the link (centered at midpoint, length labelLineLen)
+        const half = labelLineLen / 2;
+        const x1 = midX - ux * half;
+        const y1 = midY - uy * half;
+        const x2 = midX + ux * half;
+        const y2 = midY + uy * half;
+
+        // set text position
+        d3.select(this).select('text.link-label').attr('x', lx).attr('y', ly);
+
+        // set small underline segment position
+        d3.select(this).select('line.link-label-line').attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2);
+      });
 
       denyIndicators
         .attr('x', (d: any) => {
