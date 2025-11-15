@@ -520,8 +520,9 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         });
 
       // Position label groups: place text alongside the link (perpendicular offset)
-      const labelOffset = 16; // px distance from the link
+      const labelOffset = 14; // px distance from the link
       const labelLineLen = 40; // px length of short line drawn on the link under the label
+      const denyLabelExtraOffset = 9; // extra offset when a link has deny effect to avoid overlap with '✕'
 
       linkLabels.each(function (d: any) {
         const midX = (d.source.x + d.target.x) / 2;
@@ -539,9 +540,11 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         const nx = -uy;
         const ny = ux;
 
-        // label position = midpoint + normal * offset
-        const lx = midX + nx * labelOffset;
-        const ly = midY + ny * labelOffset;
+        // if this link is a deny relation, push the label further away to avoid overlapping the deny indicator
+        const extra = d.effect === 'deny' ? denyLabelExtraOffset : 0;
+        // label position = midpoint + normal * (offset + extra)
+        const lx = midX + nx * (labelOffset + extra);
+        const ly = midY + ny * (labelOffset + extra);
 
         // short line on the link (centered at midpoint, length labelLineLen)
         const half = labelLineLen / 2;
