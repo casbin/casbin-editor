@@ -507,7 +507,11 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
           const distance = Math.sqrt(dx * dx + dy * dy);
           const midX = (d.source.x + d.target.x) / 2;
           const midY = (d.source.y + d.target.y) / 2;
+<<<<<<< HEAD
           const offsetDistance = d.effect === 'deny' ? 20 : 15;
+=======
+          const offsetDistance = d.effect === 'deny' ? 27 : 15;
+>>>>>>> 7457676 (1)
           return midX + (dy / distance) * offsetDistance;
         })
         .attr('y', (d: any) => {
@@ -516,7 +520,11 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
           const distance = Math.sqrt(dx * dx + dy * dy);
           const midX = (d.source.x + d.target.x) / 2;
           const midY = (d.source.y + d.target.y) / 2;
+<<<<<<< HEAD
           const offsetDistance = d.effect === 'deny' ? 20 : 15;
+=======
+          const offsetDistance = d.effect === 'deny' ? 27 : 15;
+>>>>>>> 7457676 (1)
           return midY - (dx / distance) * offsetDistance;
         });
 
