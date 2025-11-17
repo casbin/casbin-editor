@@ -392,7 +392,6 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       .append('text')
       .attr('class', 'link-label')
       .attr('text-anchor', 'middle')
-      .attr('dominant-baseline', 'middle')
       .attr('font-size', '10px')
       .attr('font-weight', 'bold')
       .attr('fill', '#333')
@@ -403,7 +402,6 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         return d.action;
       });
 
-    // Add deny indicators for deny relationships
     const denyIndicators = g
       .append('g')
       .attr('class', 'deny-indicators')
@@ -417,7 +415,6 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       .append('text')
       .attr('class', 'deny-indicator')
       .attr('text-anchor', 'middle')
-      .attr('dominant-baseline', 'middle')
       .attr('font-size', '20px')
       .attr('font-weight', 'bold')
       .attr('fill', '#dc2626')
@@ -504,18 +501,42 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
       linkLabels
         .attr('x', (d: any) => {
-          return (d.source.x + d.target.x) / 2;
+          const dx = d.target.x - d.source.x;
+          const dy = d.target.y - d.source.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const midX = (d.source.x + d.target.x) / 2;
+          const midY = (d.source.y + d.target.y) / 2;
+          const offsetDistance = 15;
+          return midX + (dy / distance) * offsetDistance;
         })
         .attr('y', (d: any) => {
-          return (d.source.y + d.target.y) / 2;
+          const dx = d.target.x - d.source.x;
+          const dy = d.target.y - d.source.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const midX = (d.source.x + d.target.x) / 2;
+          const midY = (d.source.y + d.target.y) / 2;
+          const offsetDistance = 15;
+          return midY - (dx / distance) * offsetDistance;
         });
 
       denyIndicators
         .attr('x', (d: any) => {
-          return (d.source.x + d.target.x) / 2;
+          const dx = d.target.x - d.source.x;
+          const dy = d.target.y - d.source.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const midX = (d.source.x + d.target.x) / 2;
+          const midY = (d.source.y + d.target.y) / 2;
+          const offsetDistance = 15;
+          return midX - (dy / distance) * offsetDistance;
         })
         .attr('y', (d: any) => {
-          return (d.source.y + d.target.y) / 2;
+          const dx = d.target.x - d.source.x;
+          const dy = d.target.y - d.source.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const midX = (d.source.x + d.target.x) / 2;
+          const midY = (d.source.y + d.target.y) / 2;
+          const offsetDistance = 15;
+          return midY + (dx / distance) * offsetDistance;
         });
 
       nodes.attr('transform', (d: any) => {
