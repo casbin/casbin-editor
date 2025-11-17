@@ -5,10 +5,11 @@ import { useLang } from '@/app/context/LangContext';
 
 interface RoleInheritanceGraphProps {
   policy: string;
+  model?: string;
   className?: string;
 }
 
-export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ policy, className = '' }) => {
+export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ policy, model, className = '' }) => {
   const { t } = useLang();
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -108,7 +109,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
   useEffect(() => {
     const parser = new PolicyInheritanceParser();
-    parser.parsePolicy(policy);
+    parser.parsePolicy(policy, model);
     const tree = parser.buildPolicyGraph();
     const relationsByType = parser.getConnectionsByType();
     const cycles = parser.findCircularDependencies();
@@ -116,7 +117,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     setTreeData(tree);
     setRelations(relationsByType);
     setCircularDeps(cycles);
-  }, [policy]);
+  }, [policy, model]);
 
   useEffect(() => {
     if ((treeData.length === 0 && Object.keys(relations).length === 0) || !svgRef.current) return;
@@ -521,22 +522,10 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
       denyIndicators
         .attr('x', (d: any) => {
-          const dx = d.target.x - d.source.x;
-          const dy = d.target.y - d.source.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          const midX = (d.source.x + d.target.x) / 2;
-          const midY = (d.source.y + d.target.y) / 2;
-          const offsetDistance = 15;
-          return midX - (dy / distance) * offsetDistance;
+          return (d.source.x + d.target.x) / 2;
         })
         .attr('y', (d: any) => {
-          const dx = d.target.x - d.source.x;
-          const dy = d.target.y - d.source.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          const midX = (d.source.x + d.target.x) / 2;
-          const midY = (d.source.y + d.target.y) / 2;
-          const offsetDistance = 15;
-          return midY + (dx / distance) * offsetDistance;
+          return (d.source.y + d.target.y) / 2;
         });
 
       nodes.attr('transform', (d: any) => {

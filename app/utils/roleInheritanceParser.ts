@@ -22,6 +22,8 @@ export class PolicyInheritanceParser {
   private visiting: Set<string> = new Set();
   private nodeMap: Map<string, PolicyNode> = new Map();
   private modelParameters: string[] = []; // Added to store model parameters
+  private policyDefinitionParams: string[] = []; // Store policy_definition parameters
+  private hasEffect: boolean = false; // Track if eft is defined in policy_definition
 
   /**
    * Parse the policy text and extract all policy relationships (P policy + G policy)
@@ -66,14 +68,31 @@ export class PolicyInheritanceParser {
     });
     if (parts.length < 3) return null;
 
-    const [, subject, object, action, effect] = parts;
+    const [, subject, object, action, ...rest] = parts;
+
+    let domain: string | undefined;
+    let effect: 'allow' | 'deny' | undefined;
+
+    // Determine what the additional parameters are based on policy_definition
+    if (this.hasEffect && rest.length > 0) {
+      // If eft is defined, the last parameter is the effect
+      effect = rest[rest.length - 1] as 'allow' | 'deny';
+      // Any parameter before effect is domain
+      if (rest.length > 1) {
+        domain = rest.slice(0, rest.length - 1).join(',');
+      }
+    } else if (rest.length > 0) {
+      // If no eft defined, additional parameters are domain
+      domain = rest.join(',');
+    }
 
     return {
       source: subject,
       target: object,
       type: 'p',
       action,
-      effect: effect as 'allow' | 'deny',
+      domain,
+      effect,
     };
   }
 
@@ -102,9 +121,12 @@ export class PolicyInheritanceParser {
    */
   private parseModelConfig(modelText: string): void {
     this.modelParameters = [];
+    this.policyDefinitionParams = [];
+    this.hasEffect = false;
 
     const lines = modelText.split('\n');
     let inRequestDefinition = false;
+    let inPolicyDefinition = false;
 
     for (const line of lines) {
       const trimmedLine = line.trim();
@@ -112,12 +134,21 @@ export class PolicyInheritanceParser {
       // Check for request_definition section
       if (trimmedLine === '[request_definition]') {
         inRequestDefinition = true;
+        inPolicyDefinition = false;
         continue;
       }
 
-      // Check for other sections (exit request_definition)
-      if (trimmedLine.startsWith('[') && trimmedLine.endsWith(']') && trimmedLine !== '[request_definition]') {
+      // Check for policy_definition section
+      if (trimmedLine === '[policy_definition]') {
+        inPolicyDefinition = true;
         inRequestDefinition = false;
+        continue;
+      }
+
+      // Check for other sections
+      if (trimmedLine.startsWith('[') && trimmedLine.endsWith(']')) {
+        inRequestDefinition = false;
+        inPolicyDefinition = false;
         continue;
       }
 
@@ -127,13 +158,25 @@ export class PolicyInheritanceParser {
         this.modelParameters = paramString.split(',').map((param) => {
           return param.trim();
         });
-        break;
+      }
+
+      // Parse policy definition line
+      if (inPolicyDefinition && trimmedLine.startsWith('p = ')) {
+        const paramString = trimmedLine.substring(4).trim();
+        this.policyDefinitionParams = paramString.split(',').map((param) => {
+          return param.trim();
+        });
+        // Check if 'eft' is defined in policy_definition
+        this.hasEffect = this.policyDefinitionParams.includes('eft');
       }
     }
 
     // Fallback to default parameters if parsing fails
     if (this.modelParameters.length === 0) {
       this.modelParameters = ['sub', 'obj', 'act'];
+    }
+    if (this.policyDefinitionParams.length === 0) {
+      this.policyDefinitionParams = ['sub', 'obj', 'act'];
     }
   }
 

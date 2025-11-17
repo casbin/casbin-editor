@@ -208,6 +208,7 @@ export const EditorScreen = () => {
             t={t}
             policy={policy}  
             modelKind={modelKind}
+            modelText={modelText}
           />
         </div>
       </div>

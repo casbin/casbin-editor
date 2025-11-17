@@ -25,6 +25,7 @@ interface CustomConfigPanelProps {
   t: (key: string) => string;
   policy: string;  
   modelKind: string;
+  modelText?: string;
 }
 
 export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
@@ -36,7 +37,8 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
   textClass,
   t,
   policy,  
-  modelKind, 
+  modelKind,
+  modelText,
 }) => {
   const [functions, setFunctions] = useState<FunctionConfig[]>([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -345,7 +347,8 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
             >  
               {modelKind && policy && (  
                 <RoleInheritanceGraph   
-                  policy={policy}   
+                  policy={policy}
+                  model={modelText}
                   className="h-full"  
                 />  
               )}  
