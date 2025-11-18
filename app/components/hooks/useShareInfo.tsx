@@ -85,12 +85,12 @@ export default function useShareInfo() {
           .catch((err: unknown) => {
             const message =
               err && typeof err === 'object' && 'message' in err
-                ? String((err as any).message)
+                ? String((err as { message: unknown }).message)
                 : String(err ?? 'Unknown error');
 
-            // Show a more detailed error and include the share URL so the user can copy it manually
+            // Show a more detailed error
             toast.error(
-              `${message} ${t(', please copy manually')}`
+              `${t('Failed to copy link to clipboard')}: ${message}. ${t('You can manually copy the link')}`,
             );
           });
 
