@@ -82,8 +82,16 @@ export default function useShareInfo() {
               duration: 3000,
             });
           })
-          .catch(() => {
-            toast.error(t('Failed to copy link, please copy manually'));
+          .catch((err: unknown) => {
+            const message =
+              err && typeof err === 'object' && 'message' in err
+                ? String((err as any).message)
+                : String(err ?? 'Unknown error');
+
+            // Show a more detailed error and include the share URL so the user can copy it manually
+            toast.error(
+              `${message} ${t(', please copy manually')}`
+            );
           });
 
         props.onResponse(hash);
