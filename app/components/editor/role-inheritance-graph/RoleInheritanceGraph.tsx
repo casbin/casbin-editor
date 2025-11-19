@@ -239,19 +239,25 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
           });
         }
 
-        // Add a connection (remove duplicates)
+        // Add a connection (aggregate actions for duplicates)
         const linkId = `${rel.source}-${rel.target}-${type}`;
-        if (
-          !allLinks.find((l) => {
-            return l.id === linkId;
-          })
-        ) {
+        const existingLink = allLinks.find((l) => {
+          return l.id === linkId;
+        });
+        
+        if (existingLink) {
+          // If link exists, aggregate the action
+          if (rel.action && !existingLink.actions.includes(rel.action)) {
+            existingLink.actions.push(rel.action);
+          }
+        } else {
+          // Create new link with actions array
           allLinks.push({
             id: linkId,
             source: rel.source,
             target: rel.target,
             type: type,
-            action: rel.action,
+            actions: rel.action ? [rel.action] : [],
             domain: rel.domain,
           });
         }
@@ -384,7 +390,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       .selectAll('text')
       .data(
         allLinks.filter((d: any) => {
-          return d.action;
+          return d.actions && d.actions.length > 0;
         }),
       )
       .enter()
@@ -399,7 +405,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       .attr('stroke-width', '2')
       .attr('paint-order', 'stroke')
       .text((d: any) => {
-        return d.action;
+        return d.actions.join(', ');
       });
 
     // OnCustomDrawItem
