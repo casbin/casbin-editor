@@ -34,7 +34,9 @@ const filterUiLegend = (text: string) => {
 export const extractPageContent = (boxType: string, t: (key: string) => string, lang: string) => {
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
-  const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+  const escapeRegex = (s: string) => {
+    return s.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')
+  };
 
   // Match a titled section where the title appears on its own line, then
   // capture following lines until the next titled section (also on its own line).
