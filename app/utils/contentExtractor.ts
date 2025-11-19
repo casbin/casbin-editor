@@ -1,122 +1,109 @@
+const escapeRegExp = (s: string) => {
+  return s.replace(/[.*+?^${}()|[\\]\\]/g, '\\\\$&');
+}
+
+// Remove common UI noise and unnecessary labels, keep meaningful lines
 const cleanContent = (content: string) => {
+  if (!content) return '';
+  const blacklist = [
+    /Ask AI/i,
+    /\\bRESET\\b/i,
+    /Explain it/i,
+    /Role Inheritance Graph/i,
+    /casbin-editor/i,
+    /Model Gallery/i,
+  ];
+
   return content
-    .replace(/^\d+\s+/gm, '')
-    .replace(/Ask AI/g, '')
+    .replace(/^\\d+\\s+/gm, '')
+    .split('\\n')
+    .map((l) => l.trim())
+    .filter((l) => l !== '' && !blacklist.some((r) => r.test(l)))
+    .join('\\n')
     .trim();
 };
 
-// Remove UI legend-like runs: consecutive short lines (3+ in a row)
-const filterUiLegend = (text: string) => {
-  const isSimpleLine = (l: string) => {
-    if (!l) return false;
-    if (/[[\]{}=<>:\"]/.test(l)) return false;
-    const words = l.trim().split(/\s+/);
-    return words.length <= 3 && words.every((w) => {
-      return w.length <= 20;
-    });
-  };
-
-  const lines = text.split('\n');
-  const out: string[] = [];
-  for (let i = 0; i < lines.length; ) {
-    if (isSimpleLine(lines[i])) {
-      let j = i + 1;
-      while (j < lines.length && isSimpleLine(lines[j])) j++;
-      if (j - i >= 3) {
-        i = j; // skip the whole run
-        continue;
-      }
-    }
-    out.push(lines[i].trim());
-    i += 1;
-  }
-  return out.filter(Boolean).join('\n').trim();
+const removeEmptyLines = (content: string) => {
+  return content
+    .split('\\n')
+    .filter((line) => line.trim() !== '')
+    .join('\\n');
 };
 
-export const extractPageContent = (boxType: string, t: (key: string) => string, lang: string) => {
+export const extractPageContent = (
+  boxType: string,
+  t: (key: string) => string,
+  lang: string,
+  overrides?: { model?: string; policy?: string; request?: string; enforcementResult?: string },
+) => {
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
-  const escapeRegex = (s: string) => {
-    return s.replace(/[.*+?^${}()|[\]]/g, '\\$&');
-  };
+  const section = (title: string | string[], nextTitle?: string | string[]) => {
+    const titles = Array.isArray(title) ? title : [title];
+    const nextTitles = nextTitle ? (Array.isArray(nextTitle) ? nextTitle : [nextTitle]) : [];
 
-  // Match a titled section where the title appears on its own line, then
-  // capture following lines until the next titled section (also on its own line).
-  const sectionRe = (title: string, nextTitle?: string) => {
-    const t1 = escapeRegex(title);
-    if (nextTitle) {
-      const t2 = escapeRegex(nextTitle);
-      return new RegExp(`(?:\\n|^)${t1}(?:\\s*:)?\\s*\\n([\\s\\S]*?)(?=\\n${t2}(?:\\s*:)?\\s*\\n|$)`, 'i');
+    for (const tt of titles) {
+      const tTitle = escapeRegExp(tt);
+      if (nextTitles.length) {
+        const tNext = nextTitles.map(escapeRegExp).join('|');
+        const re = new RegExp(`${tTitle}\\\\s+([\\\\s\\\\S]*?)(?:${tNext}|$)`, 'i');
+        const m = mainContent.match(re);
+        if (m) return m[1].trim();
+      } else {
+        const re = new RegExp(`${tTitle}\\\\s+([\\\\s\\\\S]*?)$`, 'i');
+        const m = mainContent.match(re);
+        if (m) return m[1].trim();
+      }
     }
-    return new RegExp(`(?:\\n|^)${t1}(?:\\s*:)?\\s*\\n([\\s\\S]*?)$`, 'i');
+    return '';
   };
 
-  const customConfigMatch = mainContent.match(sectionRe(t('Custom Functions'), t('Model')));
-  const modelMatch = mainContent.match(sectionRe(t('Model'), t('Policy')));
-  const policyMatch = mainContent.match(sectionRe(t('Policy'), t('Request')));
-  const requestMatch = mainContent.match(sectionRe(t('Request'), t('Enforcement Result')));
-  const enforcementResultMatch = mainContent.match(sectionRe(t('Enforcement Result'), t('RUN THE TEST')));
+  // Candidate keys (localized first, fallback to English)
+  const modelKeys = [t('Model'), 'Model'];
+  const policyKeys = [t('Policy'), 'Policy'];
+  const requestKeys = [t('Request'), 'Request'];
+  const enforcementKeys = [t('Enforcement Result'), 'Enforcement Result'];
 
-  const customConfig = customConfigMatch ? cleanContent(customConfigMatch[1]) : 'No Custom Functions found';
-  const model = modelMatch
-    ? cleanContent(modelMatch[1].replace(new RegExp(`${t('Select your model')}[\\s\\S]*?${t('RESET')}`, 'i'), ''))
-    : 'No model found';
-  const policy = policyMatch ? cleanContent(policyMatch[1].replace(/Node-Casbin v[\d.]+/, '')) : 'No policy found';
-  const request = requestMatch ? cleanContent(requestMatch[1]) : 'No request found';
-  const enforcementResult = enforcementResultMatch
-    ? cleanContent(enforcementResultMatch[1].replace(new RegExp(`${t('Why this result')}[\\s\\S]*?AI Assistant`, 'i'), ''))
-    : 'No enforcement result found';
+  const rawModel = overrides?.model ?? (section(modelKeys, policyKeys) || section(modelKeys));
+  const rawPolicy = overrides?.policy ?? (section(policyKeys, requestKeys) || section(policyKeys));
+  const rawRequest = overrides?.request ?? (section(requestKeys, enforcementKeys) || section(requestKeys));
+  const rawEnforcement = overrides?.enforcementResult ?? (section(enforcementKeys) || '');
 
-  const removeEmptyLines = (content: string) => {
-    return content
-      .split('\n')
-      .filter((line) => {
-        return line.trim() !== '';
-      })
-      .join('\n');
-  };
-  const extractedContent = removeEmptyLines(`
-    Custom Functions: ${cleanContent(customConfig)}
-    Model: ${cleanContent(model)}
-    Policy: ${cleanContent(policy)}
-    Request: ${cleanContent(request)}
-    Enforcement Result: ${cleanContent(enforcementResult)}
-  `);
+  // Clean each block and remove UI noise lines
+  const model = cleanContent(rawModel) || 'No model found';
+  const policy = cleanContent(rawPolicy) || 'No policy found';
+  const request = cleanContent(rawRequest) || 'No request found';
+  const enforcementResult = cleanContent(rawEnforcement) || 'No enforcement result found';
 
-  // Filter out UI legend/noise before composing the final prompt
-  const filteredExtractedContent = filterUiLegend(extractedContent);
+  // Build extracted content with four main blocks
+  const extractedContent = removeEmptyLines([
+    `Model:\n ${model}`,
+    `Policy:\n ${policy}`,
+    `Request:\n ${request}`,
+    `Enforcement Result:\n ${enforcementResult}`,
+  ].join('\n'));
 
-  // Remove localized button labels (best-effort), e.g. t('Explain it') and t('RESET')
-  const tokens = [t('Explain it'), t('RESET')].filter(Boolean);
-  let cleanedContent = filteredExtractedContent;
-  for (const token of tokens) {
-    // Avoid using \b (word boundary) because it doesn't work for CJK (e.g. Chinese).
-    // Use a simple global, case-insensitive replace for Latin scripts and plain.
-    const re = new RegExp(escapeRegex(token), 'gi');
-    cleanedContent = cleanedContent.replace(re, '');
-  }
-
-  cleanedContent = cleanedContent.replace(/\n{2,}/g, '\n').trim();
+  // Generate the message based on the boxType (keep wording you requested)
   let message = `Please explain in ${lang} language.\n`;
   switch (boxType) {
     case 'model':
-      message += `Briefly explain the Model content. \n      no need to repeat the content of the question.\n${cleanedContent}`;
+      message += `Briefly explain the Model content.\nno need to repeat the content of the question.\n${extractedContent}`;
       break;
     case 'policy':
-      message += `Briefly explain the Policy content.\n      no need to repeat the content of the question.\n${cleanedContent}`;
+      message += `Briefly explain the Policy content.\nno need to repeat the content of the question.\n${extractedContent}`;
       break;
     case 'request':
-      message += `Briefly explain the Request content. \n      no need to repeat the content of the question.\n${cleanedContent}`;
+      message += `Briefly explain the Request content.\nno need to repeat the content of the question.\n${extractedContent}`;
       break;
     case 'enforcementResult':
-      message += `Why this result? please provide a brief summary. \n      no need to repeat the content of the question.\n${cleanedContent}`;
+      message += `Why this result? please provide a brief summary.\nno need to repeat the content of the question.\n${extractedContent}`;
       break;
     default:
-      message += cleanedContent;
+      message += extractedContent;
   }
 
   return {
-    extractedContent: cleanedContent,
+    extractedContent,
     message,
   };
 };

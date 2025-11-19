@@ -77,7 +77,12 @@ export const EditorScreen = () => {
     }
   };
   const extractContent = (boxType: string) => {
-    const { message } = extractPageContent(boxType, t, lang);
+    const { message } = extractPageContent(boxType, t, lang, {
+      model: modelText,
+      policy,
+      request,
+      enforcementResult: requestResult,
+    });
     return message;
   };
 
