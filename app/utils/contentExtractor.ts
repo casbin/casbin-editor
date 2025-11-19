@@ -17,8 +17,14 @@ const cleanContent = (content: string) => {
   return content
     .replace(/^\\d+\\s+/gm, '')
     .split('\\n')
-    .map((l) => l.trim())
-    .filter((l) => l !== '' && !blacklist.some((r) => r.test(l)))
+    .map((l) => {
+      return l.trim();
+    })
+    .filter((l) => {
+      return l !== '' && !blacklist.some((r) => {
+        return r.test(l);
+      });
+    })
     .join('\\n')
     .trim();
 };
@@ -26,7 +32,9 @@ const cleanContent = (content: string) => {
 const removeEmptyLines = (content: string) => {
   return content
     .split('\\n')
-    .filter((line) => line.trim() !== '')
+    .filter((line) => {
+      return line.trim() !== '';
+    })
     .join('\\n');
 };
 
