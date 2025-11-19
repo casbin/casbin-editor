@@ -5,14 +5,53 @@ const cleanContent = (content: string) => {
     .trim();
 };
 
+// Remove UI legend-like runs: consecutive short lines (3+ in a row)
+const filterUiLegend = (text: string) => {
+  const isSimpleLine = (l: string) => {
+    if (!l) return false;
+    if (/[[\]{}=<>:\"]/.test(l)) return false;
+    const words = l.trim().split(/\s+/);
+    return words.length <= 3 && words.every((w) => w.length <= 20);
+  };
+
+  const lines = text.split('\n');
+  const out: string[] = [];
+  for (let i = 0; i < lines.length; ) {
+    if (isSimpleLine(lines[i])) {
+      let j = i + 1;
+      while (j < lines.length && isSimpleLine(lines[j])) j++;
+      if (j - i >= 3) {
+        i = j; // skip the whole run
+        continue;
+      }
+    }
+    out.push(lines[i].trim());
+    i += 1;
+  }
+  return out.filter(Boolean).join('\n').trim();
+};
+
 export const extractPageContent = (boxType: string, t: (key: string) => string, lang: string) => {
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
-  const customConfigMatch = mainContent.match(new RegExp(`${t('Custom Functions')}\\s+([\\s\\S]*?)\\s+${t('Model')}`));
-  const modelMatch = mainContent.match(new RegExp(`${t('Model')}\\s+([\\s\\S]*?)(?:${t('Policy')}|$)`));
-  const policyMatch = mainContent.match(new RegExp(`${t('Policy')}\\s+([\\s\\S]*?)\\s+${t('Request')}`));
-  const requestMatch = mainContent.match(new RegExp(`${t('Request')}\\s+([\\s\\S]*?)\\s+${t('Enforcement Result')}`));
-  const enforcementResultMatch = mainContent.match(new RegExp(`${t('Enforcement Result')}\\s+([\\s\\S]*?)\\s+${t('RUN THE TEST')}`));
+  const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+
+  // Match a titled section where the title appears on its own line, then
+  // capture following lines until the next titled section (also on its own line).
+  const sectionRe = (title: string, nextTitle?: string) => {
+    const t1 = escapeRegex(title);
+    if (nextTitle) {
+      const t2 = escapeRegex(nextTitle);
+      return new RegExp(`(?:\\n|^)${t1}(?:\\s*:)?\\s*\\n([\\s\\S]*?)(?=\\n${t2}(?:\\s*:)?\\s*\\n|$)`, 'i');
+    }
+    return new RegExp(`(?:\\n|^)${t1}(?:\\s*:)?\\s*\\n([\\s\\S]*?)$`, 'i');
+  };
+
+  const customConfigMatch = mainContent.match(sectionRe(t('Custom Functions'), t('Model')));
+  const modelMatch = mainContent.match(sectionRe(t('Model'), t('Policy')));
+  const policyMatch = mainContent.match(sectionRe(t('Policy'), t('Request')));
+  const requestMatch = mainContent.match(sectionRe(t('Request'), t('Enforcement Result')));
+  const enforcementResultMatch = mainContent.match(sectionRe(t('Enforcement Result'), t('RUN THE TEST')));
 
   const customConfig = customConfigMatch ? cleanContent(customConfigMatch[1]) : 'No Custom Functions found';
   const model = modelMatch
@@ -40,30 +79,41 @@ export const extractPageContent = (boxType: string, t: (key: string) => string, 
     Enforcement Result: ${cleanContent(enforcementResult)}
   `);
 
-  let message = `Please explain in ${lang} language.：\n`;
+  // Filter out UI legend/noise before composing the final prompt
+  const filteredExtractedContent = filterUiLegend(extractedContent);
+
+  // Remove localized button labels (best-effort), e.g. t('Explain it') and t('RESET')
+  const tokens = [t('Explain it'), t('RESET')].filter(Boolean);
+  let cleanedContent = filteredExtractedContent;
+  for (const token of tokens) {
+    // Avoid using \b (word boundary) because it doesn't work for CJK (e.g. Chinese).
+    // Use a simple global, case-insensitive replace for Latin scripts and plain
+    const re = new RegExp(escapeRegex(token), 'gi');
+    cleanedContent = cleanedContent.replace(re, '').replace(/\n{2,}/g, '\n');
+  }
+  console.log('Cleaned Content:', cleanedContent); 
+
+  cleanedContent = cleanedContent.replace(/\n{2,}/g, '\n').trim();
+  let message = `Please explain in ${lang} language.\n`;
   switch (boxType) {
     case 'model':
-      message += `Briefly explain the Model content. 
-      no need to repeat the content of the question.\n${extractedContent}`;
+      message += `Briefly explain the Model content. \n      no need to repeat the content of the question.\n${cleanedContent}`;
       break;
     case 'policy':
-      message += `Briefly explain the Policy content.
-      no need to repeat the content of the question.\n${extractedContent}`;
+      message += `Briefly explain the Policy content.\n      no need to repeat the content of the question.\n${cleanedContent}`;
       break;
     case 'request':
-      message += `Briefly explain the Request content. 
-      no need to repeat the content of the question.\n${extractedContent}`;
+      message += `Briefly explain the Request content. \n      no need to repeat the content of the question.\n${cleanedContent}`;
       break;
     case 'enforcementResult':
-      message += `Why this result? please provide a brief summary. 
-      no need to repeat the content of the question.\n${extractedContent}`;
+      message += `Why this result? please provide a brief summary. \n      no need to repeat the content of the question.\n${cleanedContent}`;
       break;
     default:
-      message += extractedContent;
+      message += cleanedContent;
   }
 
   return {
-    extractedContent,
+    extractedContent: cleanedContent,
     message,
   };
 };
