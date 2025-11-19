@@ -37,7 +37,7 @@ export const extractPageContent = (boxType: string, t: (key: string) => string, 
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
   const escapeRegex = (s: string) => {
-    return s.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+    return s.replace(/[.*+?^${}()|[\]]/g, '\\$&');
   };
 
   // Match a titled section where the title appears on its own line, then
@@ -91,11 +91,10 @@ export const extractPageContent = (boxType: string, t: (key: string) => string, 
   let cleanedContent = filteredExtractedContent;
   for (const token of tokens) {
     // Avoid using \b (word boundary) because it doesn't work for CJK (e.g. Chinese).
-    // Use a simple global, case-insensitive replace for Latin scripts and plain
+    // Use a simple global, case-insensitive replace for Latin scripts and plain.
     const re = new RegExp(escapeRegex(token), 'gi');
-    cleanedContent = cleanedContent.replace(re, '').replace(/\n{2,}/g, '\n');
+    cleanedContent = cleanedContent.replace(re, '');
   }
-  console.log('Cleaned Content:', cleanedContent); 
 
   cleanedContent = cleanedContent.replace(/\n{2,}/g, '\n').trim();
   let message = `Please explain in ${lang} language.\n`;
