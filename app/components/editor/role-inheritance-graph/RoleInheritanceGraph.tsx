@@ -521,7 +521,10 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     <div ref={containerRef} className={`flex flex-col h-full ${className}`}>
       {/*legend */}
       {(treeData.length > 0 || Object.keys(relations).length > 0) && (
-        <div className="flex-shrink-0 mb-2 p-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-xs">
+        <div
+          className="flex-shrink-0 mb-2 p-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-xs"
+          data-exclude-from-ai="true"
+        >
           <div className="grid grid-cols-2 gap-2">
             <div>
               <div className="font-medium mb-1 dark:text-white">{t('Node Types')}</div>
@@ -575,7 +578,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
       {/* Circular Dependency Warning */}
       {circularDeps.length > 0 && (
-        <div className="flex-shrink-0 mb-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">
+        <div className="flex-shrink-0 mb-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs" data-exclude-from-ai="true">
           <div className="font-medium text-yellow-800">{t('Circular dependency detected')}</div>
           {circularDeps.map((cycle, index) => {
             return (

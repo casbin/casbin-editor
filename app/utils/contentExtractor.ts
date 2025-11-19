@@ -5,8 +5,53 @@ const cleanContent = (content: string) => {
     .trim();
 };
 
+/**
+ * Get filtered text content from an element, excluding elements marked with data-exclude-from-ai
+ */
+const getFilteredTextContent = (element: Element): string => {
+  let text = '';
+  
+  const walker = document.createTreeWalker(
+    element,
+    NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
+    {
+      acceptNode: (node) => {
+        // Check if this node or any of its parents have data-exclude-from-ai attribute
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node as Element;
+          if (el.hasAttribute('data-exclude-from-ai')) {
+            return NodeFilter.FILTER_REJECT;
+          }
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    }
+  );
+
+  let currentNode: Node | null;
+  while ((currentNode = walker.nextNode())) {
+    if (currentNode.nodeType === Node.TEXT_NODE) {
+      const textContent = currentNode.textContent || '';
+      if (textContent.trim()) {
+        text += textContent;
+      }
+    }
+  }
+
+  return text;
+};
+
 export const extractPageContent = (boxType: string, t: (key: string) => string, lang: string) => {
-  const mainContent = document.querySelector('main')?.innerText || 'No main content found';
+  const mainElement = document.querySelector('main');
+  if (!mainElement) {
+    return {
+      extractedContent: 'No main content found',
+      message: 'No main content found',
+    };
+  }
+
+  // Get filtered content (excluding elements with data-exclude-from-ai)
+  const mainContent = getFilteredTextContent(mainElement);
 
   const customConfigMatch = mainContent.match(new RegExp(`${t('Custom Functions')}\\s+([\\s\\S]*?)\\s+${t('Model')}`));
   const modelMatch = mainContent.match(new RegExp(`${t('Model')}\\s+([\\s\\S]*?)(?:${t('Policy')}|$)`));

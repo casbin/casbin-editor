@@ -106,6 +106,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
+    "@types/jsdom": "^27.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -115,6 +116,8 @@
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "jsdom": "^27.2.0",
     "postcss": "^8",
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.1",
