@@ -11,7 +11,9 @@ const filterUiLegend = (text: string) => {
     if (!l) return false;
     if (/[[\]{}=<>:\"]/.test(l)) return false;
     const words = l.trim().split(/\s+/);
-    return words.length <= 3 && words.every((w) => w.length <= 20);
+    return words.length <= 3 && words.every((w) => {
+      return w.length <= 20;
+    });
   };
 
   const lines = text.split('\n');
@@ -35,7 +37,7 @@ export const extractPageContent = (boxType: string, t: (key: string) => string, 
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
   const escapeRegex = (s: string) => {
-    return s.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')
+    return s.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
   };
 
   // Match a titled section where the title appears on its own line, then
