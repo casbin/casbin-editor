@@ -45,7 +45,7 @@ export const ModelEditorPanel = ({
   };
 
   const extractContent = (boxType: string) => {
-    const { message } = extractPageContent(boxType, t, lang);
+    const { message } = extractPageContent(boxType, t, lang, undefined);
     return message;
   };
 

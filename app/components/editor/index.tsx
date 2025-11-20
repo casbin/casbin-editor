@@ -77,7 +77,7 @@ export const EditorScreen = () => {
     }
   };
   const extractContent = (boxType: string) => {
-    const { message } = extractPageContent(boxType, t, lang);
+    const { message } = extractPageContent(boxType, t, lang, customConfig);
     return message;
   };
 
@@ -451,6 +451,7 @@ export const EditorScreen = () => {
       </div>
         <SidePanelChat
           ref={sidePanelChatRef}
+          customConfig={customConfig}
           onOpenChange={(open: boolean) => {
             setIsChatOpen(open);
           }}

@@ -3,8 +3,8 @@ import { extractPageContent } from '@/app/utils/contentExtractor';
 import { useLang } from '@/app/context/LangContext';
 import { clsx } from 'clsx';
 
-const SidePanelChat = forwardRef<any, { onOpenChange?: (open: boolean) => void }>((props, ref) => {
-  const { onOpenChange } = props;
+const SidePanelChat = forwardRef<any, { onOpenChange?: (open: boolean) => void; customConfig?: string }>((props, ref) => {
+  const { onOpenChange, customConfig } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [pageContent, setPageContent] = useState('');
@@ -32,11 +32,11 @@ const SidePanelChat = forwardRef<any, { onOpenChange?: (open: boolean) => void }
 
   useEffect(() => {
     if (isOpen && boxType) {
-      const { extractedContent, message } = extractPageContent(boxType, t, lang);
+      const { extractedContent, message } = extractPageContent(boxType, t, lang, customConfig);
       setPageContent(extractedContent);
       setMessage(message);
     }
-  }, [isOpen, boxType, t, lang]);
+  }, [isOpen, boxType, t, lang, customConfig]);
 
   return (
     <div
