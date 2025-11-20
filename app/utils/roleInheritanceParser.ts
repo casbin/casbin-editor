@@ -13,6 +13,7 @@ export interface PolicyRelation {
   type: 'p' | 'g' | 'g2' | 'g3';
   action?: string;
   domain?: string;
+  effect?: 'allow' | 'deny';
 }
 
 export class PolicyInheritanceParser {
@@ -65,14 +66,14 @@ export class PolicyInheritanceParser {
     });
     if (parts.length < 3) return null;
 
-    const [, subject, object, action, domain] = parts;
+    const [, subject, object, action, effect] = parts;
 
     return {
       source: subject,
       target: object,
       type: 'p',
       action,
-      domain,
+      effect: effect === 'deny' ? 'deny' : effect === 'allow' ? 'allow' : undefined,
     };
   }
 
