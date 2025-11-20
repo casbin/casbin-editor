@@ -6,16 +6,52 @@ const cleanContent = (content: string) => {
     .trim();
 };
 
-export const extractPageContent = (boxType: string, t: (key: string) => string, lang: string) => {
+const parseCustomConfig = (customConfigStr: string) => {
+  if (!customConfigStr || customConfigStr.trim() === '') {
+    return 'No Custom Functions found';
+  }
+
+  try {
+    const config = eval(customConfigStr) as {
+      functions?: Record<string, Function | string>;
+      matchingForGFunction?: Function | string;
+      matchingDomainForGFunction?: Function | string;
+    };
+
+    const functionLines: string[] = [];
+
+    // Add regular functions
+    if (config?.functions) {
+      Object.entries(config.functions).forEach(([name, body]) => {
+        functionLines.push(`${name}\n${body.toString()}`);
+      });
+    }
+
+    // Add special matching functions
+    ['matchingForGFunction', 'matchingDomainForGFunction'].forEach((fnName) => {
+      if (config?.[fnName as keyof typeof config] && config[fnName as keyof typeof config] !== undefined) {
+        const fnBody = config[fnName as keyof typeof config];
+        if (typeof fnBody === 'function' || (typeof fnBody === 'string' && fnBody !== 'undefined')) {
+          functionLines.push(`${fnName}\n${fnBody.toString()}`);
+        }
+      }
+    });
+
+    return functionLines.length > 0 ? functionLines.join('\n\n') : 'No Custom Functions found';
+  } catch (error) {
+    return 'No Custom Functions found';
+  }
+};
+
+export const extractPageContent = (boxType: string, t: (key: string) => string, lang: string, customConfigStr?: string) => {
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
-  const customConfigMatch = mainContent.match(new RegExp(`${t('Custom Functions')}\\s+([\\s\\S]*?)\\s+${t('Role Inheritance Graph')}`));
   const modelMatch = mainContent.match(new RegExp(`(?:^|\\n)${t('Model')}(?:\\s*\\n)([\\s\\S]*?)(?=\\n${t('Policy')}|$)`));
   const policyMatch = mainContent.match(new RegExp(`(?:^|\\n)${t('Policy')}(?:\\s*\\n)([\\s\\S]*?)(?=\\n${t('Request')}|$)`));
   const requestMatch = mainContent.match(new RegExp(`${t('Request')}\\s+([\\s\\S]*?)\\s+${t('Enforcement Result')}`));
   const enforcementResultMatch = mainContent.match(new RegExp(`${t('Enforcement Result')}\\s+([\\s\\S]*?)\\s+${t('RUN THE TEST')}`));
 
-  const customConfig = customConfigMatch ? cleanContent(customConfigMatch[1]) : 'No Custom Functions found';
+  const customConfig = customConfigStr ? parseCustomConfig(customConfigStr) : 'No Custom Functions found';
   const model = modelMatch
     ? cleanContent(
         // 1) remove any "Select your model" .. "RESET" block (localized),
