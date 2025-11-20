@@ -1,97 +1,60 @@
-const escapeRegExp = (s: string) => {
-  return s.replace(/[.*+?^${}()|[\\]\\]/g, '\\\\$&');
-}
-
-// Remove common UI noise and unnecessary labels, keep meaningful lines
 const cleanContent = (content: string) => {
-  if (!content) return '';
-  const blacklist = [
-    /Ask AI/i,
-    /\\bRESET\\b/i,
-    /Explain it/i,
-    /Role Inheritance Graph/i,
-    /casbin-editor/i,
-    /Model Gallery/i,
-  ];
-
   return content
-    .replace(/^\\d+\\s+/gm, '')
-    .split('\\n')
-    .map((l) => {
-      return l.trim();
-    })
-    .filter((l) => {
-      return l !== '' && !blacklist.some((r) => {
-        return r.test(l);
-      });
-    })
-    .join('\\n')
+    .replace(/^\d+\s+/gm, '')
+    .replace(/Ask AI/g, '')
+    .replace(/Explain it/g, '')
     .trim();
 };
 
-const removeEmptyLines = (content: string) => {
-  return content
-    .split('\\n')
-    .filter((line) => {
-      return line.trim() !== '';
-    })
-    .join('\\n');
-};
-
-export const extractPageContent = (
-  boxType: string,
-  t: (key: string) => string,
-  lang: string,
-  overrides?: { model?: string; policy?: string; request?: string; enforcementResult?: string },
-) => {
+export const extractPageContent = (boxType: string, t: (key: string) => string, lang: string) => {
   const mainContent = document.querySelector('main')?.innerText || 'No main content found';
 
-  const section = (title: string | string[], nextTitle?: string | string[]) => {
-    const titles = Array.isArray(title) ? title : [title];
-    const nextTitles = nextTitle ? (Array.isArray(nextTitle) ? nextTitle : [nextTitle]) : [];
+  const customConfigMatch = mainContent.match(new RegExp(`${t('Custom Functions')}\\s+([\\s\\S]*?)\\s+${t('Role Inheritance Graph')}`));
+  const modelMatch = mainContent.match(new RegExp(`(?:^|\\n)${t('Model')}(?:\\s*\\n)([\\s\\S]*?)(?=\\n${t('Policy')}|$)`));
+  const policyMatch = mainContent.match(new RegExp(`(?:^|\\n)${t('Policy')}(?:\\s*\\n)([\\s\\S]*?)(?=\\n${t('Request')}|$)`));
+  const requestMatch = mainContent.match(new RegExp(`${t('Request')}\\s+([\\s\\S]*?)\\s+${t('Enforcement Result')}`));
+  const enforcementResultMatch = mainContent.match(new RegExp(`${t('Enforcement Result')}\\s+([\\s\\S]*?)\\s+${t('RUN THE TEST')}`));
 
-    for (const tt of titles) {
-      const tTitle = escapeRegExp(tt);
-      if (nextTitles.length) {
-        const tNext = nextTitles.map(escapeRegExp).join('|');
-        const re = new RegExp(`${tTitle}\\\\s+([\\\\s\\\\S]*?)(?:${tNext}|$)`, 'i');
-        const m = mainContent.match(re);
-        if (m) return m[1].trim();
-      } else {
-        const re = new RegExp(`${tTitle}\\\\s+([\\\\s\\\\S]*?)$`, 'i');
-        const m = mainContent.match(re);
-        if (m) return m[1].trim();
-      }
-    }
-    return '';
+  const customConfig = customConfigMatch ? cleanContent(customConfigMatch[1]) : 'No Custom Functions found';
+  const model = modelMatch
+    ? cleanContent(
+        // 1) remove any "Select your model" .. "RESET" block (localized),
+        // 2) remove a single leading non-section line (e.g. the model name like "ACL"),
+        //    but keep lines that start with '[' (section headers) so we don't strip actual config lines.
+        // 3) remove any standalone localized RESET lines that may remain.
+        modelMatch[1]
+          .replace(new RegExp(`${t('Select your model')}[\\s\\S]*?${t('RESET')}`, 'i'), '')
+          .replace(/^\s*(?!\[)([^\r\n]+)\r?\n?/, '')
+          .replace(new RegExp(`^\\s*${t('RESET')}\\s*$`, 'gim'), '')
+      )
+    : 'No model found';
+  const policy = policyMatch
+    ? cleanContent(
+        // remove any implementation/version lines that mention casbin (covers Node-Casbin, jCasbin, etc.)
+        policyMatch[1].replace(/.*casbin.*$/gim, '')
+      )
+    : 'No policy found';
+  const request = requestMatch ? cleanContent(requestMatch[1]) : 'No request found';
+  const enforcementResult = enforcementResultMatch
+    ? cleanContent(enforcementResultMatch[1].replace(new RegExp(`${t('Why this result')}[\\s\\S]*?AI Assistant`, 'i'), ''))
+    : 'No enforcement result found';
+
+  const removeEmptyLines = (content: string) => {
+    return content
+      .split('\n')
+      .filter((line) => {
+        return line.trim() !== '';
+      })
+      .join('\n');
   };
+  const extractedContent = removeEmptyLines(`
+    Custom Functions:\n${cleanContent(customConfig)}
+    Model:\n${cleanContent(model)}
+    Policy:\n${cleanContent(policy)}
+    Request:\n${cleanContent(request)}
+    Enforcement Result:\n${cleanContent(enforcementResult)}
+  `);
 
-  // Candidate keys (localized first, fallback to English)
-  const modelKeys = [t('Model'), 'Model'];
-  const policyKeys = [t('Policy'), 'Policy'];
-  const requestKeys = [t('Request'), 'Request'];
-  const enforcementKeys = [t('Enforcement Result'), 'Enforcement Result'];
-
-  const rawModel = overrides?.model ?? (section(modelKeys, policyKeys) || section(modelKeys));
-  const rawPolicy = overrides?.policy ?? (section(policyKeys, requestKeys) || section(policyKeys));
-  const rawRequest = overrides?.request ?? (section(requestKeys, enforcementKeys) || section(requestKeys));
-  const rawEnforcement = overrides?.enforcementResult ?? (section(enforcementKeys) || '');
-
-  // Clean each block and remove UI noise lines
-  const model = cleanContent(rawModel) || 'No model found';
-  const policy = cleanContent(rawPolicy) || 'No policy found';
-  const request = cleanContent(rawRequest) || 'No request found';
-  const enforcementResult = cleanContent(rawEnforcement) || 'No enforcement result found';
-
-  // Build extracted content with four main blocks
-  const extractedContent = removeEmptyLines([
-    `Model:\n ${model}`,
-    `Policy:\n ${policy}`,
-    `Request:\n ${request}`,
-    `Enforcement Result:\n ${enforcementResult}`,
-  ].join('\n'));
-
-  // Generate the message based on the boxType (keep wording you requested)
   let message = `Please explain in ${lang} language.\n`;
   switch (boxType) {
     case 'model':
