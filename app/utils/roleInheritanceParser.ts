@@ -13,6 +13,7 @@ export interface PolicyRelation {
   type: 'p' | 'g' | 'g2' | 'g3';
   action?: string;
   domain?: string;
+  effect?: 'allow' | 'deny';
 }
 
 export class PolicyInheritanceParser {
@@ -65,7 +66,19 @@ export class PolicyInheritanceParser {
     });
     if (parts.length < 3) return null;
 
-    const [, subject, object, action, domain] = parts;
+    const [, subject, object, action, effectOrDomain, ...rest] = parts;
+
+    // Determine if the 4th parameter is effect or domain
+    // Effect is usually 'allow' or 'deny', domain is typically other values
+    let effect: 'allow' | 'deny' | undefined;
+    let domain: string | undefined;
+
+    if (effectOrDomain === 'allow' || effectOrDomain === 'deny') {
+      effect = effectOrDomain;
+      domain = rest.length > 0 ? rest[0] : undefined;
+    } else {
+      domain = effectOrDomain;
+    }
 
     return {
       source: subject,
@@ -73,6 +86,7 @@ export class PolicyInheritanceParser {
       type: 'p',
       action,
       domain,
+      effect,
     };
   }
 

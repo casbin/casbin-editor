@@ -259,6 +259,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
             type: type,
             actions: rel.action ? [rel.action] : [],
             domain: rel.domain,
+            effect: rel.effect,
           });
         }
       });
@@ -408,6 +409,51 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         return d.actions.join(', ');
       });
 
+    // Add deny indicators (red X) for deny rules
+    const denyIndicators = g
+      .append('g')
+      .attr('class', 'deny-indicators')
+      .selectAll('g')
+      .data(
+        allLinks.filter((d: any) => {
+          return d.effect === 'deny';
+        }),
+      )
+      .enter()
+      .append('g')
+      .attr('class', 'deny-indicator');
+
+    // Draw red X using two crossing lines
+    const xSize = 12;
+    denyIndicators
+      .append('line')
+      .attr('class', 'deny-x-line1')
+      .attr('x1', -xSize / 2)
+      .attr('y1', -xSize / 2)
+      .attr('x2', xSize / 2)
+      .attr('y2', xSize / 2)
+      .attr('stroke', '#DC2626')
+      .attr('stroke-width', 3)
+      .attr('stroke-linecap', 'round');
+
+    denyIndicators
+      .append('line')
+      .attr('class', 'deny-x-line2')
+      .attr('x1', -xSize / 2)
+      .attr('y1', xSize / 2)
+      .attr('x2', xSize / 2)
+      .attr('y2', -xSize / 2)
+      .attr('stroke', '#DC2626')
+      .attr('stroke-width', 3)
+      .attr('stroke-linecap', 'round');
+
+    // Add white background circle for better visibility
+    denyIndicators
+      .insert('circle', 'line')
+      .attr('r', xSize * 0.7)
+      .attr('fill', 'white')
+      .attr('opacity', 0.9);
+
     // OnCustomDrawItem
     const nodes = g.append('g').attr('class', 'nodes').selectAll('g').data(allNodes).enter().append('g').call(drag);
 
@@ -491,6 +537,13 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         .attr('y', (d: any) => {
           return (d.source.y + d.target.y) / 2;
         });
+
+      // Update deny indicator positions
+      denyIndicators.attr('transform', (d: any) => {
+        const x = (d.source.x + d.target.x) / 2;
+        const y = (d.source.y + d.target.y) / 2;
+        return `translate(${x},${y})`;
+      });
 
       nodes.attr('transform', (d: any) => {
         return `translate(${d.x},${d.y})`;
