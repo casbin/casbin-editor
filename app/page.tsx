@@ -33,14 +33,6 @@ export default function Home() {
       </div>
       <div
         className={clsx(
-          'px-4 py-6 max-w-5xl mx-auto w-full',
-          theme === 'dark' ? 'bg-customDark' : 'bg-white',
-        )}
-      >
-        <GiscusComments />
-      </div>
-      <div
-        className={clsx(
           'bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-4',
           'flex flex-col sm:flex-row items-center justify-center gap-4',
           'border-t border-slate-700 shadow-lg',
@@ -57,6 +49,14 @@ export default function Home() {
         <span className="text-slate-300 text-sm font-medium">
           Copyright © {new Date().getFullYear()} Casbin contributors.
         </span>
+      </div>
+      <div
+        className={clsx(
+          'px-4 py-6 max-w-5xl mx-auto w-full',
+          theme === 'dark' ? 'bg-customDark' : 'bg-gradient-to-br from-slate-50 to-slate-100',
+        )}
+      >
+        <GiscusComments />
       </div>
     </main>
   );
