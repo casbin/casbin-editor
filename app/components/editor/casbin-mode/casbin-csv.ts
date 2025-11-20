@@ -15,7 +15,7 @@
 import { IndentContext, LanguageSupport, StreamLanguage, StringStream } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
 
-const token = (stream: StringStream, state) => {
+export const token = (stream: StringStream, state) => {
   const ch = stream.peek();
 
   if (ch === '#') {
@@ -26,10 +26,10 @@ const token = (stream: StringStream, state) => {
     return '';
   }
 
-  if (stream.sol() && stream.match('p')) {
+  if (stream.sol() && stream.match(/^p(?=\s*,)/)) {
     return 'def';
   }
-  if (stream.sol() && (stream.match('g2') || stream.match('g'))) {
+  if (stream.sol() && (stream.match(/^g2(?=\s*,)/) || stream.match(/^g(?=\s*,)/))) {
     return 'keyword';
   }
 
