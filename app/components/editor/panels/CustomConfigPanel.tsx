@@ -333,13 +333,13 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
           </div>  
   
           {/* Role inheritance diagram area - Occupies all remaining space */}  
-          <div className="border-t border-border mt-2 pt-4 flex-1 min-h-0 px-2">  
-            <div className="h-8 pl-2 flex items-center font-bold text-lg mb-2">  
+          <div className="border-t border-border mt-2 pt-4 flex-1 min-h-0 px-2 flex flex-col">  
+            <div className="h-8 pl-2 flex items-center font-bold text-lg mb-2 flex-shrink-0">  
               <div className={textClass}>{t('Role Inheritance Graph')}</div>  
             </div>  
             <div
               className={clsx(
-                "h-full overflow-auto bg-white dark:bg-slate-800",
+                "flex-1 min-h-0 overflow-auto bg-white dark:bg-slate-800",
                 "rounded-lg border border-border shadow-sm",
               )}
             >  
