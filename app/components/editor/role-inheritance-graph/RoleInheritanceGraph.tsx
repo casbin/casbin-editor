@@ -314,7 +314,40 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       }
     };
 
-    // Create a force-oriented diagram simulation
+    // Group nodes by type for better layout
+    const nodesByType = new Map<string, any[]>();
+    allNodes.forEach((node: any) => {
+      const type = node.type || 'user';
+      if (!nodesByType.has(type)) {
+        nodesByType.set(type, []);
+      }
+      nodesByType.get(type)!.push(node);
+    });
+
+    // Assign initial positions to nodes based on their type to reduce edge crossing
+    // This creates a hierarchical layout with users at top, resources at bottom
+    const typeOrder = ['user', 'role', 'action', 'object', 'resource'];
+    const verticalSpacing = innerHeight / (typeOrder.length + 1);
+    
+    allNodes.forEach((node: any) => {
+      const typeIndex = typeOrder.indexOf(node.type || 'user');
+      const yPosition = typeIndex >= 0 ? (typeIndex + 1) * verticalSpacing : innerHeight / 2;
+      
+      // Get nodes of the same type
+      const sameTypeNodes = nodesByType.get(node.type || 'user') || [];
+      const nodeIndex = sameTypeNodes.indexOf(node);
+      const totalSameType = sameTypeNodes.length;
+      
+      // Distribute nodes of the same type horizontally
+      const horizontalSpacing = innerWidth / (totalSameType + 1);
+      const xPosition = (nodeIndex + 1) * horizontalSpacing;
+      
+      // Set initial position
+      node.x = xPosition;
+      node.y = yPosition;
+    });
+
+    // Create a force-oriented diagram simulation with improved parameters
     const simulation = d3
       .forceSimulation(allNodes)
       .force(
@@ -324,16 +357,22 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
           .id((d: any) => {
             return d.id;
           })
-          .distance(150),
+          .distance(200)
+          .strength(0.5),
       )
-      .force('charge', d3.forceManyBody().strength(-400))
+      .force('charge', d3.forceManyBody().strength(-800))
       .force('center', d3.forceCenter(innerWidth / 2, innerHeight / 2))
       .force(
         'collision',
         d3.forceCollide().radius((d: any) => {
-          return calculateNodeRadius(d.id) + 20;
+          return calculateNodeRadius(d.id) + 30;
         }),
-      );
+      )
+      .force('y', d3.forceY((d: any) => {
+        const typeIndex = typeOrder.indexOf(d.type || 'user');
+        return typeIndex >= 0 ? (typeIndex + 1) * verticalSpacing : innerHeight / 2;
+      }).strength(0.3))
+      .force('x', d3.forceX(innerWidth / 2).strength(0.05));
 
     // Draw the connecting lines
     const links = g
