@@ -259,6 +259,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
             type: type,
             actions: rel.action ? [rel.action] : [],
             domain: rel.domain,
+            effect: rel.effect,
           });
         }
       });
@@ -408,6 +409,48 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         return d.actions.join(', ');
       });
 
+    // Add deny effect indicators (red X markers)
+    const denyMarkers = g
+      .append('g')
+      .attr('class', 'deny-markers')
+      .selectAll('g')
+      .data(
+        allLinks.filter((d: any) => {
+          return d.effect === 'deny';
+        }),
+      )
+      .enter()
+      .append('g')
+      .attr('class', 'deny-marker');
+
+    // Draw red X for deny relationships
+    denyMarkers
+      .append('circle')
+      .attr('r', 10)
+      .attr('fill', 'white')
+      .attr('stroke', '#DC2626')
+      .attr('stroke-width', 2);
+
+    denyMarkers
+      .append('line')
+      .attr('x1', -6)
+      .attr('y1', -6)
+      .attr('x2', 6)
+      .attr('y2', 6)
+      .attr('stroke', '#DC2626')
+      .attr('stroke-width', 2.5)
+      .attr('stroke-linecap', 'round');
+
+    denyMarkers
+      .append('line')
+      .attr('x1', -6)
+      .attr('y1', 6)
+      .attr('x2', 6)
+      .attr('y2', -6)
+      .attr('stroke', '#DC2626')
+      .attr('stroke-width', 2.5)
+      .attr('stroke-linecap', 'round');
+
     // OnCustomDrawItem
     const nodes = g.append('g').attr('class', 'nodes').selectAll('g').data(allNodes).enter().append('g').call(drag);
 
@@ -491,6 +534,14 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         .attr('y', (d: any) => {
           return (d.source.y + d.target.y) / 2;
         });
+
+      // Position deny markers below action labels to avoid overlap
+      denyMarkers.attr('transform', (d: any) => {
+        const midX = (d.source.x + d.target.x) / 2;
+        const midY = (d.source.y + d.target.y) / 2;
+        // Offset by 20px below the midpoint to avoid overlapping with action text
+        return `translate(${midX},${midY + 20})`;
+      });
 
       nodes.attr('transform', (d: any) => {
         return `translate(${d.x},${d.y})`;
