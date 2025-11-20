@@ -36,9 +36,9 @@ export function GiscusComments() {
     <Giscus
       id="comments"
       repo="casbin/casbin-editor"
-      repoId="R_kgDODbjKlA"
+      repoId="MDEwOlJlcG9zaXRvcnkxMjA0MTY5ODM="
       category="General"
-      categoryId="DIC_kwDODbjKlM4Clhuw"
+      categoryId="DIC_kwDOBy1q184CyA2x"
       mapping="pathname"
       strict="0"
       reactionsEnabled="1"
