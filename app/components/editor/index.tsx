@@ -25,6 +25,7 @@ import useEngineVersions from '@/app/components/hooks/useEngineVersions';
 import { useEnforceCall } from '@/app/components/hooks/useEnforceCall';
 import { buttonPlugin } from '@/app/components/editor/plugins/ButtonPlugin';
 import { loadingOverlay } from '@/app/components/editor/plugins/LoadingOverlayExtension';
+import { policyHighlightExtension, setHighlightedLinesEffect } from '@/app/components/editor/plugins/PolicyHighlightExtension';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
@@ -63,8 +64,10 @@ export const EditorScreen = () => {
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [requestResults, setRequestResults] = useState<ResultsMap>({});
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [highlightedPolicyLines, setHighlightedPolicyLines] = useState<number[]>([]);
   const skipNextEffectRef = useRef(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
+  const policyEditorRef = useRef<any>(null);
   const { setupEnforceContextData, setupHandleEnforceContextChange } = useSetupEnforceContext({
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
@@ -146,6 +149,20 @@ export const EditorScreen = () => {
     });
   };
 
+  const handleHighlightPolicyLines = (lines: number[]) => {
+    setHighlightedPolicyLines(lines);
+  };
+
+  // Effect to apply highlighting to policy editor
+  useEffect(() => {
+    if (policyEditorRef.current && policyEditorRef.current.view) {
+      const view = policyEditorRef.current.view;
+      view.dispatch({
+        effects: setHighlightedLinesEffect.of(highlightedPolicyLines),
+      });
+    }
+  }, [highlightedPolicyLines]);
+
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
   return (
@@ -208,6 +225,7 @@ export const EditorScreen = () => {
             t={t}
             policy={policy}  
             modelKind={modelKind}
+            onHighlightPolicyLines={handleHighlightPolicyLines}
           />
         </div>
       </div>
@@ -301,6 +319,7 @@ export const EditorScreen = () => {
             <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
               <div className="flex flex-col h-full">
                 <CodeMirror
+                  ref={policyEditorRef}
                   height="100%"
                   extensions={[
                     basicSetup,
@@ -310,6 +329,7 @@ export const EditorScreen = () => {
                     buttonPlugin(openDrawerWithMessage, extractContent, 'policy'),
                     linter(policyLinter),
                     lintGutter(),
+                    policyHighlightExtension(),
                   ]}
                   basicSetup={{
                     lineNumbers: true,

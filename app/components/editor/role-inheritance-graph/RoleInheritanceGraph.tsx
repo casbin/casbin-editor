@@ -6,9 +6,10 @@ import { useLang } from '@/app/context/LangContext';
 interface RoleInheritanceGraphProps {
   policy: string;
   className?: string;
+  onHighlightPolicyLines?: (lines: number[]) => void;
 }
 
-export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ policy, className = '' }) => {
+export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ policy, className = '', onHighlightPolicyLines }) => {
   const { t } = useLang();
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -16,6 +17,8 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   const [relations, setRelations] = useState<Record<string, PolicyRelation[]>>({});
   const [circularDeps, setCircularDeps] = useState<string[][]>([]);
   const [dimensions, setDimensions] = useState({ width: 400, height: 300 });
+  const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(new Set());
+  const [highlightedEdges, setHighlightedEdges] = useState<Set<string>>(new Set());
 
   const medicalColorScheme = {
     user: '#2E86AB',
@@ -121,7 +124,103 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   useEffect(() => {
     if ((treeData.length === 0 && Object.keys(relations).length === 0) || !svgRef.current) return;
     renderGraph();
-  }, [treeData, relations, dimensions]);
+  }, [treeData, relations, dimensions, highlightedNodes, highlightedEdges]);
+
+  // Find policy lines that match a given node
+  const findPolicyLinesForNode = (nodeName: string): number[] => {
+    const lines: number[] = [];
+    const policyLines = policy.split('\n');
+    
+    policyLines.forEach((line, index) => {
+      const trimmedLine = line.trim();
+      if (trimmedLine.length === 0 || trimmedLine.startsWith('//')) return;
+      
+      // Parse the policy line
+      const parts = trimmedLine.split(',').map((p) => {
+        return p.trim();
+      });
+      if (parts.length > 0) {
+        // Check if any part matches the node name
+        if (parts.some((part) => {
+          return part === nodeName;
+        })) {
+          lines.push(index + 1); // Line numbers are 1-indexed
+        }
+      }
+    });
+    
+    return lines;
+  };
+
+  // Find policy lines for an edge (connection between two nodes)
+  const findPolicyLinesForEdge = (sourceNode: string, targetNode: string): number[] => {
+    const lines: number[] = [];
+    const policyLines = policy.split('\n');
+    
+    policyLines.forEach((line, index) => {
+      const trimmedLine = line.trim();
+      if (trimmedLine.length === 0 || trimmedLine.startsWith('//')) return;
+      
+      // Parse the policy line
+      const parts = trimmedLine.split(',').map((p) => {
+        return p.trim();
+      });
+      if (parts.length >= 2) {
+        // Check if line contains both source and target nodes
+        const hasSource = parts.some((part) => {
+          return part === sourceNode;
+        });
+        const hasTarget = parts.some((part) => {
+          return part === targetNode;
+        });
+        if (hasSource && hasTarget) {
+          lines.push(index + 1);
+        }
+      }
+    });
+    
+    return lines;
+  };
+
+  // Handle node click
+  const handleNodeClick = (nodeId: string, connectedEdges: Set<string>) => {
+    const newHighlightedNodes = new Set([nodeId]);
+    const newHighlightedEdges = connectedEdges;
+    
+    setHighlightedNodes(newHighlightedNodes);
+    setHighlightedEdges(newHighlightedEdges);
+    
+    // Find policy lines for this node
+    const policyLines = findPolicyLinesForNode(nodeId);
+    if (onHighlightPolicyLines) {
+      onHighlightPolicyLines(policyLines);
+    }
+  };
+
+  // Handle edge click
+  const handleEdgeClick = (sourceId: string, targetId: string, edgeId: string) => {
+    const newHighlightedNodes = new Set([sourceId, targetId]);
+    const newHighlightedEdges = new Set([edgeId]);
+    
+    setHighlightedNodes(newHighlightedNodes);
+    setHighlightedEdges(newHighlightedEdges);
+    
+    // Find policy lines for this edge
+    const policyLines = findPolicyLinesForEdge(sourceId, targetId);
+    if (onHighlightPolicyLines) {
+      onHighlightPolicyLines(policyLines);
+    }
+  };
+
+  // Handle background click to clear highlights
+  const handleBackgroundClick = () => {
+    setHighlightedNodes(new Set());
+    setHighlightedEdges(new Set());
+    if (onHighlightPolicyLines) {
+      onHighlightPolicyLines([]);
+    }
+  };
+
   const renderGraph = () => {
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
@@ -132,6 +231,11 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     const innerHeight = height - margin.top - margin.bottom;
 
     svg.attr('width', width).attr('height', height);
+
+    // Add background click handler to clear highlights
+    svg.on('click', () => {
+      handleBackgroundClick();
+    });
 
     // Check if there is any strategy data (P strategy or G strategy)
     const hasAnyPolicy = treeData.length > 0 || Object.keys(relations).length > 0;
@@ -383,10 +487,12 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       .enter()
       .append('line')
       .attr('stroke', (d: any) => {
-        return getConnectionStyle(d.type).color;
+        const isHighlighted = highlightedEdges.has(d.id);
+        return isHighlighted ? '#FFD700' : getConnectionStyle(d.type).color;
       })
       .attr('stroke-width', (d: any) => {
-        return getConnectionStyle(d.type).strokeWidth;
+        const isHighlighted = highlightedEdges.has(d.id);
+        return isHighlighted ? getConnectionStyle(d.type).strokeWidth + 2 : getConnectionStyle(d.type).strokeWidth;
       })
       .attr('stroke-dasharray', (d: any) => {
         return getConnectionStyle(d.type).dashArray;
@@ -394,7 +500,16 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       .attr('marker-end', (d: any) => {
         return getArrowMarker(d.type);
       })
-      .attr('opacity', 0.8);
+      .attr('opacity', (d: any) => {
+        const isHighlighted = highlightedEdges.has(d.id);
+        const hasHighlights = highlightedEdges.size > 0 || highlightedNodes.size > 0;
+        return isHighlighted ? 1 : hasHighlights ? 0.2 : 0.8;
+      })
+      .style('cursor', 'pointer')
+      .on('click', (event: any, d: any) => {
+        event.stopPropagation();
+        handleEdgeClick(d.source.id, d.target.id, d.id);
+      });
 
     // Create drag-and-drop behavior
     const drag = d3
@@ -500,10 +615,23 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         return calculateNodeRadius(d.id);
       })
       .attr('fill', (d: any) => {
-        return medicalColorScheme[d.type] || medicalColorScheme.user;
+        const isHighlighted = highlightedNodes.has(d.id);
+        return isHighlighted ? '#FFD700' : (medicalColorScheme[d.type] || medicalColorScheme.user);
       })
-      .attr('stroke', medicalColorScheme.border)
-      .attr('stroke-width', 2);
+      .attr('stroke', (d: any) => {
+        const isHighlighted = highlightedNodes.has(d.id);
+        return isHighlighted ? '#FF8C00' : medicalColorScheme.border;
+      })
+      .attr('stroke-width', (d: any) => {
+        const isHighlighted = highlightedNodes.has(d.id);
+        return isHighlighted ? 4 : 2;
+      })
+      .attr('opacity', (d: any) => {
+        const isHighlighted = highlightedNodes.has(d.id);
+        const hasHighlights = highlightedEdges.size > 0 || highlightedNodes.size > 0;
+        return isHighlighted ? 1 : hasHighlights ? 0.3 : 1;
+      })
+      .style('cursor', 'pointer');
 
     // Add text labels (inside the circle)
     nodes
@@ -521,8 +649,24 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         return `${fontSize}px`;
       })
       .attr('font-weight', 'bold')
-      .attr('fill', 'white')
+      .attr('fill', (d: any) => {
+        const isHighlighted = highlightedNodes.has(d.id);
+        return isHighlighted ? '#000' : 'white';
+      })
       .attr('pointer-events', 'none');
+
+    // Add click handler to nodes
+    nodes.on('click', (event: any, d: any) => {
+      event.stopPropagation();
+      // Find all edges connected to this node
+      const connectedEdges = new Set<string>();
+      allLinks.forEach((link: any) => {
+        if (link.source.id === d.id || link.target.id === d.id) {
+          connectedEdges.add(link.id);
+        }
+      });
+      handleNodeClick(d.id, connectedEdges);
+    });
 
     // Force simulation update
     simulation.on('tick', () => {
