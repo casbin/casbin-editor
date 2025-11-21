@@ -91,8 +91,8 @@ export const ActionToolbar = ({
     });
   };
 
-  const handleCopyClick = () => {
-    const content = [
+  const formatConfigurationContent = () => {
+    return [
       '# Casbin Policy Configuration',
       '',
       '## Model',
@@ -115,6 +115,10 @@ export const ActionToolbar = ({
       requestResult || '(empty)',
       '```',
     ].join('\n');
+  };
+
+  const handleCopyClick = () => {
+    const content = formatConfigurationContent();
 
     navigator.clipboard
       .writeText(content)
@@ -130,29 +134,7 @@ export const ActionToolbar = ({
 
   const handleDownloadClick = () => {
     try {
-      const content = [
-        '# Casbin Policy Configuration',
-        '',
-        '## Model',
-        '```',
-        modelText,
-        '```',
-        '',
-        '## Policy',
-        '```',
-        policy || '(empty)',
-        '```',
-        '',
-        '## Request',
-        '```',
-        request || '(empty)',
-        '```',
-        '',
-        '## Enforcement Result',
-        '```',
-        requestResult || '(empty)',
-        '```',
-      ].join('\n');
+      const content = formatConfigurationContent();
 
       const blob = new Blob([content], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
