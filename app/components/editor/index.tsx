@@ -6,7 +6,8 @@ import CodeMirror from '@uiw/react-codemirror';
 import { monokai } from '@uiw/codemirror-theme-monokai';
 import { basicSetup } from 'codemirror';
 import { indentUnit } from '@codemirror/language';
-import { EditorView } from '@codemirror/view';
+import { EditorView, Decoration } from '@codemirror/view';
+import { StateEffect, StateField } from '@codemirror/state';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
 import { linter, lintGutter } from '@codemirror/lint';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
@@ -65,6 +66,7 @@ export const EditorScreen = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const skipNextEffectRef = useRef(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
+  const policyViewRef = useRef<any | null>(null);
   const { setupEnforceContextData, setupHandleEnforceContextChange } = useSetupEnforceContext({
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
@@ -147,6 +149,72 @@ export const EditorScreen = () => {
   };
 
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
+
+  useEffect(() => {
+    // Define a StateEffect and StateField to manage line decorations
+    const setPolicyHighlights = StateEffect.define<any>();
+    const policyHighlightsField = StateField.define<any>({
+      create() {
+        return Decoration.none;
+      },
+      update(value, tr) {
+        for (const effect of tr.effects) {
+          if (effect.is(setPolicyHighlights)) return effect.value;
+        }
+        if (tr.docChanged) return value.map(tr.changes);
+        return value;
+      },
+      provide: (f) => {
+        return EditorView.decorations.from(f);
+      },
+    });
+
+    const handler = (e: any) => {
+      const detail = e?.detail || { nodes: [], links: [] };
+      const links = Array.isArray(detail.links) ? detail.links : [];
+      if (!policyViewRef.current) return;
+      try {
+        const view = policyViewRef.current;
+
+        // Ensure the field is installed on the editor (append once)
+        let hasField = true;
+        try {
+          view.state.field(policyHighlightsField);
+        } catch (err) {
+          hasField = false;
+        }
+        if (!hasField) {
+          view.dispatch({ effects: StateEffect.appendConfig.of([policyHighlightsField]) });
+        }
+
+        // Clear previous decorations if no links
+        if (!links || links.length === 0) {
+          view.dispatch({ effects: setPolicyHighlights.of(Decoration.none) });
+          return;
+        }
+
+        const doc = view.state.doc;
+        const decos: any[] = [];
+        links.forEach((idx: number) => {
+          if (typeof idx !== 'number') return;
+          const lineNumber = idx + 1; // parser uses 0-based index
+          if (lineNumber < 1 || lineNumber > doc.lines) return;
+          const line = doc.line(lineNumber);
+          decos.push(Decoration.line({ class: 'policy-highlight-line' }).range(line.from));
+        });
+
+        const set = Decoration.set(decos, true);
+        view.dispatch({ effects: setPolicyHighlights.of(set) });
+      } catch (err) {
+        // ignore DOM errors
+      }
+    };
+
+    document.addEventListener('role-graph-selection', handler as EventListener);
+    return () => {
+      document.removeEventListener('role-graph-selection', handler as EventListener);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col h-full w-full overflow-hidden">
@@ -319,6 +387,9 @@ export const EditorScreen = () => {
                   }}
                   theme={monokai}
                   onChange={setPolicyPersistent}
+                  onCreateEditor={(view) => {
+                    policyViewRef.current = view;
+                  }}
                   className={'function flex-grow h-[300px]'}
                   value={policy}
                 />

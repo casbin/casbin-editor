@@ -119,3 +119,8 @@ button:hover img {
     scroll-behavior: smooth;
   }
 }
+
+/* Policy highlight for role-graph selections: full-line background + left yellow bar */
+.cm-line.policy-highlight-line {
+  background: rgba(250, 230, 120, 0.25);
+}
