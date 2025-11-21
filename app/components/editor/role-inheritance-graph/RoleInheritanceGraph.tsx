@@ -81,9 +81,6 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     setRawRelations(parser.getRelations());
   }, [policy]);
 
-  // renderGraph is defined below but we intentionally only re-run when
-  // treeData, relations or dimensions change. Disable the hook exhaustive-deps warning.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if ((treeData.length === 0 && Object.keys(relations).length === 0) || !svgRef.current) return;
     renderGraph();
@@ -527,7 +524,9 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
             }
             return [];
           })
-          .filter((x: any) => x !== undefined) as number[];
+          .filter((x: any) => {
+            return x !== undefined;
+          }) as number[];
 
         // Also collect any relations from rawRelations that reference this node (source or target)
         const relationLineIndices = (rawRelations || [])
@@ -537,7 +536,9 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
           .map((r) => {
             return r.lineIndex;
           })
-          .filter((x: any) => x !== undefined) as number[];
+          .filter((x: any) => {
+            return x !== undefined;
+          }) as number[];
 
         // Merge and dedupe indices
         const mergedIndices = Array.from(new Set<number>([...linkLineIndices, ...relationLineIndices]));
@@ -589,7 +590,9 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
         // dispatch selection as numeric line indices for precise policy highlighting
         try {
-          const detail = { nodes: selection.nodes, links: selection.links.filter((x) => x !== undefined) };
+          const detail = { nodes: selection.nodes, links: selection.links.filter((x) => {
+            return x !== undefined;
+          }) };
           document.dispatchEvent(new CustomEvent('role-graph-selection', { detail }));
           if (svgRef.current && typeof (svgRef.current as any)?._onSelectionChange === 'function') {
             (svgRef.current as any)._onSelectionChange(detail);
