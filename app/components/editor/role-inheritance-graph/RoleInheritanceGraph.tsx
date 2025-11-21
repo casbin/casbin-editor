@@ -81,6 +81,9 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     setRawRelations(parser.getRelations());
   }, [policy]);
 
+  // renderGraph is defined below but we intentionally only re-run when
+  // treeData, relations or dimensions change. Disable the hook exhaustive-deps warning.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if ((treeData.length === 0 && Object.keys(relations).length === 0) || !svgRef.current) return;
     renderGraph();
@@ -213,7 +216,9 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
       // Group by source-target-type to avoid duplicate overlapping links; keep an array of line indices
       const groupId = `${rel.source}--${rel.target}--${type}`;
-      const existingLink = allLinks.find((l) => l.groupId === groupId || l.id === groupId);
+      const existingLink = allLinks.find((l) => {
+        return l.groupId === groupId || l.id === groupId;
+      });
       if (existingLink) {
         if (rel.action && !existingLink.actions.includes(rel.action)) {
           existingLink.actions.push(rel.action);
@@ -526,7 +531,9 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
         // Also collect any relations from rawRelations that reference this node (source or target)
         const relationLineIndices = (rawRelations || [])
-          .filter((r) => r.source === nodeId || r.target === nodeId)
+          .filter((r) => {
+            return r.source === nodeId || r.target === nodeId;
+          })
           .map((r) => {
             return r.lineIndex;
           })
@@ -542,25 +549,38 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
       const applyHighlight = (selection: { nodes: string[]; links: number[] }) => {
         // reset styles
-        g.selectAll('.links line').attr('stroke-opacity', 0.8).attr('stroke-width', (d: any) => getConnectionStyle(d.type).strokeWidth);
-        g.selectAll('.nodes circle').attr('stroke-width', 2).attr('r', (d: any) => calculateNodeRadius(d.id));
+        g.selectAll('.links line').attr('stroke-opacity', 0.8).attr('stroke-width', (d: any) => {
+          return getConnectionStyle(d.type).strokeWidth;
+        });
+        g.selectAll('.nodes circle').attr('stroke-width', 2).attr('r', (d: any) => {
+          return calculateNodeRadius(d.id);
+        });
         g.selectAll('text').attr('font-weight', '700');
 
         // highlight links by lineIndex
         selection.links.forEach((ln) => {
           if (ln === undefined) return;
-          g.selectAll('.links line').filter((d: any) => {
-            if (d.lineIndices && Array.isArray(d.lineIndices)) return d.lineIndices.includes(ln);
-            return d.lineIndex === ln;
-          }).attr('stroke-opacity', 1).attr('stroke-width', 5);
+          g.selectAll('.links line')
+            .filter((d: any) => {
+              if (d.lineIndices && Array.isArray(d.lineIndices)) {
+                return d.lineIndices.includes(ln);
+              }
+              return d.lineIndex === ln;
+            })
+            .attr('stroke-opacity', 1)
+            .attr('stroke-width', 5);
         });
 
         // highlight nodes
         selection.nodes.forEach((nodeId) => {
           g.selectAll('.nodes circle')
-            .filter((d: any) => d.id === nodeId)
+            .filter((d: any) => {
+              return d.id === nodeId;
+            })
             .attr('stroke-width', 4)
-            .attr('r', (d: any) => calculateNodeRadius(d.id) + 6);
+            .attr('r', (d: any) => {
+              return calculateNodeRadius(d.id) + 6;
+            });
         });
 
         g.selectAll('text').attr('font-weight', (d: any) => {
@@ -595,7 +615,12 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         event.stopPropagation();
         const s = typeof d.source === 'object' ? d.source.id || d.source : d.source;
         const t = typeof d.target === 'object' ? d.target.id || d.target : d.target;
-        currentSelection = { nodes: [s, t], links: d.lineIndices && d.lineIndices.length > 0 ? d.lineIndices : d.lineIndex !== undefined ? [d.lineIndex] : [] };
+        const linksArr = d.lineIndices && d.lineIndices.length > 0
+          ? d.lineIndices
+          : d.lineIndex !== undefined
+            ? [d.lineIndex]
+            : [];
+        currentSelection = { nodes: [s, t], links: linksArr };
         applyHighlight(currentSelection);
       });
 

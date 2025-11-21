@@ -164,7 +164,7 @@ export const EditorScreen = () => {
         if (tr.docChanged) return value.map(tr.changes);
         return value;
       },
-      provide: f => {
+      provide: (f) => {
         return EditorView.decorations.from(f);
       },
     });
