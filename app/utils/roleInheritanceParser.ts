@@ -14,6 +14,8 @@ export interface PolicyRelation {
   action?: string;
   domain?: string;
   effect?: 'allow' | 'deny';
+  lineIndex?: number;
+  rawLine?: string;
 }
 
 export class PolicyInheritanceParser {
@@ -36,26 +38,34 @@ export class PolicyInheritanceParser {
       this.parseModelConfig(modelText);
     }
 
-    const lines = policyText.split('\n').filter((line) => {
-      return line.trim() && !line.trim().startsWith('#');
-    });
+    const rawLines = policyText.split('\n');
+    rawLines.forEach((originalLine, idx) => {
+      const line = (originalLine || '').trim();
+      if (!line || line.startsWith('#')) return;
 
-    for (const line of lines) {
-      const trimmedLine = line.trim();
-      if (!trimmedLine) continue;
-
-      if (trimmedLine.startsWith('p,') || trimmedLine.startsWith('p ')) {
-        const relation = this.parsePolicyRule(trimmedLine);
+      if (line.startsWith('p,') || line.startsWith('p ')) {
+        const relation = this.parsePolicyRule(line);
         if (relation) {
+          relation.lineIndex = idx;
+          relation.rawLine = originalLine;
           this.relations.push(relation);
         }
-      } else if (trimmedLine.match(/^g[0-9]*[,\s]/)) {
-        const relation = this.parseGroupRule(trimmedLine);
+      } else if (line.match(/^g[0-9]*[,\s]/)) {
+        const relation = this.parseGroupRule(line);
         if (relation) {
+          relation.lineIndex = idx;
+          relation.rawLine = originalLine;
           this.relations.push(relation);
         }
       }
-    }
+    });
+  }
+
+  /**
+   * Return parsed relations with metadata (lineIndex, rawLine)
+   */
+  getRelations(): PolicyRelation[] {
+    return this.relations;
   }
   /**
    * Parse a policy rule (P strategy) and extract relationships

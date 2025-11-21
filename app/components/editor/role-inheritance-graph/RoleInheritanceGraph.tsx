@@ -14,6 +14,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   const containerRef = useRef<HTMLDivElement>(null);
   const [treeData, setTreeData] = useState<PolicyNode[]>([]);
   const [relations, setRelations] = useState<Record<string, PolicyRelation[]>>({});
+  const [rawRelations, setRawRelations] = useState<PolicyRelation[]>([]);
   const [circularDeps, setCircularDeps] = useState<string[][]>([]);
   const [dimensions, setDimensions] = useState({ width: 400, height: 300 });
 
@@ -33,45 +34,6 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     roleInheritance: '#3498DB', // G Strategy Connection - Blue
     resourceInheritance: '#27AE60', // G2 Strategy connection - Green
     domainInheritance: '#9B59B6', // G3 Strategy Connection - Purple
-  };
-
-  // Dynamically calculate the node radius
-  const calculateNodeRadius = (text: string) => {
-    const baseRadius = 25;
-    const textLength = text.length;
-    return Math.max(baseRadius, textLength * 3.5);
-  };
-
-  // Get the connection color
-  const getLineColor = (type: string) => {
-    switch (type) {
-      case 'p':
-        return medicalColorScheme.policyLine;
-      case 'g':
-        return medicalColorScheme.roleInheritance;
-      case 'g2':
-        return medicalColorScheme.resourceInheritance;
-      case 'g3':
-        return medicalColorScheme.domainInheritance;
-      default:
-        return medicalColorScheme.text;
-    }
-  };
-
-  // Get the connection style
-  const getLineStyle = (type: string) => {
-    switch (type) {
-      case 'p':
-        return 'none';
-      case 'g':
-        return 'none';
-      case 'g2':
-        return '5,5';
-      case 'g3':
-        return '2,3';
-      default:
-        return 'none';
-    }
   };
 
   useEffect(() => {
@@ -116,6 +78,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     setTreeData(tree);
     setRelations(relationsByType);
     setCircularDeps(cycles);
+    setRawRelations(parser.getRelations());
   }, [policy]);
 
   useEffect(() => {
@@ -176,6 +139,14 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
     const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`).attr('clip-path', 'url(#chart-area)');
 
+    // Transparent background to capture empty-space clicks
+    g.append('rect')
+      .attr('class', 'graph-background')
+      .attr('width', innerWidth)
+      .attr('height', innerHeight)
+      .attr('fill', 'transparent')
+      .style('pointer-events', 'all');
+
     // Create a de-duplicated node mapping
     const nodeMap = new Map();
     const allLinks: any[] = [];
@@ -216,53 +187,53 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
 
     flattenNodes(treeData);
 
-    // Add nodes and connections from relational data
-    Object.entries(relations).forEach(([type, rels]) => {
-      rels.forEach((rel) => {
-        // Add source node
-        if (!nodeMap.has(rel.source)) {
-          nodeMap.set(rel.source, {
-            id: rel.source,
-            type: determineNodeTypeFromRelation(rel, 'source'),
-            policyType: type,
-            level: 0,
-          });
-        }
-
-        // Add the target node
-        if (!nodeMap.has(rel.target)) {
-          nodeMap.set(rel.target, {
-            id: rel.target,
-            type: determineNodeTypeFromRelation(rel, 'target'),
-            policyType: type,
-            level: 1,
-          });
-        }
-
-        // Add a connection (aggregate actions for duplicates)
-        const linkId = `${rel.source}-${rel.target}-${type}`;
-        const existingLink = allLinks.find((l) => {
-          return l.id === linkId;
+    // Add nodes and connections from parsed relations (use rawRelations which includes lineIndex)
+    // Group relations by source-target-type so multiple policy lines between same nodes become a single link
+    rawRelations.forEach((rel) => {
+      const type = rel.type;
+      // Add source node
+      if (!nodeMap.has(rel.source)) {
+        nodeMap.set(rel.source, {
+          id: rel.source,
+          type: determineNodeTypeFromRelation(rel, 'source'),
+          policyType: type,
+          level: 0,
         });
-        
-        if (existingLink) {
-          // If link exists, aggregate the action
-          if (rel.action && !existingLink.actions.includes(rel.action)) {
-            existingLink.actions.push(rel.action);
-          }
-        } else {
-          // Create new link with actions array
-          allLinks.push({
-            id: linkId,
-            source: rel.source,
-            target: rel.target,
-            type: type,
-            actions: rel.action ? [rel.action] : [],
-            domain: rel.domain,
-            effect: rel.effect,
-          });
+      }
+
+      // Add the target node
+      if (!nodeMap.has(rel.target)) {
+        nodeMap.set(rel.target, {
+          id: rel.target,
+          type: determineNodeTypeFromRelation(rel, 'target'),
+          policyType: type,
+          level: 1,
+        });
+      }
+
+      // Group by source-target-type to avoid duplicate overlapping links; keep an array of line indices
+      const groupId = `${rel.source}--${rel.target}--${type}`;
+      const existingLink = allLinks.find((l) => l.groupId === groupId || l.id === groupId);
+      if (existingLink) {
+        if (rel.action && !existingLink.actions.includes(rel.action)) {
+          existingLink.actions.push(rel.action);
         }
-      });
+        if (rel.lineIndex !== undefined) {
+          existingLink.lineIndices = Array.from(new Set([...(existingLink.lineIndices || []), rel.lineIndex]));
+        }
+      } else {
+        allLinks.push({
+          id: groupId,
+          groupId,
+          source: rel.source,
+          target: rel.target,
+          type: type,
+          actions: rel.action ? [rel.action] : [],
+          domain: rel.domain,
+          effect: rel.effect,
+          lineIndices: rel.lineIndex !== undefined ? [rel.lineIndex] : [],
+        });
+      }
     });
 
     const allNodes = Array.from(nodeMap.values());
@@ -523,6 +494,139 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       .attr('font-weight', 'bold')
       .attr('fill', 'white')
       .attr('pointer-events', 'none');
+
+      // --- Interaction helpers and handlers (selection/highlight) ---
+      // Compute neighbors and related relation line indices for a node
+      const nodeNeighbors = (nodeId: string) => {
+        const connectedLinks = allLinks.filter((l: any) => {
+          const s = typeof l.source === 'object' ? l.source.id || l.source : l.source;
+          const t = typeof l.target === 'object' ? l.target.id || l.target : l.target;
+          return s === nodeId || t === nodeId;
+        });
+        const neighborNodes = new Set<string>();
+        connectedLinks.forEach((l: any) => {
+          const s = typeof l.source === 'object' ? l.source.id || l.source : l.source;
+          const t = typeof l.target === 'object' ? l.target.id || l.target : l.target;
+          neighborNodes.add(s);
+          neighborNodes.add(t);
+        });
+
+        // Collect line indices from connected links (support multiple indices per link)
+        const linkLineIndices = connectedLinks
+          .flatMap((l: any) => {
+            if (l.lineIndices && l.lineIndices.length > 0) {
+              return l.lineIndices;
+            }
+            if (l.lineIndex !== undefined) {
+              return [l.lineIndex];
+            }
+            return [];
+          })
+          .filter((x: any) => x !== undefined) as number[];
+
+        // Also collect any relations from rawRelations that reference this node (source or target)
+        const relationLineIndices = (rawRelations || [])
+          .filter((r) => r.source === nodeId || r.target === nodeId)
+          .map((r) => {
+            return r.lineIndex;
+          })
+          .filter((x: any) => x !== undefined) as number[];
+
+        // Merge and dedupe indices
+        const mergedIndices = Array.from(new Set<number>([...linkLineIndices, ...relationLineIndices]));
+
+        return { links: mergedIndices, nodes: Array.from(neighborNodes) };
+      };
+
+      let currentSelection: { nodes: string[]; links: number[] } = { nodes: [], links: [] };
+
+      const applyHighlight = (selection: { nodes: string[]; links: number[] }) => {
+        // reset styles
+        g.selectAll('.links line').attr('stroke-opacity', 0.8).attr('stroke-width', (d: any) => getConnectionStyle(d.type).strokeWidth);
+        g.selectAll('.nodes circle').attr('stroke-width', 2).attr('r', (d: any) => calculateNodeRadius(d.id));
+        g.selectAll('text').attr('font-weight', '700');
+
+        // highlight links by lineIndex
+        selection.links.forEach((ln) => {
+          if (ln === undefined) return;
+          g.selectAll('.links line').filter((d: any) => {
+            if (d.lineIndices && Array.isArray(d.lineIndices)) return d.lineIndices.includes(ln);
+            return d.lineIndex === ln;
+          }).attr('stroke-opacity', 1).attr('stroke-width', 5);
+        });
+
+        // highlight nodes
+        selection.nodes.forEach((nodeId) => {
+          g.selectAll('.nodes circle')
+            .filter((d: any) => d.id === nodeId)
+            .attr('stroke-width', 4)
+            .attr('r', (d: any) => calculateNodeRadius(d.id) + 6);
+        });
+
+        g.selectAll('text').attr('font-weight', (d: any) => {
+          return selection.nodes.includes(d?.id) ? '900' : '700';
+        });
+
+        // dispatch selection as numeric line indices for precise policy highlighting
+        try {
+          const detail = { nodes: selection.nodes, links: selection.links.filter((x) => x !== undefined) };
+          document.dispatchEvent(new CustomEvent('role-graph-selection', { detail }));
+          if (svgRef.current && typeof (svgRef.current as any)?._onSelectionChange === 'function') {
+            (svgRef.current as any)._onSelectionChange(detail);
+          }
+        } catch (e) {
+          // ignore
+        }
+      };
+
+    // Attach interaction handlers for links/nodes and background
+      links
+      .style('cursor', 'pointer')
+      .on('mouseover', function () {
+        d3.select(this).attr('stroke-opacity', 1).attr('stroke-width', 5);
+      })
+      .on('mouseout', function (event: any, d: any) {
+        const isSelected = (d.lineIndices && d.lineIndices.some((li: number) => {
+          return currentSelection.links.includes(li)
+        })) || currentSelection.links.includes(d.lineIndex);
+        d3.select(this).attr('stroke-opacity', isSelected ? 1 : 0.8).attr('stroke-width', isSelected ? 5 : getConnectionStyle(d.type).strokeWidth);
+      })
+      .on('click', (event: any, d: any) => {
+        event.stopPropagation();
+        const s = typeof d.source === 'object' ? d.source.id || d.source : d.source;
+        const t = typeof d.target === 'object' ? d.target.id || d.target : d.target;
+        currentSelection = { nodes: [s, t], links: d.lineIndices && d.lineIndices.length > 0 ? d.lineIndices : d.lineIndex !== undefined ? [d.lineIndex] : [] };
+        applyHighlight(currentSelection);
+      });
+
+    g.selectAll('.nodes g')
+      .style('cursor', 'pointer')
+      .on('mouseover', function (event: any, d: any) {
+        d3.select(this).select('circle').attr('stroke-width', 4);
+      })
+      .on('mouseout', function (event: any, d: any) {
+        const isSelected = currentSelection.nodes.includes(d.id);
+        d3.select(this)
+          .select('circle')
+          .attr('stroke-width', isSelected ? 4 : 2)
+          .attr('r', (dd: any) => {
+            return isSelected ? calculateNodeRadius(dd.id) + 6 : calculateNodeRadius(dd.id);
+          });
+      })
+      .on('click', (event: any, d: any) => {
+        event.stopPropagation();
+        const nodeId = d.id;
+        const neighbors = nodeNeighbors(nodeId);
+        const nodesToHighlight = Array.from(new Set([nodeId, ...neighbors.nodes]));
+        currentSelection = { nodes: nodesToHighlight, links: neighbors.links };
+        applyHighlight(currentSelection);
+      });
+
+    // Background click clears selection
+    g.select('.graph-background').on('click', () => {
+      currentSelection = { nodes: [], links: [] };
+      applyHighlight(currentSelection);
+    });
 
     // Force simulation update
     simulation.on('tick', () => {
