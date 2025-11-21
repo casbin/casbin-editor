@@ -126,26 +126,29 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     renderGraph();
   }, [treeData, relations, dimensions, highlightedNodes, highlightedEdges]);
 
+  // Helper function to parse policy line
+  const parsePolicyLine = (line: string): string[] | null => {
+    const trimmedLine = line.trim();
+    if (trimmedLine.length === 0 || trimmedLine.startsWith('//')) return null;
+    return trimmedLine.split(',').map((p) => {
+      return p.trim();
+    });
+  };
+
   // Find policy lines that match a given node
   const findPolicyLinesForNode = (nodeName: string): number[] => {
     const lines: number[] = [];
     const policyLines = policy.split('\n');
     
     policyLines.forEach((line, index) => {
-      const trimmedLine = line.trim();
-      if (trimmedLine.length === 0 || trimmedLine.startsWith('//')) return;
+      const parts = parsePolicyLine(line);
+      if (!parts) return;
       
-      // Parse the policy line
-      const parts = trimmedLine.split(',').map((p) => {
-        return p.trim();
-      });
-      if (parts.length > 0) {
-        // Check if any part matches the node name
-        if (parts.some((part) => {
-          return part === nodeName;
-        })) {
-          lines.push(index + 1); // Line numbers are 1-indexed
-        }
+      // Check if any part matches the node name
+      if (parts.some((part) => {
+        return part === nodeName;
+      })) {
+        lines.push(index + 1); // Line numbers are 1-indexed
       }
     });
     
@@ -158,24 +161,18 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     const policyLines = policy.split('\n');
     
     policyLines.forEach((line, index) => {
-      const trimmedLine = line.trim();
-      if (trimmedLine.length === 0 || trimmedLine.startsWith('//')) return;
+      const parts = parsePolicyLine(line);
+      if (!parts || parts.length < 2) return;
       
-      // Parse the policy line
-      const parts = trimmedLine.split(',').map((p) => {
-        return p.trim();
+      // Check if line contains both source and target nodes
+      const hasSource = parts.some((part) => {
+        return part === sourceNode;
       });
-      if (parts.length >= 2) {
-        // Check if line contains both source and target nodes
-        const hasSource = parts.some((part) => {
-          return part === sourceNode;
-        });
-        const hasTarget = parts.some((part) => {
-          return part === targetNode;
-        });
-        if (hasSource && hasTarget) {
-          lines.push(index + 1);
-        }
+      const hasTarget = parts.some((part) => {
+        return part === targetNode;
+      });
+      if (hasSource && hasTarget) {
+        lines.push(index + 1);
       }
     });
     
