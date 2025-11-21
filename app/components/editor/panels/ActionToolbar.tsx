@@ -141,7 +141,7 @@ export const ActionToolbar = ({
   );
 
   return (
-    <div className="flex flex-row flex-wrap gap-2 mb-2 sm:mb-0 w-full sm:w-auto">
+    <div className="flex flex-row flex-wrap gap-4 mb-2 sm:mb-0 w-full sm:w-auto">
       <button className={buttonClassName} onClick={runTest}>
         {t('RUN THE TEST')}
       </button>
