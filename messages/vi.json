@@ -31,6 +31,9 @@
   "Shared at": "Chia sẻ tại",
   "Done in": "Hoàn thành trong",
   "COPY": "SAO CHÉP",
+  "DOWNLOAD": "TẢI XUỐNG",
   "Content copied to clipboard": "Nội dung đã được sao chép vào clipboard",
-  "Failed to copy content": "Không thể sao chép nội dung"
+  "Failed to copy content": "Không thể sao chép nội dung",
+  "Configuration downloaded successfully": "Cấu hình đã được tải xuống thành công",
+  "Failed to download configuration": "Không thể tải xuống cấu hình"
 }

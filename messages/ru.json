@@ -31,6 +31,9 @@
   "Shared at": "Поделиться по адресу",
   "Done in": "Выполнено за",
   "COPY": "КОПИРОВАТЬ",
+  "DOWNLOAD": "СКАЧАТЬ",
   "Content copied to clipboard": "Содержимое скопировано в буфер обмена",
-  "Failed to copy content": "Не удалось скопировать содержимое"
+  "Failed to copy content": "Не удалось скопировать содержимое",
+  "Configuration downloaded successfully": "Конфигурация успешно загружена",
+  "Failed to download configuration": "Не удалось загрузить конфигурацию"
 }

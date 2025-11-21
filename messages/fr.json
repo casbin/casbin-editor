@@ -31,6 +31,9 @@
   "Shared at": "Partagé à",
   "Done in": "Terminé en",
   "COPY": "COPIER",
+  "DOWNLOAD": "TÉLÉCHARGER",
   "Content copied to clipboard": "Contenu copié dans le presse-papiers",
-  "Failed to copy content": "Échec de la copie du contenu"
+  "Failed to copy content": "Échec de la copie du contenu",
+  "Configuration downloaded successfully": "Configuration téléchargée avec succès",
+  "Failed to download configuration": "Échec du téléchargement de la configuration"
 }

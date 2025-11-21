@@ -31,6 +31,9 @@
   "Shared at": "Shared at",
   "Done in": "Done in",
   "COPY": "نسخ",
+  "DOWNLOAD": "تحميل",
   "Content copied to clipboard": "تم نسخ المحتوى إلى الحافظة",
-  "Failed to copy content": "فشل نسخ المحتوى"
+  "Failed to copy content": "فشل نسخ المحتوى",
+  "Configuration downloaded successfully": "تم تنزيل التكوين بنجاح",
+  "Failed to download configuration": "فشل تنزيل التكوين"
 }

@@ -91,8 +91,8 @@ export const ActionToolbar = ({
     });
   };
 
-  const handleCopyClick = () => {
-    const content = [
+  const formatConfigurationContent = () => {
+    return [
       '# Casbin Policy Configuration',
       '',
       '## Model',
@@ -115,6 +115,10 @@ export const ActionToolbar = ({
       requestResult || '(empty)',
       '```',
     ].join('\n');
+  };
+
+  const handleCopyClick = () => {
+    const content = formatConfigurationContent();
 
     navigator.clipboard
       .writeText(content)
@@ -126,6 +130,29 @@ export const ActionToolbar = ({
       .catch(() => {
         toast.error(t('Failed to copy content'));
       });
+  };
+
+  const handleDownloadClick = () => {
+    try {
+      const content = formatConfigurationContent();
+
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
+      link.download = `casbin-config-${timestamp}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success(t('Configuration downloaded successfully'), {
+        duration: 3000,
+      });
+    } catch (error) {
+      toast.error(t('Failed to download configuration'));
+    }
   };
 
   const buttonClassName = clsx(
@@ -152,6 +179,9 @@ export const ActionToolbar = ({
       )}
       <button className={buttonClassName} onClick={handleCopyClick}>
         {t('COPY')}
+      </button>
+      <button className={buttonClassName} onClick={handleDownloadClick}>
+        {t('DOWNLOAD')}
       </button>
       <button className={buttonClassName} onClick={handleShareClick}>
         {t('SHARE')}

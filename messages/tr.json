@@ -31,6 +31,9 @@
   "Shared at": "Paylaşıldı",
   "Done in": "Tamamlandı",
   "COPY": "KOPYALA",
+  "DOWNLOAD": "İNDİR",
   "Content copied to clipboard": "İçerik panoya kopyalandı",
-  "Failed to copy content": "İçerik kopyalanamadı"
+  "Failed to copy content": "İçerik kopyalanamadı",
+  "Configuration downloaded successfully": "Yapılandırma başarıyla indirildi",
+  "Failed to download configuration": "Yapılandırma indirilemedi"
 }
