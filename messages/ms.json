@@ -31,6 +31,9 @@
   "Shared at": "Dikongsi di",
   "Done in": "Selesai dalam",
   "COPY": "SALIN",
+  "DOWNLOAD": "MUAT TURUN",
   "Content copied to clipboard": "Kandungan disalin ke papan keratan",
-  "Failed to copy content": "Gagal menyalin kandungan"
+  "Failed to copy content": "Gagal menyalin kandungan",
+  "Configuration downloaded successfully": "Konfigurasi berjaya dimuat turun",
+  "Failed to download configuration": "Gagal memuat turun konfigurasi"
 }

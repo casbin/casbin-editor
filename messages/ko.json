@@ -31,6 +31,9 @@
   "Shared at": "공유 위치",
   "Done in": "완료 시간",
   "COPY": "복사",
+  "DOWNLOAD": "다운로드",
   "Content copied to clipboard": "내용이 클립보드에 복사되었습니다",
-  "Failed to copy content": "복사 실패"
+  "Failed to copy content": "복사 실패",
+  "Configuration downloaded successfully": "구성이 성공적으로 다운로드되었습니다",
+  "Failed to download configuration": "구성 다운로드 실패"
 }

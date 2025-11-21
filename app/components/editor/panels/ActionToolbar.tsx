@@ -128,6 +128,51 @@ export const ActionToolbar = ({
       });
   };
 
+  const handleDownloadClick = () => {
+    try {
+      const content = [
+        '# Casbin Policy Configuration',
+        '',
+        '## Model',
+        '```',
+        modelText,
+        '```',
+        '',
+        '## Policy',
+        '```',
+        policy || '(empty)',
+        '```',
+        '',
+        '## Request',
+        '```',
+        request || '(empty)',
+        '```',
+        '',
+        '## Enforcement Result',
+        '```',
+        requestResult || '(empty)',
+        '```',
+      ].join('\n');
+
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
+      link.download = `casbin-config-${timestamp}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success(t('Configuration downloaded successfully'), {
+        duration: 3000,
+      });
+    } catch (error) {
+      toast.error(t('Failed to download configuration'));
+    }
+  };
+
   const buttonClassName = clsx(
     'rounded-lg',
     'px-4 py-2',
@@ -152,6 +197,9 @@ export const ActionToolbar = ({
       )}
       <button className={buttonClassName} onClick={handleCopyClick}>
         {t('COPY')}
+      </button>
+      <button className={buttonClassName} onClick={handleDownloadClick}>
+        {t('DOWNLOAD')}
       </button>
       <button className={buttonClassName} onClick={handleShareClick}>
         {t('SHARE')}

@@ -31,6 +31,9 @@
   "Shared at": "共有先",
   "Done in": "完了時間",
   "COPY": "コピー",
+  "DOWNLOAD": "ダウンロード",
   "Content copied to clipboard": "内容がクリップボードにコピーされました",
-  "Failed to copy content": "コピーに失敗しました"
+  "Failed to copy content": "コピーに失敗しました",
+  "Configuration downloaded successfully": "設定のダウンロードに成功しました",
+  "Failed to download configuration": "設定のダウンロードに失敗しました"
 }

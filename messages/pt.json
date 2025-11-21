@@ -31,6 +31,9 @@
   "Shared at": "Compartilhado em",
   "Done in": "Concluído em",
   "COPY": "COPIAR",
+  "DOWNLOAD": "BAIXAR",
   "Content copied to clipboard": "Conteúdo copiado para a área de transferência",
-  "Failed to copy content": "Falha ao copiar conteúdo"
+  "Failed to copy content": "Falha ao copiar conteúdo",
+  "Configuration downloaded successfully": "Configuração baixada com sucesso",
+  "Failed to download configuration": "Falha ao baixar configuração"
 }

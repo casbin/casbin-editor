@@ -31,6 +31,9 @@
   "Shared at": "分享地址",
   "Done in": "完成於",
   "COPY": "複製",
+  "DOWNLOAD": "下載",
   "Content copied to clipboard": "內容已複製到剪貼簿",
-  "Failed to copy content": "複製失敗"
+  "Failed to copy content": "複製失敗",
+  "Configuration downloaded successfully": "配置下載成功",
+  "Failed to download configuration": "配置下載失敗"
 }

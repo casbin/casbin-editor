@@ -31,6 +31,9 @@
   "Shared at": "Geteilt unter",
   "Done in": "Abgeschlossen in",
   "COPY": "KOPIEREN",
+  "DOWNLOAD": "HERUNTERLADEN",
   "Content copied to clipboard": "Inhalt in die Zwischenablage kopiert",
-  "Failed to copy content": "Fehler beim Kopieren des Inhalts"
+  "Failed to copy content": "Fehler beim Kopieren des Inhalts",
+  "Configuration downloaded successfully": "Konfiguration erfolgreich heruntergeladen",
+  "Failed to download configuration": "Fehler beim Herunterladen der Konfiguration"
 }
