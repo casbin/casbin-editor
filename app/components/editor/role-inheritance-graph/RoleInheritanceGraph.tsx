@@ -781,19 +781,19 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
               <div className="flex flex-wrap gap-2">
                 <div className="flex items-center gap-1">
                   <div className="w-4 h-0.5" style={{ backgroundColor: medicalColorScheme.policyLine }}></div>
-                  <span className="dark:text-gray-300">{t('P (Policy)')}</span>
+                  <span className="dark:text-gray-300">{t('p (Policy)')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-4 h-0.5" style={{ backgroundColor: medicalColorScheme.roleInheritance }}></div>
-                  <span className="dark:text-gray-300">{t('G (Role)')}</span>
+                  <span className="dark:text-gray-300">{t('g (Role)')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-4 h-0.5 border-t-2 border-dashed" style={{ borderColor: medicalColorScheme.resourceInheritance }}></div>
-                  <span className="dark:text-gray-300">{t('G2 (Resource)')}</span>
+                  <span className="dark:text-gray-300">{t('g2 (Resource)')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-4 h-0.5 border-t-2 border-dotted" style={{ borderColor: medicalColorScheme.domainInheritance }}></div>
-                  <span className="dark:text-gray-300">{t('G3 (Domain)')}</span>
+                  <span className="dark:text-gray-300">{t('g3 (Domain)')}</span>
                 </div>
               </div>
             </div>

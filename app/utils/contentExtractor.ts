@@ -1,9 +1,14 @@
-const cleanContent = (content: string) => {
-  return content
-    .replace(/^\d+\s+/gm, '')
-    .replace(/Ask AI/g, '')
-    .replace(/Explain it/g, '')
-    .trim();
+const cleanContent = (content: string, t?: (key: string) => string) => {
+  let result = content.replace(/^\d+\s+/gm, '');
+  
+  // Remove translated "Ask AI" and "Explain it" if translation function is provided
+  if (t) {
+    const askAI = t('Ask AI');
+    const explainIt = t('Explain it');
+    result = result.replace(new RegExp(askAI, 'g'), '').replace(new RegExp(explainIt, 'g'), '');
+  }
+  
+  return result.trim();
 };
 
 const parseCustomConfig = (customConfigStr: string) => {
@@ -61,18 +66,20 @@ export const extractPageContent = (boxType: string, t: (key: string) => string, 
         modelMatch[1]
           .replace(new RegExp(`${t('Select your model')}[\\s\\S]*?${t('RESET')}`, 'i'), '')
           .replace(/^\s*(?!\[)([^\r\n]+)\r?\n?/, '')
-          .replace(new RegExp(`^\\s*${t('RESET')}\\s*$`, 'gim'), '')
+          .replace(new RegExp(`^\\s*${t('RESET')}\\s*$`, 'gim'), ''),
+        t
       )
     : 'No model found';
   const policy = policyMatch
     ? cleanContent(
         // remove any implementation/version lines that mention casbin (covers Node-Casbin, jCasbin, etc.)
-        policyMatch[1].replace(/.*casbin.*$/gim, '')
+        policyMatch[1].replace(/.*casbin.*$/gim, ''),
+        t
       )
     : 'No policy found';
-  const request = requestMatch ? cleanContent(requestMatch[1]) : 'No request found';
+  const request = requestMatch ? cleanContent(requestMatch[1], t) : 'No request found';
   const enforcementResult = enforcementResultMatch
-    ? cleanContent(enforcementResultMatch[1].replace(new RegExp(`${t('Why this result')}[\\s\\S]*?AI Assistant`, 'i'), ''))
+    ? cleanContent(enforcementResultMatch[1].replace(new RegExp(`${t('Why this result')}[\\s\\S]*?AI Assistant`, 'i'), ''), t)
     : 'No enforcement result found';
 
   const removeEmptyLines = (content: string) => {
@@ -84,11 +91,11 @@ export const extractPageContent = (boxType: string, t: (key: string) => string, 
       .join('\n');
   };
   const extractedContent = removeEmptyLines(`
-    Custom Functions:\n${cleanContent(customConfig)}
-    Model:\n${cleanContent(model)}
-    Policy:\n${cleanContent(policy)}
-    Request:\n${cleanContent(request)}
-    Enforcement Result:\n${cleanContent(enforcementResult)}
+    Custom Functions:\n${cleanContent(customConfig, t)}
+    Model:\n${cleanContent(model, t)}
+    Policy:\n${cleanContent(policy, t)}
+    Request:\n${cleanContent(request, t)}
+    Enforcement Result:\n${cleanContent(enforcementResult, t)}
   `);
 
   let message = `Please explain in ${lang} language.\n`;

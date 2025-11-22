@@ -20,7 +20,7 @@ import { useLang } from '@/app/context/LangContext';
 import { modelMetadata, categories } from '@/app/config/modelMetadata';
 
 export default function GalleryPage() {
-  const { theme } = useLang();
+  const { theme, t } = useLang();
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -84,11 +84,11 @@ export default function GalleryPage() {
               className="h-8 w-auto"
             />
             <h1 className={clsx('text-3xl font-bold', textClass)}>
-              Model Gallery
+              {t('Model Gallery')}
             </h1>
           </div>
           <p className={clsx('text-lg', textClass, 'opacity-80')}>
-            Explore and select from our collection of access control models
+            {t('Gallery description')}
           </p>
         </div>
       </div>
@@ -115,7 +115,7 @@ export default function GalleryPage() {
                       ),
                 )}
               >
-                {category}
+                {t(category)}
               </button>
             );
           })}
@@ -140,7 +140,7 @@ export default function GalleryPage() {
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-3">
                     <h3 className={clsx('text-xl font-semibold', textClass)}>
-                      {model.name}
+                      {t(model.name)}
                     </h3>
                     <span
                       className={clsx(
@@ -148,11 +148,11 @@ export default function GalleryPage() {
                         'bg-primary/10 text-primary',
                       )}
                     >
-                      {model.category}
+                      {t(model.category)}
                     </span>
                   </div>
                   <p className={clsx('text-sm', textClass, 'opacity-70')}>
-                    {model.description}
+                    {t(model.description)}
                   </p>
                 </div>
               </div>
@@ -181,7 +181,7 @@ export default function GalleryPage() {
           />
         </a>
         <span className="text-slate-300 text-sm font-medium">
-          Copyright © {new Date().getFullYear()} Casbin contributors.
+          {t('Copyright').replace('{year}', new Date().getFullYear().toString())}
         </span>
       </div>
     </main>
