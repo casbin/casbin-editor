@@ -53,10 +53,6 @@
   "Connection Types": "Bağlantı Türleri",
   "Object": "Nesne",
   "Action": "Eylem",
-  "P (Policy)": "P (Politika)",
-  "G (Role)": "G (Rol)",
-  "G2 (Resource)": "G2 (Kaynak)",
-  "G3 (Domain)": "G3 (Alan)",
   "No policy relationships found": "Politika ilişkisi bulunamadı",
   "Ask AI": "Yapay Zekaya Sor",
   "Auto": "Otomatik",
@@ -122,5 +118,9 @@
   "IP match": "IP match",
   "IP match description": "Access control based on IP address matching and filtering.",
   "Priority": "Priority",
-  "Priority description": "Priority-based access control with rule precedence handling."
+  "Priority description": "Priority-based access control with rule precedence handling.",
+  "p (Policy)": "p (Politika)",
+  "g (Role)": "g (Rol)",
+  "g2 (Resource)": "g2 (Kaynak)",
+  "g3 (Domain)": "g3 (Alan)"
 }

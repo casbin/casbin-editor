@@ -44,10 +44,6 @@
   "Connection Types": "连接类型",
   "Object": "对象",
   "Action": "动作",
-  "P (Policy)": "P (策略)",
-  "G (Role)": "G (角色)",
-  "G2 (Resource)": "G2 (资源)",
-  "G3 (Domain)": "G3 (域)",
   "No policy relationships found": "未找到策略关系",
   "Shared at": "分享地址",
   "Done in": "完成于",
@@ -122,5 +118,9 @@
   "IP match": "IP 匹配",
   "IP match description": "基于 IP 地址匹配和过滤的访问控制。",
   "Priority": "优先级",
-  "Priority description": "具有规则优先级处理的基于优先级的访问控制。"
+  "Priority description": "具有规则优先级处理的基于优先级的访问控制。",
+  "p (Policy)": "p (策略)",
+  "g (Role)": "g (角色)",
+  "g2 (Resource)": "g2 (资源)",
+  "g3 (Domain)": "g3 (域)"
 }

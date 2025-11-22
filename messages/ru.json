@@ -53,10 +53,6 @@
   "Connection Types": "Типы связей",
   "Object": "Объект",
   "Action": "Действие",
-  "P (Policy)": "P (Политика)",
-  "G (Role)": "G (Роль)",
-  "G2 (Resource)": "G2 (Ресурс)",
-  "G3 (Domain)": "G3 (Домен)",
   "No policy relationships found": "Отношения политики не найдены",
   "Ask AI": "Спросить ИИ",
   "Auto": "Авто",
@@ -122,5 +118,9 @@
   "IP match": "IP match",
   "IP match description": "Access control based on IP address matching and filtering.",
   "Priority": "Priority",
-  "Priority description": "Priority-based access control with rule precedence handling."
+  "Priority description": "Priority-based access control with rule precedence handling.",
+  "p (Policy)": "p (Политика)",
+  "g (Role)": "g (Роль)",
+  "g2 (Resource)": "g2 (Ресурс)",
+  "g3 (Domain)": "g3 (Домен)"
 }
