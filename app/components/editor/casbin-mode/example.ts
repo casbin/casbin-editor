@@ -225,6 +225,37 @@ g, alice, data2_admin`,
     customConfig: undefined,
     enforceContext: undefined,
   },
+  rbac_with_multiple_roles: {
+    name: 'RBAC with multiple roles',
+    model: `[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`,
+    policy: `p, reader, data, read
+p, writer, data, write
+p, admin, data, delete
+
+g, alice, reader
+g, alice, writer
+g, bob, reader
+g, cathy, admin`,
+    request: `alice, data, read
+alice, data, write
+alice, data, delete
+bob, data, write`,
+    customConfig: undefined,
+    enforceContext: undefined,
+  },
   rbac_with_resource_roles: {
     name: 'RBAC with resource roles',
     model: `[request_definition]
@@ -510,38 +541,6 @@ g, alice, admin`,
     request: `alice, /data/test, read
 alice, /data/private/file, write
 alice, /other/test, read`,
-    customConfig: undefined,
-    enforceContext: undefined,
-  },
-
-  rbac_with_multiple_roles: {
-    name: 'RBAC with multiple roles',
-    model: `[request_definition]
-r = sub, obj, act
-
-[policy_definition]
-p = sub, obj, act
-
-[role_definition]
-g = _, _
-
-[policy_effect]
-e = some(where (p.eft == allow))
-
-[matchers]
-m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`,
-    policy: `p, reader, data, read
-p, writer, data, write
-p, admin, data, delete
-
-g, alice, reader
-g, alice, writer
-g, bob, reader
-g, cathy, admin`,
-    request: `alice, data, read
-alice, data, write
-alice, data, delete
-bob, data, write`,
     customConfig: undefined,
     enforceContext: undefined,
   },

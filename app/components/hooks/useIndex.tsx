@@ -7,7 +7,7 @@ import { useLang } from '@/app/context/LangContext';
 
 export default function useIndex() {
   const { t } = useLang();
-  const [modelKind, setModelKind] = useState('basic');
+  const [modelKind, setModelKind] = useState('rbac_with_multiple_roles');
   const [modelText, setModelText] = useState('');
   const [policy, setPolicy] = useState('');
   const [request, setRequest] = useState('');
@@ -91,7 +91,7 @@ export default function useIndex() {
           return resp.ok ? resp.text() : Promise.reject(`HTTP error: ${resp.status}`);
         })
         .then((content) => {
-          updateAllStates('basic', JSON.parse(content) as ShareFormat);
+          updateAllStates('rbac_with_multiple_roles', JSON.parse(content) as ShareFormat);
           setEcho(<div className="text-green-500">Shared Content Loaded.</div>);
         })
         .catch((error) => {
