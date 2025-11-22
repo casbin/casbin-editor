@@ -208,7 +208,7 @@ export const ModelEditorPanel = ({
               CasbinConfSupport(),
               indentUnit.of('    '),
               EditorView.lineWrapping,
-              buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
+              buttonPlugin(openDrawerWithMessage, extractContent, 'model', t),
               linter(casbinLinter),
               lintGutter(),
               EditorView.updateListener.of((update) => {

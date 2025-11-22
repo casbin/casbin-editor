@@ -344,7 +344,7 @@ export const EditorScreen = () => {
                     CasbinConfSupport(),
                     indentUnit.of('    '),
                     EditorView.lineWrapping,
-                    buttonPlugin(openDrawerWithMessage, extractContent, 'model'),
+                    buttonPlugin(openDrawerWithMessage, extractContent, 'model', t),
                     linter(casbinLinter),
                     lintGutter(),
                   ]}
@@ -375,7 +375,7 @@ export const EditorScreen = () => {
                     CasbinPolicySupport(),
                     indentUnit.of('    '),
                     EditorView.lineWrapping,
-                    buttonPlugin(openDrawerWithMessage, extractContent, 'policy'),
+                    buttonPlugin(openDrawerWithMessage, extractContent, 'policy', t),
                     linter(policyLinter),
                     lintGutter(),
                   ]}
@@ -420,7 +420,7 @@ export const EditorScreen = () => {
                     CasbinPolicySupport(),
                     indentUnit.of('    '),
                     EditorView.lineWrapping,
-                    buttonPlugin(openDrawerWithMessage, extractContent, 'request'),
+                    buttonPlugin(openDrawerWithMessage, extractContent, 'request', t),
                     linter(requestLinter),
                     lintGutter(),
                   ]}
@@ -485,7 +485,7 @@ export const EditorScreen = () => {
                     indentUnit.of('    '),
                     EditorView.lineWrapping,
                     EditorView.editable.of(false),
-                    buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult'),
+                    buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult', t),
                     loadingOverlay(isLoading),
                   ]}
                   basicSetup={{

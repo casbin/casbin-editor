@@ -160,7 +160,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
             htmlFor="auto-carousel-switch"
             className="text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Auto
+            {t('Auto')}
           </label>
           <Switch.Root
             id="auto-carousel-switch"
