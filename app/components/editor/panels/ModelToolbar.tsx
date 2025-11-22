@@ -4,7 +4,7 @@ import * as Switch from '@radix-ui/react-switch';
 import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
 import { example } from '@/app/components/editor/casbin-mode/example';
 import { useLang } from '@/app/context/LangContext';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface ModelSelectorProps {
   modelKind: string;
@@ -18,28 +18,42 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
   const [autoCarouselEnabled, setAutoCarouselEnabled] = useState(() => {
     // Initialize from localStorage if available, otherwise default to true
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('autoCarouselEnabled');
-      if (saved !== null) {
-        return saved === 'true';
+      try {
+        const saved = localStorage.getItem('autoCarouselEnabled');
+        if (saved !== null) {
+          return saved === 'true';
+        }
+      } catch (error) {
+        // If localStorage access fails (e.g., private browsing), use default value
+        console.warn('Failed to read from localStorage:', error);
       }
     }
     return true;
   });
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const modelKeys = useMemo(() => {
+    return Object.keys(example);
+  }, []);
 
   // Save auto carousel state to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('autoCarouselEnabled', String(autoCarouselEnabled));
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('autoCarouselEnabled', String(autoCarouselEnabled));
+      } catch (error) {
+        // If localStorage is full or unavailable, log but don't crash
+        console.warn('Failed to save to localStorage:', error);
+      }
+    }
   }, [autoCarouselEnabled]);
 
   // Auto carousel logic
   useEffect(() => {
     if (autoCarouselEnabled) {
-      const modelKeys = Object.keys(example);
-      
       intervalRef.current = setInterval(() => {
         const currentIndex = modelKeys.indexOf(modelKind);
-        const nextIndex = (currentIndex + 1) % modelKeys.length;
+        // If current model is not found, start from the beginning
+        const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % modelKeys.length;
         const nextModelKind = modelKeys[nextIndex];
         setModelKind(nextModelKind);
         setRequestResults({});
@@ -55,7 +69,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
         clearInterval(intervalRef.current);
       }
     }
-  }, [autoCarouselEnabled, modelKind, setModelKind, setRequestResults]);
+  }, [autoCarouselEnabled, modelKind, modelKeys, setModelKind, setRequestResults]);
 
   return (
    <div className="flex-1 overflow-x-auto">    
