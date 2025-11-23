@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { clsx } from 'clsx';
+import { ChevronLeft } from 'lucide-react';
 import { RoleInheritanceGraph } from '../role-inheritance-graph/RoleInheritanceGraph';
 import { CustomFunctionTitle, CustomFunctionList, CustomFunctionButtons } from '../custom-functions';
 import { FunctionConfig } from '../custom-functions/types';
@@ -222,16 +223,13 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
           return setOpen(!open);
         }}
       >
-        <svg
+        <ChevronLeft
           className={clsx('h-5 w-5 text-primary')}
           style={{
             transform: open ? 'rotateZ(0deg)' : 'rotateZ(180deg)',
             transition: 'transform 0.2s',
           }}
-          viewBox="0 0 24 24"
-        >
-          <path fill={'currentColor'} d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
-        </svg>
+        />
       </button>
 
       {(showCustomConfig || open) && (  
