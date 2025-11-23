@@ -8,6 +8,7 @@ import { StreamLanguage } from '@codemirror/language';
 import { go } from '@codemirror/legacy-modes/mode/go';
 import { EditorView } from '@codemirror/view';
 import { RoleInheritanceGraph } from '../role-inheritance-graph/RoleInheritanceGraph';
+import { ChevronLeft, X } from 'lucide-react';
 
 interface FunctionConfig {
   id: string;
@@ -233,16 +234,13 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
           return setOpen(!open);
         }}
       >
-        <svg
+        <ChevronLeft
           className={clsx('h-5 w-5 text-primary')}
           style={{
             transform: open ? 'rotateZ(0deg)' : 'rotateZ(180deg)',
             transition: 'transform 0.2s',
           }}
-          viewBox="0 0 24 24"
-        >
-          <path fill={'currentColor'} d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
-        </svg>
+        />
       </button>
 
       {(showCustomConfig || open) && (  
@@ -285,12 +283,7 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
                       )}
                       title={t('Delete')}  
                     >  
-                      <svg viewBox="0 0 24 24" className="w-4 h-4">  
-                        <path  
-                          fill="currentColor"  
-                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"  
-                        />  
-                      </svg>  
+                      <X className="w-4 h-4" />
                     </button>  
                   </div>  
   
