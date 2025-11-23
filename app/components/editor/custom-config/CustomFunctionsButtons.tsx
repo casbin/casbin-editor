@@ -17,19 +17,13 @@ import { clsx } from 'clsx';
 
 interface CustomFunctionsButtonsProps {
   functionsLength: number;
-  hasMatchingFunction: (name: string) => boolean;
   addNewFunction: () => void;
-  addMatchingFunction: () => void;
-  addMatchingDomainFunction: () => void;
   t: (key: string) => string;
 }
 
 export const CustomFunctionsButtons: React.FC<CustomFunctionsButtonsProps> = ({
   functionsLength,
-  hasMatchingFunction,
   addNewFunction,
-  addMatchingFunction,
-  addMatchingDomainFunction,
   t,
 }) => {
   // If there is no function, display the Add button

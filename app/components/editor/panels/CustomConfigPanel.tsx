@@ -264,10 +264,7 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
           {/* Button Section */}
           <CustomFunctionsButtons
             functionsLength={functions.length}
-            hasMatchingFunction={hasMatchingFunction}
             addNewFunction={addNewFunction}
-            addMatchingFunction={addMatchingFunction}
-            addMatchingDomainFunction={addMatchingDomainFunction}
             t={t}
           />  
   
