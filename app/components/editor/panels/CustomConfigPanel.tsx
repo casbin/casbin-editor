@@ -1,20 +1,25 @@
+// Copyright 2025 The casbin Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import React, { useState, useEffect, useRef } from 'react';
 import { clsx } from 'clsx';
-import CodeMirror from '@uiw/react-codemirror';
-import { monokai } from '@uiw/codemirror-theme-monokai';
-import { basicSetup } from 'codemirror';
-import { indentUnit } from '@codemirror/language';
-import { StreamLanguage } from '@codemirror/language';
-import { go } from '@codemirror/legacy-modes/mode/go';
-import { EditorView } from '@codemirror/view';
 import { RoleInheritanceGraph } from '../role-inheritance-graph/RoleInheritanceGraph';
-import { ChevronLeft, X } from 'lucide-react';
-
-interface FunctionConfig {
-  id: string;
-  name: string;
-  body: string;
-}
+import { ChevronLeft } from 'lucide-react';
+import { CustomFunctionsTitle } from '../custom-config/CustomFunctionsTitle';
+import { CustomFunctionsList } from '../custom-config/CustomFunctionsList';
+import { CustomFunctionsButtons } from '../custom-config/CustomFunctionsButtons';
+import type { FunctionConfig } from '../custom-config/types';
 
 interface CustomConfigPanelProps {
   open: boolean;
@@ -245,85 +250,26 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
 
       {(showCustomConfig || open) && (  
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900">  
-          <div className={'pt-6 h-12 pl-3 flex items-center font-bold text-lg'}>  
-            <div className={textClass}>{t('Custom Functions')}</div>  
-          </div>  
+          {/* Title Section */}
+          <CustomFunctionsTitle textClass={textClass} t={t} />
   
-          {/* Custom Functions Area - Restricted to the height of a function */}  
-          <div className="h-32 overflow-auto min-h-0 flex-shrink-0 px-2">  
-            {functions.slice(0, 1).map((func) => {  
-              return (  
-                <div key={func.id} className="bg-white dark:bg-slate-800 rounded-lg flex flex-col shadow-sm border border-border">  
-                  <div className="flex justify-between items-center p-2">  
-                    <input  
-                      type="text"  
-                      value={func.name}  
-                      onChange={(e) => {  
-                        return updateFunction(func.id, 'name', e.target.value);  
-                      }}  
-                      className={clsx(
-                        "px-3 py-1.5 border border-border rounded-lg w-64",
-                        "focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all",
-                        "bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100",
-                      )}
-                      placeholder={t('Function name')}  
-                      disabled={
-                        func.name === 'matchingForGFunction' ||
-                        func.name === 'matchingDomainForGFunction'
-                      }
-                    />  
-                    <button  
-                      onClick={() => {  
-                        return deleteFunction(func.id);  
-                      }}  
-                      className={clsx(
-                        "w-7 h-7 flex items-center justify-center",
-                        "text-muted-foreground hover:text-destructive transition-colors",
-                        "rounded-lg hover:bg-destructive/10",
-                      )}
-                      title={t('Delete')}  
-                    >  
-                      <X className="w-4 h-4" />
-                    </button>  
-                  </div>  
-  
-                  <div className="flex-1 overflow-auto">  
-                    <CodeMirror  
-                      value={func.body}  
-                      height="100%"  
-                      theme={monokai}  
-                      onChange={(value) => {  
-                        return updateFunction(func.id, 'body', value);  
-                      }}  
-                      basicSetup={{  
-                        lineNumbers: true,  
-                        highlightActiveLine: true,  
-                        bracketMatching: true,  
-                        indentOnInput: true,  
-                      }}  
-                      extensions={[basicSetup, StreamLanguage.define(go), indentUnit.of('    '), EditorView.lineWrapping]}  
-                      className="h-full"  
-                    />  
-                  </div>  
-                </div>  
-              );  
-            })}  
-              
-            {/* If there is no function, display the Add button */}  
-            {functions.length === 0 && (  
-              <div className="flex gap-2 m-1 mb-0 text-xs">  
-                <button  
-                  onClick={addNewFunction}  
-                  className={clsx(
-                    "px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-sm",
-                    "hover:bg-primary/90 transition-all shadow-sm hover:shadow-md font-medium",
-                  )}
-                >  
-                  {t('Add Function')}  
-                </button>  
-              </div>  
-            )}  
-          </div>  
+          {/* Function Section */}
+          <CustomFunctionsList
+            functions={functions}
+            updateFunction={updateFunction}
+            deleteFunction={deleteFunction}
+            t={t}
+          />
+          
+          {/* Button Section */}
+          <CustomFunctionsButtons
+            functionsLength={functions.length}
+            hasMatchingFunction={hasMatchingFunction}
+            addNewFunction={addNewFunction}
+            addMatchingFunction={addMatchingFunction}
+            addMatchingDomainFunction={addMatchingDomainFunction}
+            t={t}
+          />  
   
           {/* Role inheritance diagram area - Occupies all remaining space */}  
           <div className="border-t border-border mt-2 pt-4 flex-1 min-h-0 px-2 flex flex-col">  
