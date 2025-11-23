@@ -7,12 +7,7 @@ import { indentUnit } from '@codemirror/language';
 import { StreamLanguage } from '@codemirror/language';
 import { go } from '@codemirror/legacy-modes/mode/go';
 import { EditorView } from '@codemirror/view';
-
-interface FunctionConfig {
-  id: string;
-  name: string;
-  body: string;
-}
+import { FunctionConfig } from './types';
 
 interface CustomFunctionListProps {
   functions: FunctionConfig[];
@@ -29,6 +24,7 @@ export const CustomFunctionList: React.FC<CustomFunctionListProps> = ({
 }) => {
   return (
     <div className="h-32 overflow-auto min-h-0 flex-shrink-0 px-2">
+      {/* Display only the first function to maintain a fixed height for the custom functions area */}
       {functions.slice(0, 1).map((func) => {
         return (
           <div key={func.id} className="bg-white dark:bg-slate-800 rounded-lg flex flex-col shadow-sm border border-border">

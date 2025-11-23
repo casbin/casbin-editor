@@ -2,12 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { RoleInheritanceGraph } from '../role-inheritance-graph/RoleInheritanceGraph';
 import { CustomFunctionTitle, CustomFunctionList, CustomFunctionButtons } from '../custom-functions';
-
-interface FunctionConfig {
-  id: string;
-  name: string;
-  body: string;
-}
+import { FunctionConfig } from '../custom-functions/types';
 
 interface CustomConfigPanelProps {
   open: boolean;
