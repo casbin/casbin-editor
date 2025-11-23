@@ -24,10 +24,17 @@ import { EditorView } from '@codemirror/view';
 import { X } from 'lucide-react';
 import type { FunctionConfig } from './types';
 
+/**
+ * Props for the CustomFunctionsList component
+ */
 interface CustomFunctionsListProps {
+  /** Array of function configurations to display */
   functions: FunctionConfig[];
+  /** Callback to update a function's name or body */
   updateFunction: (id: string, field: keyof FunctionConfig, value: string) => void;
+  /** Callback to delete a function */
   deleteFunction: (id: string) => void;
+  /** Translation function for internationalization */
   t: (key: string) => string;
 }
 
@@ -39,6 +46,7 @@ export const CustomFunctionsList: React.FC<CustomFunctionsListProps> = ({
 }) => {
   return (
     <div className="h-32 overflow-auto min-h-0 flex-shrink-0 px-2">
+      {/* Display only the first function - restricted to the height of a function */}
       {functions.slice(0, 1).map((func) => {
         return (
           <div key={func.id} className="bg-white dark:bg-slate-800 rounded-lg flex flex-col shadow-sm border border-border">

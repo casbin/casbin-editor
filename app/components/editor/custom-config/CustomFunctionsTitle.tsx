@@ -14,8 +14,13 @@
 
 import React from 'react';
 
+/**
+ * Props for the CustomFunctionsTitle component
+ */
 interface CustomFunctionsTitleProps {
+  /** CSS class for text styling */
   textClass: string;
+  /** Translation function for internationalization */
   t: (key: string) => string;
 }
 

@@ -15,9 +15,15 @@
 import React from 'react';
 import { clsx } from 'clsx';
 
+/**
+ * Props for the CustomFunctionsButtons component
+ */
 interface CustomFunctionsButtonsProps {
+  /** Number of functions currently configured */
   functionsLength: number;
+  /** Callback to add a new custom function */
   addNewFunction: () => void;
+  /** Translation function for internationalization */
   t: (key: string) => string;
 }
 
