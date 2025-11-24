@@ -12,42 +12,100 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
+import { Plus, UserCheck, Globe, Code } from 'lucide-react';
 
 /**
  * Props for the CustomFunctionsButtons component
  */
 interface CustomFunctionsButtonsProps {
-  /** Number of functions currently configured */
-  functionsLength: number;
-  /** Callback to add a new custom function */
   addNewFunction: () => void;
-  /** Translation function for internationalization */
+  addMatchingFunction: () => void;
+  addMatchingDomainFunction: () => void;
+  hasMatchingFunction: (name: string) => boolean;
   t: (key: string) => string;
 }
 
 export const CustomFunctionsButtons: React.FC<CustomFunctionsButtonsProps> = ({
-  functionsLength,
   addNewFunction,
+  addMatchingFunction,
+  addMatchingDomainFunction,
+  hasMatchingFunction,
   t,
 }) => {
-  // If there is no function, display the Add button
-  if (functionsLength === 0) {
-    return (
-      <div className="flex gap-2 m-1 mb-0 text-xs">
-        <button
-          onClick={addNewFunction}
-          className={clsx(
-            "px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-sm",
-            "hover:bg-primary/90 transition-all shadow-sm hover:shadow-md font-medium",
-          )}
-        >
-          {t('Add Function')}
-        </button>
-      </div>
-    );
-  }
+  const buttonsRef = useRef<HTMLDivElement | null>(null);
+  const [iconsOnly, setIconsOnly] = useState(false);
 
-  return null;
+  useEffect(() => {
+    const el = buttonsRef.current;
+    if (!el) return;
+
+    const check = () => {
+      const w = el.clientWidth || 0;
+      const per = w / 3;
+      setIconsOnly(per < 105);
+    };
+
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    check();
+
+    return () => {
+      return ro.disconnect()
+    };
+  }, []);
+
+  const ActionButton: React.FC<{
+    onClick: () => void;
+    disabled?: boolean;
+    titleKey: string;
+    Icon: React.ComponentType<any>;
+  }> = ({ onClick, disabled = false, titleKey, Icon }) => {
+    return (
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        className={clsx(
+          'flex-1 min-w-0 text-center whitespace-nowrap overflow-hidden text-ellipsis',
+          'px-2 py-1 rounded-md text-xs font-medium',
+          'transition-all shadow-sm',
+          disabled
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
+            : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md',
+        )}
+        title={t(titleKey)}
+      >
+        {iconsOnly ? (
+          <div className="flex items-center justify-center gap-1">
+            <Plus className="w-3 h-3" />
+            <Icon className="w-4 h-4" />
+          </div>
+        ) : (
+          <>
+            <Icon className="inline-block w-4 h-4 mr-2 align-middle" />
+            <span className="truncate align-middle">{t(titleKey)}</span>
+          </>
+        )}
+      </button>
+    );
+  };
+
+  return (
+    <div ref={buttonsRef} className="flex gap-2 text-xs flex-1 justify-end min-w-0 ml-4">
+      <ActionButton onClick={addNewFunction} titleKey={'Add Function'} Icon={Code} />
+      <ActionButton
+        onClick={addMatchingFunction}
+        disabled={hasMatchingFunction('matchingForGFunction')}
+        titleKey={'Add Role Matching'}
+        Icon={UserCheck}
+      />
+      <ActionButton
+        onClick={addMatchingDomainFunction}
+        disabled={hasMatchingFunction('matchingDomainForGFunction')}
+        titleKey={'Add Domain Matching'}
+        Icon={Globe}
+      />
+    </div>
+  );
 };

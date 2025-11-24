@@ -28,9 +28,5 @@ export const CustomFunctionsTitle: React.FC<CustomFunctionsTitleProps> = ({
   textClass,
   t,
 }) => {
-  return (
-    <div className={'pt-6 h-12 pl-3 flex items-center font-bold text-lg'}>
-      <div className={textClass}>{t('Custom Functions')}</div>
-    </div>
-  );
+  return <div className={textClass}>{t('Custom Functions')}</div>;
 };

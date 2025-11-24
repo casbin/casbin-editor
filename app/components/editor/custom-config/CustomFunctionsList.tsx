@@ -45,9 +45,15 @@ export const CustomFunctionsList: React.FC<CustomFunctionsListProps> = ({
   t,
 }) => {
   return (
-    <div className="h-32 overflow-auto min-h-0 flex-shrink-0 px-2">
-      {/* Display only the first function - restricted to the height of a function */}
-      {functions.slice(0, 1).map((func) => {
+    <div className="h-32 overflow-auto min-h-0 flex-shrink-0 px-2 space-y-2">
+      {/* Render all functions; container is scrollable when there are many */}
+      {functions.length === 0 && (
+        <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400 text-sm">
+          {t('No custom functions defined. Click any button to create one.')}
+        </div>
+      )}
+
+      {functions.map((func) => {
         return (
           <div key={func.id} className="bg-white dark:bg-slate-800 rounded-lg flex flex-col shadow-sm border border-border">
             <div className="flex justify-between items-center p-2">
