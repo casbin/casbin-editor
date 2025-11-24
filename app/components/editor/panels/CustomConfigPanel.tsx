@@ -250,9 +250,18 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
 
       {(showCustomConfig || open) && (  
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900">  
-          {/* Title Section */}
-          <CustomFunctionsTitle textClass={textClass} t={t} />
-  
+          {/* Header: title + action buttons */}
+          <div className={'pt-6 h-12 pl-3 pr-3 flex items-center justify-between font-bold text-lg'}>
+            <CustomFunctionsTitle textClass={textClass} t={t} />
+            <CustomFunctionsButtons
+              addNewFunction={addNewFunction}
+              addMatchingFunction={addMatchingFunction}
+              addMatchingDomainFunction={addMatchingDomainFunction}
+              hasMatchingFunction={hasMatchingFunction}
+              t={t}
+            />
+          </div>
+
           {/* Function Section */}
           <CustomFunctionsList
             functions={functions}
@@ -260,13 +269,6 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
             deleteFunction={deleteFunction}
             t={t}
           />
-          
-          {/* Button Section */}
-          <CustomFunctionsButtons
-            functionsLength={functions.length}
-            addNewFunction={addNewFunction}
-            t={t}
-          />  
   
           {/* Role inheritance diagram area - Occupies all remaining space */}  
           <div className="border-t border-border mt-2 pt-4 flex-1 min-h-0 px-2 flex flex-col">  
