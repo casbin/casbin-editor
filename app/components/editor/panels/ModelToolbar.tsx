@@ -4,6 +4,7 @@ import * as Switch from '@radix-ui/react-switch';
 import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
 import { example } from '@/app/components/editor/casbin-mode/example';
 import { useLang } from '@/app/context/LangContext';
+import { useUserInteraction } from '@/app/context/UserInteractionContext';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface ModelSelectorProps {
@@ -15,6 +16,7 @@ interface ModelSelectorProps {
 
 export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setModelTextPersistent }: ModelSelectorProps) => {
   const { t } = useLang();
+  const { isUserInteracting, incrementInteractionCount, decrementInteractionCount } = useUserInteraction();
   const [autoCarouselEnabled, setAutoCarouselEnabled] = useState(() => {
     // Initialize from localStorage if available, otherwise default to true
     if (typeof window !== 'undefined') {
@@ -47,9 +49,9 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
     }
   }, [autoCarouselEnabled]);
 
-  // Auto carousel logic
+  // Auto carousel logic - disabled when user is interacting
   useEffect(() => {
-    if (autoCarouselEnabled) {
+    if (autoCarouselEnabled && !isUserInteracting) {
       intervalRef.current = setInterval(() => {
         const currentIndex = modelKeys.indexOf(modelKind);
         // If current model is not found, start from the beginning
@@ -69,13 +71,21 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
         clearInterval(intervalRef.current);
       }
     }
-  }, [autoCarouselEnabled, modelKind, modelKeys, setModelKind, setRequestResults]);
+  }, [autoCarouselEnabled, isUserInteracting, modelKind, modelKeys, setModelKind, setRequestResults]);
 
   return (
    <div className="flex-1 overflow-x-auto">    
       <div className="flex items-center gap-2 min-w-max">    
         {/* Radix UI Dropdown Menu with adjusted proportions */}    
-        <DropdownMenu.Root>    
+        <DropdownMenu.Root
+          onOpenChange={(open) => {
+            if (open) {
+              incrementInteractionCount();
+            } else {
+              decrementInteractionCount();
+            }
+          }}
+        >    
           <DropdownMenu.Trigger asChild>    
             {/* Longer and narrower button for better proportions */}    
             <button   

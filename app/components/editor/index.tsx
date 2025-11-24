@@ -30,9 +30,11 @@ import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
 import { useLang } from '@/app/context/LangContext';
+import { UserInteractionProvider, useUserInteraction } from '@/app/context/UserInteractionContext';
 import type { EngineType } from '@/app/config/engineConfig';
 
-export const EditorScreen = () => {
+const EditorScreenContent = () => {
+  const { incrementInteractionCount, decrementInteractionCount } = useUserInteraction();
   const {
     modelKind,
     setModelKind,
@@ -333,6 +335,8 @@ export const EditorScreen = () => {
                   height="100%"
                   theme={monokai}
                   onChange={setModelTextPersistent}
+                  onFocus={incrementInteractionCount}
+                  onBlur={decrementInteractionCount}
                   basicSetup={{
                     lineNumbers: true,
                     highlightActiveLine: true,
@@ -387,6 +391,8 @@ export const EditorScreen = () => {
                   }}
                   theme={monokai}
                   onChange={setPolicyPersistent}
+                  onFocus={incrementInteractionCount}
+                  onBlur={decrementInteractionCount}
                   onCreateEditor={(view) => {
                     policyViewRef.current = view;
                   }}
@@ -415,6 +421,8 @@ export const EditorScreen = () => {
                   onChange={(value) => {
                     setRequestPersistent(value);
                   }}
+                  onFocus={incrementInteractionCount}
+                  onBlur={decrementInteractionCount}
                   extensions={[
                     basicSetup,
                     CasbinPolicySupport(),
@@ -529,5 +537,13 @@ export const EditorScreen = () => {
         />
       </div>
     </div>
+  );
+};
+
+export const EditorScreen = () => {
+  return (
+    <UserInteractionProvider>
+      <EditorScreenContent />
+    </UserInteractionProvider>
   );
 };

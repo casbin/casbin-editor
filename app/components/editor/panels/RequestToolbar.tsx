@@ -1,5 +1,6 @@
 import { clsx } from 'clsx';
 import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
+import { useUserInteraction } from '@/app/context/UserInteractionContext';
 import { e, m, p, r } from '@/app/components/hooks/useSetupEnforceContext';
 
 interface RequestToolbarProps {
@@ -9,6 +10,7 @@ interface RequestToolbarProps {
 }
 
 export const RequestToolbar = ({ setupEnforceContextData, setupHandleEnforceContextChange, setRequestPersistent }: RequestToolbarProps) => {
+  const { incrementInteractionCount, decrementInteractionCount } = useUserInteraction();
   const inputClassName = clsx(
     'w-8 px-1.5 py-0.5',
     'border border-border rounded-md',
@@ -29,6 +31,8 @@ export const RequestToolbar = ({ setupEnforceContextData, setupHandleEnforceCont
             onChange={(event) => {
               return setupHandleEnforceContextChange(r, event.target.value);
             }}
+            onFocus={incrementInteractionCount}
+            onBlur={decrementInteractionCount}
           />
           <input
             className={inputClassName}
@@ -37,6 +41,8 @@ export const RequestToolbar = ({ setupEnforceContextData, setupHandleEnforceCont
             onChange={(event) => {
               return setupHandleEnforceContextChange(p, event.target.value);
             }}
+            onFocus={incrementInteractionCount}
+            onBlur={decrementInteractionCount}
           />
           <input
             className={inputClassName}
@@ -45,6 +51,8 @@ export const RequestToolbar = ({ setupEnforceContextData, setupHandleEnforceCont
             onChange={(event) => {
               return setupHandleEnforceContextChange(e, event.target.value);
             }}
+            onFocus={incrementInteractionCount}
+            onBlur={decrementInteractionCount}
           />
           <input
             className={inputClassName}
@@ -53,6 +61,8 @@ export const RequestToolbar = ({ setupEnforceContextData, setupHandleEnforceCont
             onChange={(event) => {
               return setupHandleEnforceContextChange(m, event.target.value);
             }}
+            onFocus={incrementInteractionCount}
+            onBlur={decrementInteractionCount}
           />
         </div>
         <FileUploadButton onFileContent={setRequestPersistent} accept=".txt" />

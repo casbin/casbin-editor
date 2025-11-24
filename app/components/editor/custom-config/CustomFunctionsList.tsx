@@ -22,6 +22,7 @@ import { StreamLanguage } from '@codemirror/language';
 import { go } from '@codemirror/legacy-modes/mode/go';
 import { EditorView } from '@codemirror/view';
 import { X } from 'lucide-react';
+import { useUserInteraction } from '@/app/context/UserInteractionContext';
 import type { FunctionConfig } from './types';
 
 /**
@@ -44,6 +45,8 @@ export const CustomFunctionsList: React.FC<CustomFunctionsListProps> = ({
   deleteFunction,
   t,
 }) => {
+  const { incrementInteractionCount, decrementInteractionCount } = useUserInteraction();
+  
   return (
     <div className="h-32 overflow-auto min-h-0 flex-shrink-0 px-2 space-y-2">
       {/* Render all functions; container is scrollable when there are many */}
@@ -63,6 +66,8 @@ export const CustomFunctionsList: React.FC<CustomFunctionsListProps> = ({
                 onChange={(e) => {
                   return updateFunction(func.id, 'name', e.target.value);
                 }}
+                onFocus={incrementInteractionCount}
+                onBlur={decrementInteractionCount}
                 className={clsx(
                   "px-3 py-1.5 border border-border rounded-lg w-64",
                   "focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all",
@@ -97,6 +102,8 @@ export const CustomFunctionsList: React.FC<CustomFunctionsListProps> = ({
                 onChange={(value) => {
                   return updateFunction(func.id, 'body', value);
                 }}
+                onFocus={incrementInteractionCount}
+                onBlur={decrementInteractionCount}
                 basicSetup={{
                   lineNumbers: true,
                   highlightActiveLine: true,
