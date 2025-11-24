@@ -51,8 +51,10 @@ export const CustomFunctionsButtons: React.FC<CustomFunctionsButtonsProps> = ({
     ro.observe(el);
     check();
 
-    return () => ro.disconnect();
-  }, [buttonsRef.current]);
+    return () => {
+      return ro.disconnect()
+    };
+  }, []);
 
   const ActionButton: React.FC<{
     onClick: () => void;
@@ -62,7 +64,7 @@ export const CustomFunctionsButtons: React.FC<CustomFunctionsButtonsProps> = ({
   }> = ({ onClick, disabled = false, titleKey, Icon }) => {
     return (
       <button
-        onClick={() => onClick()}
+        onClick={onClick}
         disabled={disabled}
         className={clsx(
           'flex-1 min-w-0 text-center whitespace-nowrap overflow-hidden text-ellipsis',
