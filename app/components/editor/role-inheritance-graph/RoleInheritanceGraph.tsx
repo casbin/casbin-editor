@@ -108,7 +108,6 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         .attr('dominant-baseline', 'middle')
         .attr('font-size', '16px')
         .attr('fill', '#9ca3af')
-        .attr('class', 'dark:fill-gray-400')
         .text(t('(empty)'));
       return;
     }
