@@ -279,7 +279,7 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
                 "rounded-lg border border-border shadow-sm",
               )}
             >  
-              {modelKind && policy && (  
+              {modelKind && (  
                 <RoleInheritanceGraph   
                   policy={policy}   
                   className="h-full"  
