@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 
 interface UserInteractionContextType {
   isUserInteracting: boolean;
-  setIsUserInteracting: (value: boolean) => void;
   incrementInteractionCount: () => void;
   decrementInteractionCount: () => void;
 }
@@ -24,15 +23,10 @@ export const UserInteractionProvider: React.FC<{ children: React.ReactNode }> = 
     });
   }, []);
 
-  const setIsUserInteracting = useCallback((value: boolean) => {
-    setInteractionCount(value ? 1 : 0);
-  }, []);
-
   return (
     <UserInteractionContext.Provider
       value={{
         isUserInteracting: interactionCount > 0,
-        setIsUserInteracting,
         incrementInteractionCount,
         decrementInteractionCount,
       }}
