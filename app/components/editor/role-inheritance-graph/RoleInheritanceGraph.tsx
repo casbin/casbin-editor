@@ -82,7 +82,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   }, [policy]);
 
   useEffect(() => {
-    if ((treeData.length === 0 && Object.keys(relations).length === 0) || !svgRef.current) return;
+    if (!svgRef.current) return;
     renderGraph();
   }, [treeData, relations, dimensions]);
   const renderGraph = () => {
@@ -99,6 +99,16 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     // Check if there is any strategy data (P strategy or G strategy)
     const hasAnyPolicy = treeData.length > 0 || Object.keys(relations).length > 0;
     if (!hasAnyPolicy) {
+      // Display centered "(empty)" label when no policy exists
+      svg
+        .append('text')
+        .attr('x', width / 2)
+        .attr('y', height / 2)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('font-size', '16px')
+        .attr('fill', '#9ca3af')
+        .text(t('(empty)'));
       return;
     }
 
@@ -819,11 +829,6 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       <div className="flex-1 min-h-0 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-900 overflow-hidden">
         <svg ref={svgRef} className="w-full h-full"></svg>
       </div>
-
-      {/* Empty state - Modify condition check */}
-      {treeData.length === 0 && Object.keys(relations).length === 0 && (
-        <div className="flex-1 flex items-center justify-center text-gray-500 text-sm">{t('No policy relationships found')}</div>
-      )}
     </div>
   );
 };

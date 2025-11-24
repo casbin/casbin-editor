@@ -54,6 +54,7 @@
   "Object": "オブジェクト",
   "Action": "アクション",
   "No policy relationships found": "ポリシー関係が見つかりません",
+  "(empty)": "(空)",
   "Ask AI": "AIに質問",
   "Auto": "自動",
   "Gallery description": "アクセス制御モデルのコレクションから閲覧して選択",
