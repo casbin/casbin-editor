@@ -82,7 +82,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   }, [policy]);
 
   useEffect(() => {
-    if ((treeData.length === 0 && Object.keys(relations).length === 0) || !svgRef.current) return;
+    if (!svgRef.current) return;
     renderGraph();
   }, [treeData, relations, dimensions]);
   const renderGraph = () => {
