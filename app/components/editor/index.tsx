@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { clsx } from 'clsx';
 import { Toaster } from 'react-hot-toast';
 import CodeMirror from '@uiw/react-codemirror';
@@ -30,6 +30,7 @@ import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
 import { useLang } from '@/app/context/LangContext';
+import { useAutoCarousel } from '@/app/context/AutoCarouselContext';
 import type { EngineType } from '@/app/config/engineConfig';
 
 export const EditorScreen = () => {
@@ -59,6 +60,7 @@ export const EditorScreen = () => {
   const { enforcer } = useRunTest();
   const { shareInfo } = useShareInfo();
   const { t, lang, theme, toggleTheme } = useLang();
+  const { disableAutoCarousel } = useAutoCarousel();
   const [open, setOpen] = useState(true);
   const [showCustomConfig, setShowCustomConfig] = useState(false);
   const [isContentLoaded, setIsContentLoaded] = useState(false);
@@ -82,6 +84,27 @@ export const EditorScreen = () => {
     const { message } = extractPageContent(boxType, t, lang, customConfig);
     return message;
   };
+
+  // Wrapper functions that disable auto carousel before updating editor content
+  const handleModelTextChange = useCallback((value: string) => {
+    disableAutoCarousel();
+    setModelTextPersistent(value);
+  }, [disableAutoCarousel, setModelTextPersistent]);
+
+  const handlePolicyChange = useCallback((value: string) => {
+    disableAutoCarousel();
+    setPolicyPersistent(value);
+  }, [disableAutoCarousel, setPolicyPersistent]);
+
+  const handleRequestChange = useCallback((value: string) => {
+    disableAutoCarousel();
+    setRequestPersistent(value);
+  }, [disableAutoCarousel, setRequestPersistent]);
+
+  const handleCustomConfigChange = useCallback((value: string) => {
+    disableAutoCarousel();
+    setCustomConfigPersistent(value);
+  }, [disableAutoCarousel, setCustomConfigPersistent]);
 
   const runTest = () => {
     return handleEnforcerCall({
@@ -271,7 +294,7 @@ export const EditorScreen = () => {
             setOpen={setOpen}
             showCustomConfig={showCustomConfig}
             customConfig={customConfig}
-            setCustomConfigPersistent={setCustomConfigPersistent}
+            setCustomConfigPersistent={handleCustomConfigChange}
             textClass={textClass}
             t={t}
             policy={policy}  
@@ -332,7 +355,7 @@ export const EditorScreen = () => {
                 <CodeMirror
                   height="100%"
                   theme={monokai}
-                  onChange={setModelTextPersistent}
+                  onChange={handleModelTextChange}
                   basicSetup={{
                     lineNumbers: true,
                     highlightActiveLine: true,
@@ -386,7 +409,7 @@ export const EditorScreen = () => {
                     indentOnInput: true,
                   }}
                   theme={monokai}
-                  onChange={setPolicyPersistent}
+                  onChange={handlePolicyChange}
                   onCreateEditor={(view) => {
                     policyViewRef.current = view;
                   }}
@@ -412,9 +435,7 @@ export const EditorScreen = () => {
                 <CodeMirror
                   height="100%"
                   theme={monokai}
-                  onChange={(value) => {
-                    setRequestPersistent(value);
-                  }}
+                  onChange={handleRequestChange}
                   extensions={[
                     basicSetup,
                     CasbinPolicySupport(),

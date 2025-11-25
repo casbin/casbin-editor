@@ -2,12 +2,14 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { DEFAULT_ENDPOINT } from '@/app/components/hooks/useRemoteEnforcer';
 import { useLang } from '@/app/context/LangContext';
+import { useAutoCarousel } from '@/app/context/AutoCarouselContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/app/components/ui/tooltip';
 
 const ENDPOINTS = [DEFAULT_ENDPOINT, 'demo.casdoor.com'];
 
 export const EndpointSelector: React.FC = () => {
   const { t } = useLang();
+  const { disableAutoCarousel } = useAutoCarousel();
   const [isOpen, setIsOpen] = React.useState(false);
   const storedEndpoint = window.localStorage.getItem('casbinEndpoint') || DEFAULT_ENDPOINT;
   const [selectedEndpoint, setSelectedEndpoint] = React.useState(storedEndpoint);
@@ -27,6 +29,13 @@ export const EndpointSelector: React.FC = () => {
     };
   }, []);
 
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      disableAutoCarousel();
+    }
+    setIsOpen(open);
+  };
+
   const handleEndpointSelect = (value: string) => {
     setSelectedEndpoint(value);
     window.localStorage.setItem('casbinEndpoint', value);
@@ -34,6 +43,7 @@ export const EndpointSelector: React.FC = () => {
   };
 
   const handleCustomEndpointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    disableAutoCarousel();
     const value = e.target.value;
     setCustomEndpoint(value);
 
@@ -53,7 +63,7 @@ export const EndpointSelector: React.FC = () => {
           <TooltipTrigger asChild>
             <button
               onClick={() => {
-                return setIsOpen(!isOpen);
+                handleOpenChange(!isOpen);
               }}
               className="border border-[#e13c3c] rounded px-2 py-1 text-[#e13c3c] hover:bg-[#e13c3c] hover:text-white flex items-center gap-1"
             >

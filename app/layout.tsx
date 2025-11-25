@@ -15,6 +15,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { LangProvider } from './context/LangContext';
+import { AutoCarouselProvider } from './context/AutoCarouselContext';
 
 export const metadata: Metadata = {
   title: 'Casbin Policy Editor',
@@ -29,7 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <LangProvider>{children}</LangProvider>
+        <LangProvider>
+          <AutoCarouselProvider>{children}</AutoCarouselProvider>
+        </LangProvider>
       </body>
     </html>
   );
