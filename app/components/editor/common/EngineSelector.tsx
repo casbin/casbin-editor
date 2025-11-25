@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useLang } from '@/app/context/LangContext';
+import { useAutoCarousel } from '@/app/context/AutoCarouselContext';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'; 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/app/components/ui/tooltip';
 import { EngineType, ENGINES } from '@/app/config/engineConfig';
@@ -15,6 +16,7 @@ interface EngineSelectorProps {
 
 export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, comparisonEngines, onEngineChange, versions, engineGithubLinks }) => {
   const { t } = useLang();
+  const { disableAutoCarousel } = useAutoCarousel();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
@@ -25,6 +27,20 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
       version: id === 'node' ? process.env.CASBIN_VERSION : versions[id as EngineType],
     };
   });
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      disableAutoCarousel();
+    }
+    setIsOpen(open);
+  };
+
+  const handleComparisonOpenChange = (open: boolean) => {
+    if (open) {
+      disableAutoCarousel();
+    }
+    setIsComparisonOpen(open);
+  };
 
   const handlePrimaryEngineChange = (engineId: string) => {
     onEngineChange(engineId as EngineType, []);
@@ -54,7 +70,7 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
 
   return (
     <div className="relative flex items-center gap-2">             
-      <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>          
+      <DropdownMenu.Root open={isOpen} onOpenChange={handleOpenChange}>          
         <DropdownMenu.Trigger asChild>          
           <button           
             className={          
@@ -117,7 +133,7 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
         </DropdownMenu.Content>          
       </DropdownMenu.Root>          
          
-      <DropdownMenu.Root open={isComparisonOpen} onOpenChange={setIsComparisonOpen}>        
+      <DropdownMenu.Root open={isComparisonOpen} onOpenChange={handleComparisonOpenChange}>        
         <TooltipProvider>          
           <Tooltip>          
             <TooltipTrigger asChild>          
