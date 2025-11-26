@@ -54,7 +54,7 @@ export default function Home() {
           href="https://discord.gg/S5UjpzGZjN"
           className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors duration-200"
         >
-          <img src="discord.svg" alt="Discord" className="w-5 h-5" style={{ filter: 'invert(0.8)' }} />
+          <img src="/discord.svg" alt="Discord" className="w-5 h-5 invert-[0.8]" />
           <span className="text-sm font-medium">Casbin Discord</span>
         </a>
       </div>
