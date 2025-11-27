@@ -88,8 +88,8 @@ button:hover img {
     --card-foreground: 210 40% 98%;
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 262 52% 47%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 261 46% 86%;
+    --primary-foreground: 222 47% 11%;
     --secondary: 217 33% 22%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217 33% 17%;
@@ -100,7 +100,7 @@ button:hover img {
     --destructive-foreground: 210 40% 98%;
     --border: 217 33% 35%;
     --input: 217 33% 25%;
-    --ring: 262 52% 47%;
+    --ring: 261 46% 86%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
