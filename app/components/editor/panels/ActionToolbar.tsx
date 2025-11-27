@@ -169,8 +169,8 @@ export const ActionToolbar = ({
   );
 
   return (
-    <div className="flex flex-row flex-wrap gap-4 mb-2 sm:mb-0 w-full sm:w-auto">
-      <TooltipProvider>
+    <TooltipProvider>
+      <div className="flex flex-row flex-wrap gap-4 mb-2 sm:mb-0 w-full sm:w-auto">
         <Tooltip>
           <TooltipTrigger asChild>
             <button className={buttonClassName} onClick={runTest}>
@@ -183,13 +183,11 @@ export const ActionToolbar = ({
             <p>{t('Run test tooltip')}</p>
           </TooltipContent>
         </Tooltip>
-      </TooltipProvider>
-      {showRefreshButton && (
-        <button className={buttonClassName} onClick={handleRefreshEngines}>
-          {t('Refresh Engines')}
-        </button>
-      )}
-      <TooltipProvider>
+        {showRefreshButton && (
+          <button className={buttonClassName} onClick={handleRefreshEngines}>
+            {t('Refresh Engines')}
+          </button>
+        )}
         <Tooltip>
           <TooltipTrigger asChild>
             <button className={buttonClassName} onClick={handleCopyClick}>
@@ -202,8 +200,6 @@ export const ActionToolbar = ({
             <p>{t('Copy tooltip')}</p>
           </TooltipContent>
         </Tooltip>
-      </TooltipProvider>
-      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <button className={buttonClassName} onClick={handleDownloadClick}>
@@ -216,8 +212,6 @@ export const ActionToolbar = ({
             <p>{t('Download tooltip')}</p>
           </TooltipContent>
         </Tooltip>
-      </TooltipProvider>
-      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <button className={buttonClassName} onClick={handleShareClick}>
@@ -230,7 +224,7 @@ export const ActionToolbar = ({
             <p>{t('Share tooltip')}</p>
           </TooltipContent>
         </Tooltip>
-      </TooltipProvider>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 };
