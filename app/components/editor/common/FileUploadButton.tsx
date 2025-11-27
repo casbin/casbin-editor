@@ -62,7 +62,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ onFileConten
               </svg>
             </button>
           </TooltipTrigger>
-          <TooltipContent className="bg-white text-primary border border-primary shadow-lg">
+          <TooltipContent className="bg-white dark:bg-gray-800 text-primary border border-primary shadow-lg">
             <p>{t('Upload File')}</p>
           </TooltipContent>
         </Tooltip>
