@@ -9,7 +9,7 @@ interface RoleInheritanceGraphProps {
 }
 
 export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ policy, className = '' }) => {
-  const { t } = useLang();
+  const { t, theme } = useLang();
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [treeData, setTreeData] = useState<PolicyNode[]>([]);
@@ -18,22 +18,24 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   const [circularDeps, setCircularDeps] = useState<string[][]>([]);
   const [dimensions, setDimensions] = useState({ width: 400, height: 300 });
 
+  const isDarkMode = theme === 'dark';
+
   const medicalColorScheme = {
     user: '#2E86AB',
     role: '#A23B72',
     resource: '#F18F01',
     object: '#6A994E',
     action: '#BC4749',
-    background: '#FAFAFA',
-    text: '#2C3E50',
-    border: '#000000ff',
-    gridLine: '#E8E8E8',
-    shadow: 'rgba(0,0,0,0.1)',
+    background: isDarkMode ? '#1a1a2e' : '#FAFAFA',
+    text: isDarkMode ? '#E0E0E0' : '#2C3E50',
+    border: isDarkMode ? '#FFFFFF' : '#000000ff',
+    gridLine: isDarkMode ? '#3a3a4a' : '#E8E8E8',
+    shadow: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
     // connectingLineColor
-    policyLine: '#2C3E50', // P Strategy Connection - Dark gray
-    roleInheritance: '#3498DB', // G Strategy Connection - Blue
-    resourceInheritance: '#27AE60', // G2 Strategy connection - Green
-    domainInheritance: '#9B59B6', // G3 Strategy Connection - Purple
+    policyLine: isDarkMode ? '#A0AEC0' : '#2C3E50', // P Strategy Connection - Light gray in dark mode
+    roleInheritance: isDarkMode ? '#63B3ED' : '#3498DB', // G Strategy Connection - Lighter blue in dark mode
+    resourceInheritance: isDarkMode ? '#68D391' : '#27AE60', // G2 Strategy connection - Lighter green in dark mode
+    domainInheritance: isDarkMode ? '#B794F4' : '#9B59B6', // G3 Strategy Connection - Lighter purple in dark mode
   };
 
   useEffect(() => {
@@ -84,7 +86,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   useEffect(() => {
     if (!svgRef.current) return;
     renderGraph();
-  }, [treeData, relations, dimensions]);
+  }, [treeData, relations, dimensions, isDarkMode]);
   const renderGraph = () => {
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
