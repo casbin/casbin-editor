@@ -6,6 +6,7 @@ import { example } from '@/app/components/editor/casbin-mode/example';
 import { useLang } from '@/app/context/LangContext';
 import { useAutoCarousel } from '@/app/context/AutoCarouselContext';
 import { useEffect, useMemo, useRef } from 'react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/app/components/ui/tooltip';
 
 interface ModelSelectorProps {
   modelKind: string;
@@ -107,27 +108,38 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
           </DropdownMenu.Content>    
         </DropdownMenu.Root>    
     
-        <button    
-          className={clsx(    
-            'rounded-lg',    
-            'text-primary',    
-            'px-3 py-1',    
-            'border border-primary',    
-            'bg-secondary',    
-            'hover:bg-primary hover:text-primary-foreground',    
-            'transition-all duration-200',
-            'shadow-sm hover:shadow-md',
-            'font-medium text-sm',
-          )}    
-          onClick={() => {    
-            const ok = window.confirm('Confirm Reset?');    
-            if (ok) {    
-              window.location.reload();    
-            }    
-          }}    
-        >    
-          {t('RESET')} 
-        </button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button    
+                className={clsx(    
+                  'rounded-lg',    
+                  'text-primary',    
+                  'px-3 py-1',    
+                  'border border-primary',    
+                  'bg-secondary',    
+                  'hover:bg-primary hover:text-primary-foreground',    
+                  'transition-all duration-200',
+                  'shadow-sm hover:shadow-md',
+                  'font-medium text-sm',
+                )}    
+                onClick={() => {    
+                  const ok = window.confirm('Confirm Reset?');    
+                  if (ok) {    
+                    window.location.reload();    
+                  }    
+                }}    
+              >    
+                {t('RESET')} 
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              className="bg-white dark:bg-gray-800 text-primary border border-primary"
+            >
+              <p>{t('Reset tooltip')}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         {/* Auto Carousel Switch */}
         <div className="flex items-center gap-2">
