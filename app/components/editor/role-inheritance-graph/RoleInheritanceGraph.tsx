@@ -17,6 +17,32 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   const [rawRelations, setRawRelations] = useState<PolicyRelation[]>([]);
   const [circularDeps, setCircularDeps] = useState<string[][]>([]);
   const [dimensions, setDimensions] = useState({ width: 400, height: 300 });
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Detect dark mode from the HTML element class
+  useEffect(() => {
+    const checkDarkMode = () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      setIsDarkMode(isDark);
+    };
+
+    checkDarkMode();
+
+    // Observe changes to the HTML element's class attribute
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          checkDarkMode();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const medicalColorScheme = {
     user: '#2E86AB',
@@ -24,16 +50,16 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     resource: '#F18F01',
     object: '#6A994E',
     action: '#BC4749',
-    background: '#FAFAFA',
-    text: '#2C3E50',
-    border: '#000000ff',
-    gridLine: '#E8E8E8',
-    shadow: 'rgba(0,0,0,0.1)',
-    // connectingLineColor
-    policyLine: '#2C3E50', // P Strategy Connection - Dark gray
-    roleInheritance: '#3498DB', // G Strategy Connection - Blue
-    resourceInheritance: '#27AE60', // G2 Strategy connection - Green
-    domainInheritance: '#9B59B6', // G3 Strategy Connection - Purple
+    background: isDarkMode ? '#1f2937' : '#FAFAFA',
+    text: isDarkMode ? '#f3f4f6' : '#2C3E50',
+    border: isDarkMode ? '#ffffffcc' : '#000000ff',
+    gridLine: isDarkMode ? '#374151' : '#E8E8E8',
+    shadow: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+    // connectingLineColor - use brighter colors in dark mode for better visibility
+    policyLine: isDarkMode ? '#9ca3af' : '#2C3E50', // P Strategy Connection - Light gray in dark mode
+    roleInheritance: isDarkMode ? '#60a5fa' : '#3498DB', // G Strategy Connection - Brighter blue in dark mode
+    resourceInheritance: isDarkMode ? '#4ade80' : '#27AE60', // G2 Strategy connection - Brighter green in dark mode
+    domainInheritance: isDarkMode ? '#c084fc' : '#9B59B6', // G3 Strategy Connection - Brighter purple in dark mode
   };
 
   useEffect(() => {
@@ -84,7 +110,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   useEffect(() => {
     if (!svgRef.current) return;
     renderGraph();
-  }, [treeData, relations, dimensions]);
+  }, [treeData, relations, dimensions, isDarkMode]);
   const renderGraph = () => {
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
