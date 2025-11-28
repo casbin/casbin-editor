@@ -156,6 +156,20 @@ export class PolicyInheritanceParser {
       return this.modelParameters[parameterIndex];
     }
 
+    // Use position-based typing when parameter index is known (for 'p' policy rules)
+    if (parameterIndex !== undefined) {
+      switch (parameterIndex) {
+        case 0:
+          return 'user'; // subject position - always user
+        case 1:
+          return 'resource'; // object position - default to resource
+        case 2:
+          return 'action'; // action position
+        default:
+          return 'object'; // other positions
+      }
+    }
+
     // Fallback to heuristic-based typing for backward compatibility
     return this.determineNodeTypeHeuristic(nodeId);
   }
@@ -210,12 +224,13 @@ export class PolicyInheritanceParser {
 
     allEntities.forEach((entity) => {
       if (!this.nodeMap.has(entity)) {
+        const paramIndex = this.getParameterIndex(entity);
         const node: PolicyNode = {
           name: entity,
           children: [],
-          type: this.determineNodeType(entity),
+          type: this.determineNodeType(entity, paramIndex),
           level: 0,
-          parameterIndex: this.getParameterIndex(entity),
+          parameterIndex: paramIndex,
         };
         this.nodeMap.set(entity, node);
       }
