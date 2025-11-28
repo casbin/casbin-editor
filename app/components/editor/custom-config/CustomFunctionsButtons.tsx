@@ -15,6 +15,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Plus, UserCheck, Globe, Code } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/app/components/ui/tooltip';
 
 /**
  * Props for the CustomFunctionsButtons component
@@ -63,49 +64,59 @@ export const CustomFunctionsButtons: React.FC<CustomFunctionsButtonsProps> = ({
     Icon: React.ComponentType<any>;
   }> = ({ onClick, disabled = false, titleKey, Icon }) => {
     return (
-      <button
-        onClick={onClick}
-        disabled={disabled}
-        className={clsx(
-          'flex-1 min-w-0 text-center whitespace-nowrap overflow-hidden text-ellipsis',
-          'px-2 py-1 rounded-md text-xs font-medium',
-          'transition-all shadow-sm',
-          disabled
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
-            : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md',
-        )}
-        title={t(titleKey)}
-      >
-        {iconsOnly ? (
-          <div className="flex items-center justify-center gap-1">
-            <Plus className="w-3 h-3" />
-            <Icon className="w-4 h-4" />
-          </div>
-        ) : (
-          <>
-            <Icon className="inline-block w-4 h-4 mr-2 align-middle" />
-            <span className="truncate align-middle">{t(titleKey)}</span>
-          </>
-        )}
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={onClick}
+            disabled={disabled}
+            className={clsx(
+              'flex-1 min-w-0 text-center whitespace-nowrap overflow-hidden text-ellipsis',
+              'px-2 py-1 rounded-md text-xs font-medium',
+              'transition-all shadow-sm',
+              disabled
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
+                : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md',
+            )}
+          >
+            {iconsOnly ? (
+              <div className="flex items-center justify-center gap-1">
+                <Plus className="w-3 h-3" />
+                <Icon className="w-4 h-4" />
+              </div>
+            ) : (
+              <>
+                <Icon className="inline-block w-4 h-4 mr-2 align-middle" />
+                <span className="truncate align-middle">{t(titleKey)}</span>
+              </>
+            )}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent
+          className="bg-white dark:bg-gray-800 text-primary border border-primary"
+        >
+          <p>{t(titleKey)}</p>
+        </TooltipContent>
+      </Tooltip>
     );
   };
 
   return (
-    <div ref={buttonsRef} className="flex gap-2 text-xs flex-1 justify-end min-w-0 ml-4">
-      <ActionButton onClick={addNewFunction} titleKey={'Add Function'} Icon={Code} />
-      <ActionButton
-        onClick={addMatchingFunction}
-        disabled={hasMatchingFunction('matchingForGFunction')}
-        titleKey={'Add Role Matching'}
-        Icon={UserCheck}
-      />
-      <ActionButton
-        onClick={addMatchingDomainFunction}
-        disabled={hasMatchingFunction('matchingDomainForGFunction')}
-        titleKey={'Add Domain Matching'}
-        Icon={Globe}
-      />
-    </div>
+    <TooltipProvider delayDuration={700} skipDelayDuration={0}>
+      <div ref={buttonsRef} className="flex gap-2 text-xs flex-1 justify-end min-w-0 ml-4">
+        <ActionButton onClick={addNewFunction} titleKey={'Add Function'} Icon={Code} />
+        <ActionButton
+          onClick={addMatchingFunction}
+          disabled={hasMatchingFunction('matchingForGFunction')}
+          titleKey={'Add Role Matching'}
+          Icon={UserCheck}
+        />
+        <ActionButton
+          onClick={addMatchingDomainFunction}
+          disabled={hasMatchingFunction('matchingDomainForGFunction')}
+          titleKey={'Add Domain Matching'}
+          Icon={Globe}
+        />
+      </div>
+    </TooltipProvider>
   );
 };

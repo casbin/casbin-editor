@@ -5,6 +5,7 @@ import type { EngineType } from '@/app/config/engineConfig';
 import type { ShareProps } from '@/app/components/hooks/useShareInfo';
 import { refreshEngines } from '@/app/components/hooks/useRemoteEnforcer';
 import { useState, useEffect } from 'react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/app/components/ui/tooltip';
 
 interface ActionToolbarProps {
   runTest: () => void;
@@ -168,24 +169,62 @@ export const ActionToolbar = ({
   );
 
   return (
-    <div className="flex flex-row flex-wrap gap-4 mb-2 sm:mb-0 w-full sm:w-auto">
-      <button className={buttonClassName} onClick={runTest}>
-        {t('RUN THE TEST')}
-      </button>
-      {showRefreshButton && (
-        <button className={buttonClassName} onClick={handleRefreshEngines}>
-          {t('Refresh Engines')}
-        </button>
-      )}
-      <button className={buttonClassName} onClick={handleCopyClick}>
-        {t('COPY')}
-      </button>
-      <button className={buttonClassName} onClick={handleDownloadClick}>
-        {t('DOWNLOAD')}
-      </button>
-      <button className={buttonClassName} onClick={handleShareClick}>
-        {t('SHARE')}
-      </button>
-    </div>
+    <TooltipProvider delayDuration={700} skipDelayDuration={0}>
+      <div className="flex flex-row flex-wrap gap-4 mb-2 sm:mb-0 w-full sm:w-auto">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button className={buttonClassName} onClick={runTest}>
+              {t('RUN THE TEST')}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent
+            className="bg-white dark:bg-gray-800 text-primary border border-primary"
+          >
+            <p>{t('Run test tooltip')}</p>
+          </TooltipContent>
+        </Tooltip>
+        {showRefreshButton && (
+          <button className={buttonClassName} onClick={handleRefreshEngines}>
+            {t('Refresh Engines')}
+          </button>
+        )}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button className={buttonClassName} onClick={handleCopyClick}>
+              {t('COPY')}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent
+            className="bg-white dark:bg-gray-800 text-primary border border-primary"
+          >
+            <p>{t('Copy tooltip')}</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button className={buttonClassName} onClick={handleDownloadClick}>
+              {t('DOWNLOAD')}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent
+            className="bg-white dark:bg-gray-800 text-primary border border-primary"
+          >
+            <p>{t('Download tooltip')}</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button className={buttonClassName} onClick={handleShareClick}>
+              {t('SHARE')}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent
+            className="bg-white dark:bg-gray-800 text-primary border border-primary"
+          >
+            <p>{t('Share tooltip')}</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    </TooltipProvider>
   );
 };
