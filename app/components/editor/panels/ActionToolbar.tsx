@@ -169,7 +169,7 @@ export const ActionToolbar = ({
   );
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={300}>
       <div className="flex flex-row flex-wrap gap-4 mb-2 sm:mb-0 w-full sm:w-auto">
         <Tooltip>
           <TooltipTrigger asChild>
