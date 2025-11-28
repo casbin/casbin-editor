@@ -156,7 +156,8 @@ export class PolicyInheritanceParser {
       return this.modelParameters[parameterIndex];
     }
 
-    // Use position-based typing when parameter index is known (for 'p' policy rules)
+    // Use position-based typing when parameter index is known from P policy rules
+    // (getParameterIndex only extracts positions from 'p' type rules)
     if (parameterIndex !== undefined) {
       switch (parameterIndex) {
         case 0:
