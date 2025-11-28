@@ -129,5 +129,55 @@ m = r.sub == p.sub && r.obj == p.obj && r.act == p.act`;
       expect(cathyNode?.type).toBe('sub');
       expect(data1Node?.type).toBe('obj');
     });
+
+    it('should correctly identify roles and users in RBAC with multiple roles', () => {
+      const parser = new PolicyInheritanceParser();
+      // This is the "RBAC with multiple roles" example from the issue
+      const policy = `p, reader, data, read
+p, writer, data, write
+p, admin, data, delete
+
+g, alice, reader
+g, alice, writer
+g, bob, reader
+g, cathy, admin`;
+
+      parser.parsePolicy(policy);
+      const tree = parser.buildPolicyGraph();
+
+      // Helper to find nodes in tree recursively
+      const findNodeInTree = (nodes: typeof tree, name: string): (typeof tree)[0] | undefined => {
+        for (const node of nodes) {
+          if (node.name === name) return node;
+          if (node.children && node.children.length > 0) {
+            const found = findNodeInTree(node.children as typeof tree, name);
+            if (found) return found;
+          }
+        }
+        return undefined;
+      };
+
+      // reader, writer, admin are targets in G rules, so they should be 'role'
+      const readerNode = findNodeInTree(tree, 'reader');
+      const writerNode = findNodeInTree(tree, 'writer');
+      const adminNode = findNodeInTree(tree, 'admin');
+
+      expect(readerNode?.type).toBe('role');
+      expect(writerNode?.type).toBe('role');
+      expect(adminNode?.type).toBe('role');
+
+      // alice, bob, cathy are sources in G rules only (not targets), so they should be 'user'
+      const aliceNode = findNodeInTree(tree, 'alice');
+      const bobNode = findNodeInTree(tree, 'bob');
+      const cathyNode = findNodeInTree(tree, 'cathy');
+
+      expect(aliceNode?.type).toBe('user');
+      expect(bobNode?.type).toBe('user');
+      expect(cathyNode?.type).toBe('user');
+
+      // data is an object in P rules
+      const dataNode = findNodeInTree(tree, 'data');
+      expect(dataNode?.type).toBe('resource');
+    });
   });
 });
