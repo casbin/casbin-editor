@@ -148,12 +148,54 @@ export class PolicyInheritanceParser {
   }
 
   /**
-   * Determine node type based on model parameters and position
+   * Determine node type based on model parameters, position, and G rule relationships
    */
   private determineNodeType(nodeId: string, parameterIndex?: number): string {
+    // First, check if this entity is a target in any G rule - if so, it's a role
+    const isRoleTarget = this.relations.some((rel) => {
+      return rel.type.startsWith('g') && rel.target === nodeId;
+    });
+    if (isRoleTarget) {
+      return 'role';
+    }
+
+    // Check if this entity only appears in G rules as a source (user inheriting roles)
+    const onlyInGRulesAsSource = this.relations.every((rel) => {
+      if (rel.source === nodeId) {
+        return rel.type.startsWith('g');
+      }
+      if (rel.target === nodeId) {
+        return false; // appears as target somewhere
+      }
+      if (rel.action === nodeId || rel.domain === nodeId) {
+        return false; // appears in other positions
+      }
+      return true; // not in this relation
+    }) && this.relations.some((rel) => {
+      return rel.type.startsWith('g') && rel.source === nodeId;
+    });
+    
+    if (onlyInGRulesAsSource) {
+      return 'user';
+    }
+
     // If we have model parameters and parameter index, use model-based typing
     if (this.modelParameters.length > 0 && parameterIndex !== undefined && parameterIndex < this.modelParameters.length) {
       return this.modelParameters[parameterIndex];
+    }
+
+    // Use position-based typing when parameter index is known from P policy rules
+    if (parameterIndex !== undefined) {
+      switch (parameterIndex) {
+        case 0:
+          return 'user'; // subject position - always user
+        case 1:
+          return 'resource'; // object position - default to resource
+        case 2:
+          return 'action'; // action position
+        default:
+          return 'object'; // other positions
+      }
     }
 
     // Fallback to heuristic-based typing for backward compatibility
@@ -210,12 +252,13 @@ export class PolicyInheritanceParser {
 
     allEntities.forEach((entity) => {
       if (!this.nodeMap.has(entity)) {
+        const paramIndex = this.getParameterIndex(entity);
         const node: PolicyNode = {
           name: entity,
           children: [],
-          type: this.determineNodeType(entity),
+          type: this.determineNodeType(entity, paramIndex),
           level: 0,
-          parameterIndex: this.getParameterIndex(entity),
+          parameterIndex: paramIndex,
         };
         this.nodeMap.set(entity, node);
       }
