@@ -101,7 +101,7 @@ export const CustomFunctionsButtons: React.FC<CustomFunctionsButtonsProps> = ({
   };
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={700} skipDelayDuration={0}>
       <div ref={buttonsRef} className="flex gap-2 text-xs flex-1 justify-end min-w-0 ml-4">
         <ActionButton onClick={addNewFunction} titleKey={'Add Function'} Icon={Code} />
         <ActionButton

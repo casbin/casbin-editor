@@ -108,7 +108,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
           </DropdownMenu.Content>    
         </DropdownMenu.Root>    
     
-        <TooltipProvider delayDuration={300}>
+        <TooltipProvider delayDuration={700} skipDelayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
               <button    
