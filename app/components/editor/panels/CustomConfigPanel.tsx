@@ -16,15 +16,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { clsx } from 'clsx';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { RoleInheritanceGraph } from '../role-inheritance-graph/RoleInheritanceGraph';
-import { ChevronLeft } from 'lucide-react';
 import { CustomFunctionsTitle } from '../custom-config/CustomFunctionsTitle';
 import { CustomFunctionsList } from '../custom-config/CustomFunctionsList';
 import { CustomFunctionsButtons } from '../custom-config/CustomFunctionsButtons';
 import type { FunctionConfig } from '../custom-config/types';
 
 interface CustomConfigPanelProps {
-  open: boolean;
-  setOpen: (value: boolean) => void;
   showCustomConfig: boolean;
   customConfig: string;
   setCustomConfigPersistent: (value: string) => void;
@@ -35,8 +32,6 @@ interface CustomConfigPanelProps {
 }
 
 export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
-  open,
-  setOpen,
   showCustomConfig,
   customConfig,
   setCustomConfigPersistent,
@@ -224,33 +219,7 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
 
   return (
     <>
-      <button
-        className={clsx(
-          'absolute top-.5 right-0 translate-x-1/2',
-          'h-8 w-8',
-          'bg-white',
-          'border border-border rounded-full',
-          'items-center justify-center',
-          'hidden sm:flex',
-          'shadow-md hover:shadow-lg',
-          'transition-all duration-200',
-          'hover:bg-secondary',
-          'z-10',
-        )}
-        onClick={() => {
-          return setOpen(!open);
-        }}
-      >
-        <ChevronLeft
-          className={clsx('h-5 w-5 text-primary')}
-          style={{
-            transform: open ? 'rotateZ(0deg)' : 'rotateZ(180deg)',
-            transition: 'transform 0.2s',
-          }}
-        />
-      </button>
-
-      {(showCustomConfig || open) && (  
+      {showCustomConfig && (  
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900">  
           <PanelGroup direction="vertical" className="flex-1 min-h-0">
             {/* Custom Function Panel */}
