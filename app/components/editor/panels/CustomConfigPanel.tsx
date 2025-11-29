@@ -14,6 +14,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { clsx } from 'clsx';
+import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { RoleInheritanceGraph } from '../role-inheritance-graph/RoleInheritanceGraph';
 import { ChevronLeft } from 'lucide-react';
 import { CustomFunctionsTitle } from '../custom-config/CustomFunctionsTitle';
@@ -234,6 +235,7 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
           'shadow-md hover:shadow-lg',
           'transition-all duration-200',
           'hover:bg-secondary',
+          'z-10',
         )}
         onClick={() => {
           return setOpen(!open);
@@ -250,45 +252,61 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
 
       {(showCustomConfig || open) && (  
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900">  
-          {/* Header: title + action buttons */}
-          <div className={'pt-6 h-12 pl-3 pr-3 flex items-center justify-between font-bold text-lg'}>
-            <CustomFunctionsTitle textClass={textClass} t={t} />
-            <CustomFunctionsButtons
-              addNewFunction={addNewFunction}
-              addMatchingFunction={addMatchingFunction}
-              addMatchingDomainFunction={addMatchingDomainFunction}
-              hasMatchingFunction={hasMatchingFunction}
-              t={t}
-            />
-          </div>
+          <PanelGroup direction="vertical" className="flex-1 min-h-0">
+            {/* Custom Function Panel */}
+            <Panel defaultSize={40} minSize={20} maxSize={80}>
+              <div className="flex flex-col h-full">
+                {/* Header: title + action buttons */}
+                <div className={'pt-6 h-12 pl-3 pr-3 flex items-center justify-between font-bold text-lg flex-shrink-0'}>
+                  <CustomFunctionsTitle textClass={textClass} t={t} />
+                  <CustomFunctionsButtons
+                    addNewFunction={addNewFunction}
+                    addMatchingFunction={addMatchingFunction}
+                    addMatchingDomainFunction={addMatchingDomainFunction}
+                    hasMatchingFunction={hasMatchingFunction}
+                    t={t}
+                  />
+                </div>
 
-          {/* Function Section */}
-          <CustomFunctionsList
-            functions={functions}
-            updateFunction={updateFunction}
-            deleteFunction={deleteFunction}
-            t={t}
-          />
-  
-          {/* Role inheritance diagram area - Occupies all remaining space */}  
-          <div className="border-t border-border mt-2 pt-4 flex-1 min-h-0 px-2 flex flex-col">  
-            <div className="h-8 pl-2 flex items-center font-bold text-lg mb-2 flex-shrink-0">  
-              <div className={textClass}>{t('Role Inheritance Graph')}</div>  
-            </div>  
-            <div
-              className={clsx(
-                "flex-1 min-h-0 overflow-auto bg-white dark:bg-slate-800",
-                "rounded-lg border border-border shadow-sm",
-              )}
-            >  
-              {modelKind && (  
-                <RoleInheritanceGraph   
-                  policy={policy}   
-                  className="h-full"  
-                />  
-              )}  
-            </div>  
-          </div>  
+                {/* Function Section */}
+                <div className="flex-1 min-h-0 overflow-auto">
+                  <CustomFunctionsList
+                    functions={functions}
+                    updateFunction={updateFunction}
+                    deleteFunction={deleteFunction}
+                    t={t}
+                  />
+                </div>
+              </div>
+            </Panel>
+            
+            {/* Resize Handle */}
+            <PanelResizeHandle className="h-2 flex items-center justify-center cursor-row-resize hover:bg-primary/10 transition-colors group">
+              <div className="w-16 h-1 rounded-full bg-border group-hover:bg-primary/50 transition-colors" />
+            </PanelResizeHandle>
+
+            {/* Role Inheritance Graph Panel */}
+            <Panel defaultSize={60} minSize={20} maxSize={80}>
+              <div className="h-full px-2 py-2 flex flex-col">  
+                <div className="h-8 pl-2 flex items-center font-bold text-lg mb-2 flex-shrink-0">  
+                  <div className={textClass}>{t('Role Inheritance Graph')}</div>  
+                </div>  
+                <div
+                  className={clsx(
+                    "flex-1 min-h-0 overflow-auto bg-white dark:bg-slate-800",
+                    "rounded-lg border border-border shadow-sm",
+                  )}
+                >  
+                  {modelKind && (  
+                    <RoleInheritanceGraph   
+                      policy={policy}   
+                      className="h-full"  
+                    />  
+                  )}  
+                </div>  
+              </div>
+            </Panel>
+          </PanelGroup>
         </div>  
       )}
     </>

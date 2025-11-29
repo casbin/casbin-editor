@@ -10,6 +10,7 @@ import { EditorView, Decoration } from '@codemirror/view';
 import { StateEffect, StateField } from '@codemirror/state';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
 import { linter, lintGutter } from '@codemirror/lint';
+import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
 import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
@@ -280,267 +281,520 @@ export const EditorScreen = () => {
       </div>
       {/* Main content area */}
       <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
-        <div
-          className={clsx('sm:relative border-r border-border shadow-sm', 'transition-all duration-300', {
-            'hidden sm:block': !showCustomConfig,
-            block: showCustomConfig,
-            'sm:w-[25%]': open,
-            'sm:w-5': !open,
-          })}
-        >
-        <div className="flex flex-col h-full w-full">
-          <CustomConfigPanel
-            open={open}
-            setOpen={setOpen}
-            showCustomConfig={showCustomConfig}
-            customConfig={customConfig}
-            setCustomConfigPersistent={handleCustomConfigChange}
-            textClass={textClass}
-            t={t}
-            policy={policy}  
-            modelKind={modelKind}
-          />
-        </div>
-      </div>
-      <div
-        className={clsx('flex flex-col h-full min-w-0', 'transition-all duration-300', {
-          'sm:w-[60%]': open && isChatOpen,
-          'sm:w-[75%]': open && !isChatOpen,
-          'sm:w-[70%]': !open && isChatOpen,
-          'w-full': !open && !isChatOpen,
-        })}
-      >
-        <div className="flex flex-col sm:flex-row gap-2 pt-4 px-2 flex-1 overflow-hidden min-w-0">
-          <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
-              <div className={clsx(textClass, 'font-bold text-lg')}>{t('Model')}</div>
-              <ModelToolbar
+        {/* Mobile sidebar toggle - shown only on mobile when showCustomConfig is true */}
+        {showCustomConfig && (
+          <div className="sm:hidden border-r border-border shadow-sm">
+            <div className="flex flex-col h-full w-full">
+              <CustomConfigPanel
+                open={true}
+                setOpen={setOpen}
+                showCustomConfig={showCustomConfig}
+                customConfig={customConfig}
+                setCustomConfigPersistent={handleCustomConfigChange}
+                textClass={textClass}
+                t={t}
+                policy={policy}
                 modelKind={modelKind}
-                setModelKind={setModelKind}
-                setRequestResults={setRequestResults}
-                setModelTextPersistent={setModelTextPersistent}
               />
-              <div className="sm:hidden ml-auto mr-2">
-                <button
-                  className={clsx(
-                    'rounded-lg',
-                    'flex items-center justify-center',
-                    'border border-primary',
-                    'text-primary',
-                    'bg-secondary',
-                    'hover:bg-primary hover:text-primary-foreground',
-                    'transition-all duration-200',
-                    'shadow-sm hover:shadow-md',
-                    'p-2',
-                  )}
-                  onClick={() => {
-                    return setShowCustomConfig(!showCustomConfig);
-                  }}
+            </div>
+          </div>
+        )}
+        
+        {/* Desktop layout with resizable panels */}
+        <div className="hidden sm:flex flex-1 overflow-hidden">
+          <PanelGroup direction="horizontal" className="flex-1">
+            {/* Sidebar Panel - only shown when open */}
+            {open && (
+              <>
+                <Panel 
+                  defaultSize={25} 
+                  minSize={15} 
+                  maxSize={50}
+                  className="border-r border-border shadow-sm"
                 >
-                  <svg
-                    className={clsx('h-5 w-5')}
-                    style={{
-                      transform: showCustomConfig ? 'rotateZ(90deg)' : 'rotateZ(-90deg)',
-                    }}
-                    viewBox="0 0 24 24"
-                  >
-                    <path fill={'currentColor'} d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
-              <div className="flex flex-col h-full">
-                <CodeMirror
-                  height="100%"
-                  theme={monokai}
-                  onChange={handleModelTextChange}
-                  basicSetup={{
-                    lineNumbers: true,
-                    highlightActiveLine: true,
-                    bracketMatching: true,
-                    indentOnInput: true,
-                  }}
-                  extensions={[
-                    basicSetup,
-                    CasbinConfSupport(),
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                    buttonPlugin(openDrawerWithMessage, extractContent, 'model', t),
-                    linter(casbinLinter),
-                    lintGutter(),
-                  ]}
-                  className={'function flex-grow h-[300px]'}
-                  value={modelText}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className="h-10 pl-2 font-bold text-lg flex items-center justify-between">
-              <div className={textClass}>{t('Policy')}</div>
-              <PolicyToolbar
-                setPolicyPersistent={setPolicyPersistent}
-                selectedEngine={selectedEngine}
-                comparisonEngines={comparisonEngines}
-                handleEngineChange={handleEngineChange}
-                versions={versions}
-                engineGithubLinks={engineGithubLinks}
-              />
-            </div>
-            <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
-              <div className="flex flex-col h-full">
-                <CodeMirror
-                  height="100%"
-                  extensions={[
-                    basicSetup,
-                    CasbinPolicySupport(),
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                    buttonPlugin(openDrawerWithMessage, extractContent, 'policy', t),
-                    linter(policyLinter),
-                    lintGutter(),
-                  ]}
-                  basicSetup={{
-                    lineNumbers: true,
-                    highlightActiveLine: true,
-                    bracketMatching: true,
-                    indentOnInput: true,
-                  }}
-                  theme={monokai}
-                  onChange={handlePolicyChange}
-                  onCreateEditor={(view) => {
-                    policyViewRef.current = view;
-                  }}
-                  className={'function flex-grow h-[300px]'}
-                  value={policy}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-2 pt-2 px-2 flex-1 overflow-hidden min-w-0">
-          <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
-              <div className={clsx(textClass, 'font-bold text-lg')}>{t('Request')}</div>
-              <RequestToolbar
-                setupEnforceContextData={setupEnforceContextData}
-                setupHandleEnforceContextChange={setupHandleEnforceContextChange}
-                setRequestPersistent={setRequestPersistent}
-              />
-            </div>
-            <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
-              <div className="flex flex-col h-full">
-                <CodeMirror
-                  height="100%"
-                  theme={monokai}
-                  onChange={handleRequestChange}
-                  extensions={[
-                    basicSetup,
-                    CasbinPolicySupport(),
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                    buttonPlugin(openDrawerWithMessage, extractContent, 'request', t),
-                    linter(requestLinter),
-                    lintGutter(),
-                  ]}
-                  basicSetup={{
-                    lineNumbers: true,
-                    highlightActiveLine: true,
-                    bracketMatching: true,
-                    indentOnInput: true,
-                  }}
-                  className={'function flex-grow h-[300px]'}
-                  value={request}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div className={clsx('h-10 pl-2 font-bold text-lg', 'flex items-center justify-between')}>
-              <div className={textClass}>{t('Enforcement Result')}</div>
-              <div className="mr-4">
-                <button
-                  className={clsx(
-                    'px-3 py-1.5 rounded-lg',
-                    'text-primary border border-primary',
-                    'bg-secondary hover:bg-primary hover:text-primary-foreground',
-                    'transition-all duration-200',
-                    'shadow-sm hover:shadow-md',
-                    'font-medium text-sm',
-                    'flex items-center gap-2',
-                  )}
-                  onClick={() => {
-                    if (sidePanelChatRef.current) {
-                      sidePanelChatRef.current.openDrawer('');
-                    }
-                  }}
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d={
-                        'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907' +
-                        '-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                      }
+                  <div className="relative flex flex-col h-full w-full">
+                    <CustomConfigPanel
+                      open={open}
+                      setOpen={setOpen}
+                      showCustomConfig={showCustomConfig}
+                      customConfig={customConfig}
+                      setCustomConfigPersistent={handleCustomConfigChange}
+                      textClass={textClass}
+                      t={t}
+                      policy={policy}
+                      modelKind={modelKind}
                     />
-                  </svg>
-                  <span>{t('Explain it')}</span>
-                </button>
-              </div>
-            </div>
-            <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
-              <div className="flex flex-col h-full">
-                <CodeMirror
-                  height="100%"
-                  onChange={() => {
-                    return;
-                  }}
-                  theme={monokai}
-                  extensions={[
-                    basicSetup,
-                    javascriptLanguage,
-                    indentUnit.of('    '),
-                    EditorView.lineWrapping,
-                    EditorView.editable.of(false),
-                    buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult', t),
-                    loadingOverlay(isLoading),
-                  ]}
-                  basicSetup={{
-                    lineNumbers: true,
-                    highlightActiveLine: true,
-                    bracketMatching: true,
-                    indentOnInput: true,
-                  }}
-                  className={'cursor-not-allowed flex-grow h-[300px]'}
-                  value={Object.keys(requestResults).length > 0 ? formatEngineResults(requestResults, selectedEngine) : requestResult}
+                  </div>
+                </Panel>
+                <PanelResizeHandle className="w-2 flex items-center justify-center cursor-col-resize hover:bg-primary/10 transition-colors group">
+                  <div className="h-16 w-1 rounded-full bg-border group-hover:bg-primary/50 transition-colors" />
+                </PanelResizeHandle>
+              </>
+            )}
+            
+            {/* Collapsed sidebar toggle - shown when sidebar is collapsed */}
+            {!open && (
+              <div className="relative w-5 border-r border-border shadow-sm flex-shrink-0">
+                <CustomConfigPanel
+                  open={open}
+                  setOpen={setOpen}
+                  showCustomConfig={false}
+                  customConfig={customConfig}
+                  setCustomConfigPersistent={handleCustomConfigChange}
+                  textClass={textClass}
+                  t={t}
+                  policy={policy}
+                  modelKind={modelKind}
                 />
               </div>
-            </div>
-          </div>
+            )}
+            
+            {/* Main Editor Panel */}
+            <Panel defaultSize={open ? 75 : 100} minSize={50}>
+              <div className="flex flex-col h-full min-w-0">
+                <div className="flex flex-col sm:flex-row gap-2 pt-4 px-2 flex-1 overflow-hidden min-w-0">
+                  <div className="flex-1 flex flex-col h-full overflow-hidden">
+                    <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
+                      <div className={clsx(textClass, 'font-bold text-lg')}>{t('Model')}</div>
+                      <ModelToolbar
+                        modelKind={modelKind}
+                        setModelKind={setModelKind}
+                        setRequestResults={setRequestResults}
+                        setModelTextPersistent={setModelTextPersistent}
+                      />
+                    </div>
+
+                    <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
+                      <div className="flex flex-col h-full">
+                        <CodeMirror
+                          height="100%"
+                          theme={monokai}
+                          onChange={handleModelTextChange}
+                          basicSetup={{
+                            lineNumbers: true,
+                            highlightActiveLine: true,
+                            bracketMatching: true,
+                            indentOnInput: true,
+                          }}
+                          extensions={[
+                            basicSetup,
+                            CasbinConfSupport(),
+                            indentUnit.of('    '),
+                            EditorView.lineWrapping,
+                            buttonPlugin(openDrawerWithMessage, extractContent, 'model', t),
+                            linter(casbinLinter),
+                            lintGutter(),
+                          ]}
+                          className={'function flex-grow h-[300px]'}
+                          value={modelText}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-col h-full overflow-hidden">
+                    <div className="h-10 pl-2 font-bold text-lg flex items-center justify-between">
+                      <div className={textClass}>{t('Policy')}</div>
+                      <PolicyToolbar
+                        setPolicyPersistent={setPolicyPersistent}
+                        selectedEngine={selectedEngine}
+                        comparisonEngines={comparisonEngines}
+                        handleEngineChange={handleEngineChange}
+                        versions={versions}
+                        engineGithubLinks={engineGithubLinks}
+                      />
+                    </div>
+                    <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
+                      <div className="flex flex-col h-full">
+                        <CodeMirror
+                          height="100%"
+                          extensions={[
+                            basicSetup,
+                            CasbinPolicySupport(),
+                            indentUnit.of('    '),
+                            EditorView.lineWrapping,
+                            buttonPlugin(openDrawerWithMessage, extractContent, 'policy', t),
+                            linter(policyLinter),
+                            lintGutter(),
+                          ]}
+                          basicSetup={{
+                            lineNumbers: true,
+                            highlightActiveLine: true,
+                            bracketMatching: true,
+                            indentOnInput: true,
+                          }}
+                          theme={monokai}
+                          onChange={handlePolicyChange}
+                          onCreateEditor={(view) => {
+                            policyViewRef.current = view;
+                          }}
+                          className={'function flex-grow h-[300px]'}
+                          value={policy}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 pt-2 px-2 flex-1 overflow-hidden min-w-0">
+                  <div className="flex-1 flex flex-col h-full overflow-hidden">
+                    <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
+                      <div className={clsx(textClass, 'font-bold text-lg')}>{t('Request')}</div>
+                      <RequestToolbar
+                        setupEnforceContextData={setupEnforceContextData}
+                        setupHandleEnforceContextChange={setupHandleEnforceContextChange}
+                        setRequestPersistent={setRequestPersistent}
+                      />
+                    </div>
+                    <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
+                      <div className="flex flex-col h-full">
+                        <CodeMirror
+                          height="100%"
+                          theme={monokai}
+                          onChange={handleRequestChange}
+                          extensions={[
+                            basicSetup,
+                            CasbinPolicySupport(),
+                            indentUnit.of('    '),
+                            EditorView.lineWrapping,
+                            buttonPlugin(openDrawerWithMessage, extractContent, 'request', t),
+                            linter(requestLinter),
+                            lintGutter(),
+                          ]}
+                          basicSetup={{
+                            lineNumbers: true,
+                            highlightActiveLine: true,
+                            bracketMatching: true,
+                            indentOnInput: true,
+                          }}
+                          className={'function flex-grow h-[300px]'}
+                          value={request}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-col h-full overflow-hidden">
+                    <div className={clsx('h-10 pl-2 font-bold text-lg', 'flex items-center justify-between')}>
+                      <div className={textClass}>{t('Enforcement Result')}</div>
+                      <div className="mr-4">
+                        <button
+                          className={clsx(
+                            'px-3 py-1.5 rounded-lg',
+                            'text-primary border border-primary',
+                            'bg-secondary hover:bg-primary hover:text-primary-foreground',
+                            'transition-all duration-200',
+                            'shadow-sm hover:shadow-md',
+                            'font-medium text-sm',
+                            'flex items-center gap-2',
+                          )}
+                          onClick={() => {
+                            if (sidePanelChatRef.current) {
+                              sidePanelChatRef.current.openDrawer('');
+                            }
+                          }}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d={
+                                'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907' +
+                                '-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                              }
+                            />
+                          </svg>
+                          <span>{t('Explain it')}</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
+                      <div className="flex flex-col h-full">
+                        <CodeMirror
+                          height="100%"
+                          onChange={() => {
+                            return;
+                          }}
+                          theme={monokai}
+                          extensions={[
+                            basicSetup,
+                            javascriptLanguage,
+                            indentUnit.of('    '),
+                            EditorView.lineWrapping,
+                            EditorView.editable.of(false),
+                            buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult', t),
+                            loadingOverlay(isLoading),
+                          ]}
+                          basicSetup={{
+                            lineNumbers: true,
+                            highlightActiveLine: true,
+                            bracketMatching: true,
+                            indentOnInput: true,
+                          }}
+                          className={'cursor-not-allowed flex-grow h-[300px]'}
+                          value={Object.keys(requestResults).length > 0 ? formatEngineResults(requestResults, selectedEngine) : requestResult}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <FooterToolbar
+                  runTest={runTest}
+                  shareInfo={shareInfo}
+                  handleShare={handleShare}
+                  modelKind={modelKind}
+                  modelText={modelText}
+                  policy={policy}
+                  customConfig={customConfig}
+                  request={request}
+                  enforceContextData={enforceContextData}
+                  selectedEngine={selectedEngine}
+                  comparisonEngines={comparisonEngines}
+                  echo={echo}
+                  textClass={textClass}
+                  toggleTheme={toggleTheme}
+                  theme={theme}
+                  requestResult={requestResult}
+                />
+              </div>
+            </Panel>
+          </PanelGroup>
         </div>
-        <FooterToolbar
-          runTest={runTest}
-          shareInfo={shareInfo}
-          handleShare={handleShare}
-          modelKind={modelKind}
-          modelText={modelText}
-          policy={policy}
-          customConfig={customConfig}
-          request={request}
-          enforceContextData={enforceContextData}
-          selectedEngine={selectedEngine}
-          comparisonEngines={comparisonEngines}
-          echo={echo}
-          textClass={textClass}
-          toggleTheme={toggleTheme}
-          theme={theme}
-          requestResult={requestResult}
-        />
-      </div>
+        
+        {/* Mobile main editor - shown when sidebar is not visible on mobile */}
+        {!showCustomConfig && (
+          <div className="sm:hidden flex flex-col h-full min-w-0 w-full">
+            <div className="flex flex-col sm:flex-row gap-2 pt-4 px-2 flex-1 overflow-hidden min-w-0">
+              <div className="flex-1 flex flex-col h-full overflow-hidden">
+                <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-2')}>
+                  <div className={clsx(textClass, 'font-bold text-lg')}>{t('Model')}</div>
+                  <ModelToolbar
+                    modelKind={modelKind}
+                    setModelKind={setModelKind}
+                    setRequestResults={setRequestResults}
+                    setModelTextPersistent={setModelTextPersistent}
+                  />
+                  <div className="ml-auto mr-2">
+                    <button
+                      className={clsx(
+                        'rounded-lg',
+                        'flex items-center justify-center',
+                        'border border-primary',
+                        'text-primary',
+                        'bg-secondary',
+                        'hover:bg-primary hover:text-primary-foreground',
+                        'transition-all duration-200',
+                        'shadow-sm hover:shadow-md',
+                        'p-2',
+                      )}
+                      onClick={() => {
+                        return setShowCustomConfig(!showCustomConfig);
+                      }}
+                    >
+                      <svg
+                        className={clsx('h-5 w-5')}
+                        style={{
+                          transform: showCustomConfig ? 'rotateZ(90deg)' : 'rotateZ(-90deg)',
+                        }}
+                        viewBox="0 0 24 24"
+                      >
+                        <path fill={'currentColor'} d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
+                  <div className="flex flex-col h-full">
+                    <CodeMirror
+                      height="100%"
+                      theme={monokai}
+                      onChange={handleModelTextChange}
+                      basicSetup={{
+                        lineNumbers: true,
+                        highlightActiveLine: true,
+                        bracketMatching: true,
+                        indentOnInput: true,
+                      }}
+                      extensions={[
+                        basicSetup,
+                        CasbinConfSupport(),
+                        indentUnit.of('    '),
+                        EditorView.lineWrapping,
+                        buttonPlugin(openDrawerWithMessage, extractContent, 'model', t),
+                        linter(casbinLinter),
+                        lintGutter(),
+                      ]}
+                      className={'function flex-grow h-[300px]'}
+                      value={modelText}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 flex flex-col h-full overflow-hidden">
+                <div className="h-10 pl-2 font-bold text-lg flex items-center justify-between">
+                  <div className={textClass}>{t('Policy')}</div>
+                  <PolicyToolbar
+                    setPolicyPersistent={setPolicyPersistent}
+                    selectedEngine={selectedEngine}
+                    comparisonEngines={comparisonEngines}
+                    handleEngineChange={handleEngineChange}
+                    versions={versions}
+                    engineGithubLinks={engineGithubLinks}
+                  />
+                </div>
+                <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
+                  <div className="flex flex-col h-full">
+                    <CodeMirror
+                      height="100%"
+                      extensions={[
+                        basicSetup,
+                        CasbinPolicySupport(),
+                        indentUnit.of('    '),
+                        EditorView.lineWrapping,
+                        buttonPlugin(openDrawerWithMessage, extractContent, 'policy', t),
+                        linter(policyLinter),
+                        lintGutter(),
+                      ]}
+                      basicSetup={{
+                        lineNumbers: true,
+                        highlightActiveLine: true,
+                        bracketMatching: true,
+                        indentOnInput: true,
+                      }}
+                      theme={monokai}
+                      onChange={handlePolicyChange}
+                      onCreateEditor={(view) => {
+                        policyViewRef.current = view;
+                      }}
+                      className={'function flex-grow h-[300px]'}
+                      value={policy}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 pt-2 px-2 flex-1 overflow-hidden min-w-0">
+              <div className="flex-1 flex flex-col h-full overflow-hidden">
+                <div className={clsx('h-10 pl-2', 'flex items-center justify-start gap-3')}>
+                  <div className={clsx(textClass, 'font-bold text-lg')}>{t('Request')}</div>
+                  <RequestToolbar
+                    setupEnforceContextData={setupEnforceContextData}
+                    setupHandleEnforceContextChange={setupHandleEnforceContextChange}
+                    setRequestPersistent={setRequestPersistent}
+                  />
+                </div>
+                <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
+                  <div className="flex flex-col h-full">
+                    <CodeMirror
+                      height="100%"
+                      theme={monokai}
+                      onChange={handleRequestChange}
+                      extensions={[
+                        basicSetup,
+                        CasbinPolicySupport(),
+                        indentUnit.of('    '),
+                        EditorView.lineWrapping,
+                        buttonPlugin(openDrawerWithMessage, extractContent, 'request', t),
+                        linter(requestLinter),
+                        lintGutter(),
+                      ]}
+                      basicSetup={{
+                        lineNumbers: true,
+                        highlightActiveLine: true,
+                        bracketMatching: true,
+                        indentOnInput: true,
+                      }}
+                      className={'function flex-grow h-[300px]'}
+                      value={request}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 flex flex-col h-full overflow-hidden">
+                <div className={clsx('h-10 pl-2 font-bold text-lg', 'flex items-center justify-between')}>
+                  <div className={textClass}>{t('Enforcement Result')}</div>
+                  <div className="mr-4">
+                    <button
+                      className={clsx(
+                        'px-3 py-1.5 rounded-lg',
+                        'text-primary border border-primary',
+                        'bg-secondary hover:bg-primary hover:text-primary-foreground',
+                        'transition-all duration-200',
+                        'shadow-sm hover:shadow-md',
+                        'font-medium text-sm',
+                        'flex items-center gap-2',
+                      )}
+                      onClick={() => {
+                        if (sidePanelChatRef.current) {
+                          sidePanelChatRef.current.openDrawer('');
+                        }
+                      }}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d={
+                            'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907' +
+                            '-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                          }
+                        />
+                      </svg>
+                      <span>{t('Explain it')}</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex-grow overflow-auto h-full rounded-lg border border-border shadow-sm bg-white dark:bg-slate-800">
+                  <div className="flex flex-col h-full">
+                    <CodeMirror
+                      height="100%"
+                      onChange={() => {
+                        return;
+                      }}
+                      theme={monokai}
+                      extensions={[
+                        basicSetup,
+                        javascriptLanguage,
+                        indentUnit.of('    '),
+                        EditorView.lineWrapping,
+                        EditorView.editable.of(false),
+                        buttonPlugin(openDrawerWithMessage, extractContent, 'enforcementResult', t),
+                        loadingOverlay(isLoading),
+                      ]}
+                      basicSetup={{
+                        lineNumbers: true,
+                        highlightActiveLine: true,
+                        bracketMatching: true,
+                        indentOnInput: true,
+                      }}
+                      className={'cursor-not-allowed flex-grow h-[300px]'}
+                      value={Object.keys(requestResults).length > 0 ? formatEngineResults(requestResults, selectedEngine) : requestResult}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <FooterToolbar
+              runTest={runTest}
+              shareInfo={shareInfo}
+              handleShare={handleShare}
+              modelKind={modelKind}
+              modelText={modelText}
+              policy={policy}
+              customConfig={customConfig}
+              request={request}
+              enforceContextData={enforceContextData}
+              selectedEngine={selectedEngine}
+              comparisonEngines={comparisonEngines}
+              echo={echo}
+              textClass={textClass}
+              toggleTheme={toggleTheme}
+              theme={theme}
+              requestResult={requestResult}
+            />
+          </div>
+        )}
+        
         <SidePanelChat
           ref={sidePanelChatRef}
           customConfig={customConfig}
