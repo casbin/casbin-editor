@@ -66,7 +66,6 @@ export const EditorScreen = () => {
   const [showCustomConfig, setShowCustomConfig] = useState(false);
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [requestResults, setRequestResults] = useState<ResultsMap>({});
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const skipNextEffectRef = useRef(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
   const policyViewRef = useRef<any | null>(null);
@@ -798,9 +797,6 @@ export const EditorScreen = () => {
         <SidePanelChat
           ref={sidePanelChatRef}
           customConfig={customConfig}
-          onOpenChange={(open: boolean) => {
-            setIsChatOpen(open);
-          }}
         />
       </div>
     </div>
