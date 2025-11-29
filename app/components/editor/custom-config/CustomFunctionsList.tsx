@@ -45,7 +45,7 @@ export const CustomFunctionsList: React.FC<CustomFunctionsListProps> = ({
   t,
 }) => {
   return (
-    <div className="h-32 overflow-auto min-h-0 flex-shrink-0 px-2 space-y-2">
+    <div className="h-full overflow-auto min-h-0 px-2 space-y-2">
       {/* Render all functions; container is scrollable when there are many */}
       {functions.length === 0 && (
         <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400 text-sm">
