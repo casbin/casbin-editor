@@ -62,7 +62,6 @@ export const EditorScreen = () => {
   const { shareInfo } = useShareInfo();
   const { t, lang, theme, toggleTheme } = useLang();
   const { disableAutoCarousel } = useAutoCarousel();
-  const [open, setOpen] = useState(true);
   const [showCustomConfig, setShowCustomConfig] = useState(false);
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [requestResults, setRequestResults] = useState<ResultsMap>({});
@@ -285,8 +284,6 @@ export const EditorScreen = () => {
           <div className="sm:hidden border-r border-border shadow-sm">
             <div className="flex flex-col h-full w-full">
               <CustomConfigPanel
-                open={true}
-                setOpen={setOpen}
                 showCustomConfig={showCustomConfig}
                 customConfig={customConfig}
                 setCustomConfigPersistent={handleCustomConfigChange}
@@ -302,42 +299,16 @@ export const EditorScreen = () => {
         {/* Desktop layout with resizable panels */}
         <div className="hidden sm:flex flex-1 overflow-hidden">
           <PanelGroup direction="horizontal" className="flex-1">
-            {/* Sidebar Panel - only shown when open */}
-            {open && (
-              <>
-                <Panel 
-                  defaultSize={25} 
-                  minSize={15} 
-                  maxSize={50}
-                  className="border-r border-border shadow-sm"
-                >
-                  <div className="relative flex flex-col h-full w-full">
-                    <CustomConfigPanel
-                      open={open}
-                      setOpen={setOpen}
-                      showCustomConfig={showCustomConfig}
-                      customConfig={customConfig}
-                      setCustomConfigPersistent={handleCustomConfigChange}
-                      textClass={textClass}
-                      t={t}
-                      policy={policy}
-                      modelKind={modelKind}
-                    />
-                  </div>
-                </Panel>
-                <PanelResizeHandle className="w-2 flex items-center justify-center cursor-col-resize hover:bg-primary/10 transition-colors group">
-                  <div className="h-16 w-1 rounded-full bg-border group-hover:bg-primary/50 transition-colors" />
-                </PanelResizeHandle>
-              </>
-            )}
-            
-            {/* Collapsed sidebar toggle - shown when sidebar is collapsed */}
-            {!open && (
-              <div className="relative w-5 border-r border-border shadow-sm flex-shrink-0">
+            {/* Sidebar Panel */}
+            <Panel 
+              defaultSize={25} 
+              minSize={15} 
+              maxSize={50}
+              className="border-r border-border shadow-sm"
+            >
+              <div className="relative flex flex-col h-full w-full">
                 <CustomConfigPanel
-                  open={open}
-                  setOpen={setOpen}
-                  showCustomConfig={false}
+                  showCustomConfig={true}
                   customConfig={customConfig}
                   setCustomConfigPersistent={handleCustomConfigChange}
                   textClass={textClass}
@@ -346,10 +317,13 @@ export const EditorScreen = () => {
                   modelKind={modelKind}
                 />
               </div>
-            )}
+            </Panel>
+            <PanelResizeHandle className="w-2 flex items-center justify-center cursor-col-resize hover:bg-primary/10 transition-colors group">
+              <div className="h-16 w-1 rounded-full bg-border group-hover:bg-primary/50 transition-colors" />
+            </PanelResizeHandle>
             
             {/* Main Editor Panel */}
-            <Panel defaultSize={open ? 75 : 100} minSize={50}>
+            <Panel defaultSize={75} minSize={50}>
               <div className="flex flex-col h-full min-w-0">
                 <div className="flex flex-col sm:flex-row gap-2 pt-4 px-2 flex-1 overflow-hidden min-w-0">
                   <div className="flex-1 flex flex-col h-full overflow-hidden">
