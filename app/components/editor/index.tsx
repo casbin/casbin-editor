@@ -7,7 +7,7 @@ import { monokai } from '@uiw/codemirror-theme-monokai';
 import { basicSetup } from 'codemirror';
 import { indentUnit } from '@codemirror/language';
 import { EditorView, Decoration } from '@codemirror/view';
-import { StateEffect, StateField } from '@codemirror/state';
+import { StateEffect, StateField, StateEffectType } from '@codemirror/state';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
 import { linter, lintGutter } from '@codemirror/lint';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
@@ -172,16 +172,22 @@ export const EditorScreen = () => {
 
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
 
-  useEffect(() => {
-    // Define a StateEffect and StateField to manage line decorations
-    const setPolicyHighlights = StateEffect.define<any>();
-    const policyHighlightsField = StateField.define<any>({
+  // Define StateEffect and StateField at module level (outside useEffect) to persist across renders
+  const setPolicyHighlightsRef = useRef<StateEffectType<any>>();
+  const policyHighlightsFieldRef = useRef<StateField<any>>();
+
+  if (!setPolicyHighlightsRef.current) {
+    setPolicyHighlightsRef.current = StateEffect.define<any>();
+  }
+
+  if (!policyHighlightsFieldRef.current) {
+    policyHighlightsFieldRef.current = StateField.define<any>({
       create() {
         return Decoration.none;
       },
       update(value, tr) {
         for (const effect of tr.effects) {
-          if (effect.is(setPolicyHighlights)) return effect.value;
+          if (effect.is(setPolicyHighlightsRef.current!)) return effect.value;
         }
         if (tr.docChanged) return value.map(tr.changes);
         return value;
@@ -190,14 +196,19 @@ export const EditorScreen = () => {
         return EditorView.decorations.from(f);
       },
     });
+  }
+
+  useEffect(() => {
+    const setPolicyHighlights = setPolicyHighlightsRef.current!;
+    const policyHighlightsField = policyHighlightsFieldRef.current!;
 
     const handler = (e: any) => {
       const detail = e?.detail || { nodes: [], links: [] };
       const links = Array.isArray(detail.links) ? detail.links : [];
-      if (!policyViewRef.current) return;
+      // Access the current value of the ref on each event
+      const view = policyViewRef.current;
+      if (!view) return;
       try {
-        const view = policyViewRef.current;
-
         // Ensure the field is installed on the editor (append once)
         let hasField = true;
         try {
