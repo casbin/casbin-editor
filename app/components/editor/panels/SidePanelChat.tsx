@@ -1,4 +1,5 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import { X } from 'lucide-react';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { useLang } from '@/app/context/LangContext';
 import { clsx } from 'clsx';
@@ -53,9 +54,7 @@ const SidePanelChat = forwardRef<any, { onOpenChange?: (open: boolean) => void; 
             <div>AI Assistant</div>
           </a>
           <button onClick={toggleDrawer} className="text-gray-500 hover:text-gray-700">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <X className="w-6 h-6" />
           </button>
         </div>
         <div className="flex-1 h-[calc(100%-60px)]">

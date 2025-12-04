@@ -1,6 +1,7 @@
 import { clsx } from 'clsx';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'; 
 import * as Switch from '@radix-ui/react-switch';
+import { ChevronDown } from 'lucide-react';
 import { FileUploadButton } from '@/app/components/editor/common/FileUploadButton';
 import { example } from '@/app/components/editor/casbin-mode/example';
 import { useLang } from '@/app/context/LangContext';
@@ -65,14 +66,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
               <span className="truncate text-sm">    
                 {modelKind ? example[modelKind]?.name : t('Select your model')}    
               </span>    
-              {/* Dropdown arrow icon */}    
-              <svg className="w-3 h-3 flex-shrink-0 ml-2" fill="currentColor" viewBox="0 0 20 20">    
-                <path   
-                  fillRule="evenodd"   
-                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"   
-                  clipRule="evenodd"   
-                />    
-              </svg>    
+              <ChevronDown className="w-3 h-3 flex-shrink-0 ml-2" />    
             </button>    
           </DropdownMenu.Trigger>    
               
