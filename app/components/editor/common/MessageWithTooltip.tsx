@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { clsx } from 'clsx';
+import { Check } from 'lucide-react';
 
 interface MessageWithTooltipProps {
   message: React.ReactNode;
@@ -60,9 +61,7 @@ export const MessageWithTooltip: React.FC<MessageWithTooltipProps> = ({ message,
         onMouseLeave={handleMouseLeave}
       >
         {isDoneMessage && (
-          <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-          </svg>
+          <Check className="w-5 h-5 flex-shrink-0" />
         )}
         {message}
       </div>

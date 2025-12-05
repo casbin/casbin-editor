@@ -11,6 +11,7 @@ import { StateEffect, StateField } from '@codemirror/state';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
 import { linter, lintGutter } from '@codemirror/lint';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
+import { HelpCircle, ChevronLeft } from 'lucide-react';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
 import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
@@ -171,6 +172,7 @@ export const EditorScreen = () => {
   };
 
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
+  const iconFilterClass = theme === 'dark' ? '' : 'filter invert';
 
   useEffect(() => {
     // Define a StateEffect and StateField to manage line decorations
@@ -263,17 +265,7 @@ export const EditorScreen = () => {
             'flex items-center gap-2',
           )}
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z
-                M14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z
-                M4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z
-                M14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-            />
-          </svg>
+          <img src="/modelGallery.svg" alt="Model Gallery" className={clsx('w-5 h-5', iconFilterClass)} />
           <span>{t('Model Gallery')}</span>
         </a>
       </div>
@@ -464,17 +456,7 @@ export const EditorScreen = () => {
                             }
                           }}
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d={
-                                'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907' +
-                                '-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                              }
-                            />
-                          </svg>
+                          <HelpCircle className="w-4 h-4" />
                           <span>{t('Explain it')}</span>
                         </button>
                       </div>
@@ -562,15 +544,12 @@ export const EditorScreen = () => {
                         return setShowCustomConfig(!showCustomConfig);
                       }}
                     >
-                      <svg
+                      <ChevronLeft
                         className={clsx('h-5 w-5')}
                         style={{
                           transform: showCustomConfig ? 'rotateZ(90deg)' : 'rotateZ(-90deg)',
                         }}
-                        viewBox="0 0 24 24"
-                      >
-                        <path fill={'currentColor'} d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
-                      </svg>
+                      />
                     </button>
                   </div>
                 </div>
@@ -702,17 +681,7 @@ export const EditorScreen = () => {
                         }
                       }}
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d={
-                            'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907' +
-                            '-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                          }
-                        />
-                      </svg>
+                      <HelpCircle className="w-4 h-4" />
                       <span>{t('Explain it')}</span>
                     </button>
                   </div>

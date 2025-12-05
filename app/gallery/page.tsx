@@ -16,6 +16,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
+import { ArrowLeft } from 'lucide-react';
 import { useLang } from '@/app/context/LangContext';
 import { modelMetadata, categories } from '@/app/config/modelMetadata';
 
@@ -64,19 +65,7 @@ export default function GalleryPage() {
               }}
               className="text-primary hover:text-primary/80 transition-colors"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
+              <ArrowLeft className="w-6 h-6" />
             </button>
             <img
               src="https://cdn.casbin.org/img/casbin_logo_1024x256.png"
