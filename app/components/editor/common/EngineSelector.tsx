@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { ChevronDown, Split, Github } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useLang } from '@/app/context/LangContext';
 import { useAutoCarousel } from '@/app/context/AutoCarouselContext';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'; 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/app/components/ui/tooltip';
 import { EngineType, ENGINES } from '@/app/config/engineConfig';
 import type { VersionInfo } from '@/app/components/hooks/useRemoteEnforcer';
+import { clsx } from 'clsx';
 
 interface EngineSelectorProps {
   selectedEngine: EngineType;
@@ -16,10 +17,10 @@ interface EngineSelectorProps {
 }
 
 export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, comparisonEngines, onEngineChange, versions, engineGithubLinks }) => {
-  const { t } = useLang();
+  const { t, theme } = useLang();
+  const iconFilterClass = theme === 'dark' ? 'filter invert' : '';
   const { disableAutoCarousel } = useAutoCarousel();
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
   const engines = Object.entries(ENGINES).map(([id, config]) => {
     return {
@@ -134,10 +135,21 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
                 <button          
                   className={          
                     "border border-primary rounded-lg px-2 py-1 text-primary bg-secondary " +          
-                    "hover:bg-primary hover:text-primary-foreground transition-all duration-200"          
+                    "hover:bg-primary hover:text-primary-foreground transition-all duration-200 " +
+                    "flex items-center justify-center"          
                   }          
-                >          
-                  <Split className="w-4 h-4" />          
+                >
+                  <span
+                    className={clsx('w-4 h-4 inline-flex items-center justify-center')}
+                    style={{
+                      maskImage: "url('/compareEngines.svg')",
+                      maskRepeat: 'no-repeat',
+                      maskSize: 'contain',
+                      maskPosition: 'center center',
+                      backgroundColor: 'currentColor',
+                      transition: 'opacity 0.2s, filter 0.5s',
+                    }}
+                  />
                 </button>          
               </DropdownMenu.Trigger>        
             </TooltipTrigger>          
@@ -192,28 +204,39 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
         </DropdownMenu.Content>        
       </DropdownMenu.Root>        
         
-      <TooltipProvider>          
-        <Tooltip>          
-          <TooltipTrigger asChild>          
-            <a           
-              href={engineGithubLinks[selectedEngine]}           
-              target="_blank"           
-              rel="noopener noreferrer"           
-              className="text-primary hover:text-primary/80 transition-colors"          
-            >          
-              <Github className="w-5 h-5" />          
-            </a>          
-          </TooltipTrigger>          
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <a
+              href={engineGithubLinks[selectedEngine]}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:text-primary/80 transition-colors group"
+            >
+              <span
+                className={clsx('w-5 h-5 inline-flex items-center justify-center transition-opacity duration-200 group-hover:opacity-80')}
+                style={{
+                  maskImage: "url('/github.svg')",
+                  maskRepeat: 'no-repeat',
+                  maskSize: 'contain',
+                  maskPosition: 'center center',
+                  backgroundColor: 'currentColor',
+                  transition: 'opacity 0.2s, filter 0.5s',
+                  verticalAlign: 'middle',
+                }}
+              />
+            </a>
+          </TooltipTrigger>
           <TooltipContent 
             className={
               "bg-white dark:bg-gray-800 text-primary " +
               "border border-primary"
             }
           >          
-            <p>{t('View Source Code')}</p>          
-          </TooltipContent>          
-        </Tooltip>          
-      </TooltipProvider>        
-    </div>   
+            <p>{t('View Source Code')}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
   );
 };

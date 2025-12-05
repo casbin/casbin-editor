@@ -11,7 +11,7 @@ import { StateEffect, StateField } from '@codemirror/state';
 import { javascriptLanguage } from '@codemirror/lang-javascript';
 import { linter, lintGutter } from '@codemirror/lint';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
-import { Grid3x3, HelpCircle, ChevronLeft } from 'lucide-react';
+import { HelpCircle, ChevronLeft } from 'lucide-react';
 import { CasbinConfSupport } from '@/app/components/editor/casbin-mode/casbin-conf';
 import { CasbinPolicySupport } from '@/app/components/editor/casbin-mode/casbin-csv';
 import SidePanelChat from '@/app/components/editor/panels/SidePanelChat';
@@ -172,6 +172,7 @@ export const EditorScreen = () => {
   };
 
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
+  const iconFilterClass = theme === 'dark' ? '' : 'filter invert';
 
   useEffect(() => {
     // Define a StateEffect and StateField to manage line decorations
@@ -264,7 +265,7 @@ export const EditorScreen = () => {
             'flex items-center gap-2',
           )}
         >
-          <Grid3x3 className="w-5 h-5" />
+          <img src="/modelGallery.svg" alt="Model Gallery" className={clsx('w-5 h-5', iconFilterClass)} />
           <span>{t('Model Gallery')}</span>
         </a>
       </div>
