@@ -41,7 +41,7 @@ export const PolicyToolbar: React.FC<PolicyToolbarProps> = ({
     check();
 
     return () => {
-      return ro.disconnect();
+      ro.disconnect();
     };
   }, []);
 

@@ -66,7 +66,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
     check();
 
     return () => {
-      return ro.disconnect();
+      ro.disconnect();
     };
   }, []);
 
