@@ -92,13 +92,24 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
 
   // Add new function
   const addNewFunction = () => {
-    const regularFunctionCount = functions.filter((f) => {
-      return !['matchingForGFunction', 'matchingDomainForGFunction'].includes(f.name);
-    }).length;
+    // Find the highest function number in existing my_func names to avoid duplicates
+    const existingNumbers = functions
+      .filter((f) => {
+        return !['matchingForGFunction', 'matchingDomainForGFunction'].includes(f.name);
+      })
+      .map((f) => {
+        const match = f.name.match(/^my_func(\d+)$/);
+        return match ? parseInt(match[1], 10) : 0;
+      })
+      .filter((num) => {
+        return num > 0;
+      });
+
+    const nextNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) + 1 : 1;
 
     const newFunction = {
       id: Date.now().toString(),
-      name: `my_func${regularFunctionCount + 1}`,
+      name: `my_func${nextNumber}`,
       body: '(arg1, arg2) => {\n  return arg1.endsWith(arg2);\n}',
     };
     setFunctions([...functions, newFunction]);
