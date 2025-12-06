@@ -15,16 +15,16 @@
 import { IndentContext, LanguageSupport, StreamLanguage, StringStream } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
 
-const token = (stream: StringStream, state) => {
+export const token = (stream: StringStream, state) => {
   if (stream.sol()) {
     state.afterEqual = false;
 
-    if (stream.match(/[rpgem]\s*=/)) {
+    if (stream.match(/[rpem]\s*=/) || stream.match(/g\d*\s*=/)) {
       stream.backUp(1);
       return 'builtin';
     }
 
-    if (state.sec === 'matchers' && stream.match(/[rpgem]\./)) {
+    if (state.sec === 'matchers' && (stream.match(/[rpem]\./) || stream.match(/g\d*\./))) {
       return 'builtin';
     }
   }
@@ -55,7 +55,7 @@ const token = (stream: StringStream, state) => {
       if (stream.match(/[a-zA-Z_][a-zA-Z0-9_]*\(/)) {
         return 'def';
       }
-      if (stream.match(/[rpgem](?=\.)/)) {
+      if (stream.match(/[rpem](?=\.)/) || stream.match(/g\d*(?=\.)/)) {
         return 'builtin';
       }
       if (stream.eat('.')) {
