@@ -55,7 +55,7 @@ export const token = (stream: StringStream, state) => {
       if (stream.match(/[a-zA-Z_][a-zA-Z0-9_]*\(/)) {
         return 'def';
       }
-      if (stream.match(/[rpgem](?=\.)/)) {
+      if (stream.match(/[rpem](?=\.)/) || stream.match(/g\d*(?=\.)/)) {
         return 'builtin';
       }
       if (stream.eat('.')) {
