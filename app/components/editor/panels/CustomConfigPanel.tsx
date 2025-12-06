@@ -90,10 +90,9 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
     }
   }, [customConfig, isEditing]);
 
-  // Add new function
-  const addNewFunction = () => {
-    // Find the highest function number in existing my_func names to avoid duplicates
-    const existingNumbers = functions
+  // Generate the next unique function name by finding the highest number used
+  const generateNextFunctionName = (existingFunctions: FunctionConfig[]): string => {
+    const existingNumbers = existingFunctions
       .filter((f) => {
         return !['matchingForGFunction', 'matchingDomainForGFunction'].includes(f.name);
       })
@@ -106,10 +105,14 @@ export const CustomConfigPanel: React.FC<CustomConfigPanelProps> = ({
       });
 
     const nextNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) + 1 : 1;
+    return `my_func${nextNumber}`;
+  };
 
+  // Add new function
+  const addNewFunction = () => {
     const newFunction = {
       id: Date.now().toString(),
-      name: `my_func${nextNumber}`,
+      name: generateNextFunctionName(functions),
       body: '(arg1, arg2) => {\n  return arg1.endsWith(arg2);\n}',
     };
     setFunctions([...functions, newFunction]);
