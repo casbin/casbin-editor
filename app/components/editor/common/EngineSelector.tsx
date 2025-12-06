@@ -14,9 +14,17 @@ interface EngineSelectorProps {
   onEngineChange: (primary: EngineType, comparison: EngineType[]) => void;
   versions: Record<EngineType, VersionInfo>;
   engineGithubLinks: Record<EngineType, string>;
+  compactMode?: boolean;
 }
 
-export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, comparisonEngines, onEngineChange, versions, engineGithubLinks }) => {
+export const EngineSelector: React.FC<EngineSelectorProps> = ({
+  selectedEngine,
+  comparisonEngines,
+  onEngineChange,
+  versions,
+  engineGithubLinks,
+  compactMode = false,
+}) => {
   const { t, theme } = useLang();
   const iconFilterClass = theme === 'dark' ? 'filter invert' : '';
   const { disableAutoCarousel } = useAutoCarousel();
@@ -71,23 +79,22 @@ export const EngineSelector: React.FC<EngineSelectorProps> = ({ selectedEngine, 
     : selectedEngine;    
 
   return (
-    <div className="relative flex items-center gap-2">             
-      <DropdownMenu.Root open={isOpen} onOpenChange={handleOpenChange}>          
-        <DropdownMenu.Trigger asChild>          
-          <button           
-            className={          
-              "bg-secondary border border-primary rounded-lg px-2 py-1 " +          
-              "text-primary focus:outline-none hover:bg-primary hover:text-primary-foreground " +          
-              "w-[200px] sm:w-[360px] text-left flex justify-between items-center transition-all duration-200"          
-            }          
-          >          
-            <span className="truncate text-sm">          
-              {displayText}          
-            </span>          
-            <ChevronDown           
-              className={`w-3 h-3 flex-shrink-0 ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`}           
-            />          
-          </button>          
+    <div className="relative flex items-center gap-2">
+      <DropdownMenu.Root open={isOpen} onOpenChange={handleOpenChange}>
+        <DropdownMenu.Trigger asChild>
+          <button
+            className={
+              'bg-secondary border border-primary rounded-lg px-2 py-1 ' +
+              'text-primary focus:outline-none hover:bg-primary hover:text-primary-foreground ' +
+              (compactMode ? 'w-[150px]' : 'w-[200px] sm:w-[360px]') +
+              ' text-left flex justify-between items-center transition-all duration-200'
+            }
+          >
+            <span className="truncate text-sm">{displayText}</span>
+            <ChevronDown
+              className={`w-3 h-3 flex-shrink-0 ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
         </DropdownMenu.Trigger>          
                   
         <DropdownMenu.Content           
