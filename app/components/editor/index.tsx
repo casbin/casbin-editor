@@ -614,9 +614,6 @@ export const EditorScreen = () => {
                       }}
                       theme={monokai}
                       onChange={handlePolicyChange}
-                      onCreateEditor={(view) => {
-                        policyViewRef.current = view;
-                      }}
                       className={'function flex-grow h-[300px]'}
                       value={policy}
                     />
