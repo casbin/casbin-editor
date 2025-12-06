@@ -6,7 +6,7 @@ import { FileUploadButton } from '@/app/components/editor/common/FileUploadButto
 import { example } from '@/app/components/editor/casbin-mode/example';
 import { useLang } from '@/app/context/LangContext';
 import { useAutoCarousel } from '@/app/context/AutoCarouselContext';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/app/components/ui/tooltip';
 
 interface ModelSelectorProps {
@@ -20,8 +20,30 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
   const { t } = useLang();
   const { autoCarouselEnabled, setAutoCarouselEnabled, disableAutoCarousel } = useAutoCarousel();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const toolbarRef = useRef<HTMLDivElement | null>(null);
+  const [compactMode, setCompactMode] = useState(false);
   const modelKeys = useMemo(() => {
     return Object.keys(example);
+  }, []);
+
+  // ResizeObserver to detect when to use compact mode
+  useEffect(() => {
+    const el = toolbarRef.current;
+    if (!el) return;
+
+    const check = () => {
+      const w = el.clientWidth || 0;
+      // Switch to compact mode if width is less than 550px
+      setCompactMode(w < 550);
+    };
+
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    check();
+
+    return () => {
+      return ro.disconnect();
+    };
   }, []);
 
   // Auto carousel logic
@@ -49,7 +71,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
   }, [autoCarouselEnabled, modelKind, modelKeys, setModelKind, setRequestResults]);
 
   return (
-   <div className="flex-1 overflow-x-auto">    
+   <div ref={toolbarRef} className="flex-1 overflow-x-auto">    
       <div className="flex items-center gap-2 min-w-max">    
         {/* Radix UI Dropdown Menu with adjusted proportions */}    
         <DropdownMenu.Root onOpenChange={(open) => { if (open) disableAutoCarousel(); }}>    
@@ -57,7 +79,8 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
             {/* Longer and narrower button for better proportions */}    
             <button   
               className={clsx(
-                "border-border border rounded-lg w-[300px] sm:w-[380px]",
+                "border-border border rounded-lg",
+                compactMode ? "w-[200px]" : "w-[300px] sm:w-[380px]",
                 "h-9 px-3 py-2 text-left bg-white dark:bg-slate-700 hover:bg-secondary",
                 "flex justify-between items-center shadow-sm hover:shadow transition-all duration-200",
                 "text-gray-900 dark:text-gray-100",
@@ -109,7 +132,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
                 className={clsx(    
                   'rounded-lg',    
                   'text-primary',    
-                  'px-3 py-1',    
+                  compactMode ? 'px-2 py-1' : 'px-3 py-1',
                   'border border-primary',    
                   'bg-secondary',    
                   'hover:bg-primary hover:text-primary-foreground',    
@@ -124,7 +147,7 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
                   }    
                 }}    
               >    
-                {t('RESET')} 
+                {compactMode ? '↻' : t('RESET')}
               </button>
             </TooltipTrigger>
             <TooltipContent
@@ -137,12 +160,14 @@ export const ModelToolbar = ({ modelKind, setModelKind, setRequestResults, setMo
 
         {/* Auto Carousel Switch */}
         <div className="flex items-center gap-2">
-          <label
-            htmlFor="auto-carousel-switch"
-            className="text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            {t('Auto')}
-          </label>
+          {!compactMode && (
+            <label
+              htmlFor="auto-carousel-switch"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              {t('Auto')}
+            </label>
+          )}
           <Switch.Root
             id="auto-carousel-switch"
             checked={autoCarouselEnabled}
