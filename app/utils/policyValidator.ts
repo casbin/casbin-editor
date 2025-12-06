@@ -205,7 +205,8 @@ export function validatePolicy(policyText: string, modelText: string): PolicyVal
     const error = validatePolicyLine(line, definitions);
     
     if (error) {
-      const policyType = line.trim().split(',')[0];
+      const trimmedLine = line.trim();
+      const policyType = trimmedLine.includes(',') ? trimmedLine.split(',')[0] : trimmedLine;
       errors.push({
         line: i + 1, // 1-indexed for user display
         message: error,
