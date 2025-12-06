@@ -29,7 +29,7 @@ export const token = (stream: StringStream, state) => {
   if (stream.sol() && stream.match(/^p(?=\s*,)/)) {
     return 'def';
   }
-  if (stream.sol() && (stream.match(/^g2(?=\s*,)/) || stream.match(/^g(?=\s*,)/))) {
+  if (stream.sol() && stream.match(/^g\d*(?=\s*,)/)) {
     return 'keyword';
   }
 
