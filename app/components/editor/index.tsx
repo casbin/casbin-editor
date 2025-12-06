@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { clsx } from 'clsx';
 import { Toaster } from 'react-hot-toast';
 import CodeMirror from '@uiw/react-codemirror';
@@ -30,7 +30,7 @@ import { buttonPlugin } from '@/app/components/editor/plugins/ButtonPlugin';
 import { loadingOverlay } from '@/app/components/editor/plugins/LoadingOverlayExtension';
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
-import { casbinLinter, policyLinter, requestLinter } from '@/app/utils/casbinLinter';
+import { casbinLinter, createPolicyLinter, requestLinter } from '@/app/utils/casbinLinter';
 import { useLang } from '@/app/context/LangContext';
 import { useAutoCarousel } from '@/app/context/AutoCarouselContext';
 import type { EngineType } from '@/app/config/engineConfig';
@@ -75,15 +75,15 @@ export const EditorScreen = () => {
   });
   const { versions, engineGithubLinks } = useEngineVersions();
   const { handleEnforcerCall, isLoading } = useEnforceCall(enforcer, setEcho, setRequestResult, setRequestResults, t);
-  const openDrawerWithMessage = (message: string) => {
+  const openDrawerWithMessage = useCallback((message: string) => {
     if (sidePanelChatRef.current) {
       sidePanelChatRef.current.openDrawer(message);
     }
-  };
-  const extractContent = (boxType: string) => {
+  }, []);
+  const extractContent = useCallback((boxType: string) => {
     const { message } = extractPageContent(boxType, t, lang, customConfig);
     return message;
-  };
+  }, [t, lang, customConfig]);
 
   // Wrapper functions that disable auto carousel before updating editor content
   const handleModelTextChange = useCallback((value: string) => {
@@ -105,6 +105,19 @@ export const EditorScreen = () => {
     disableAutoCarousel();
     setCustomConfigPersistent(value);
   }, [disableAutoCarousel, setCustomConfigPersistent]);
+
+  // Create policy linter that validates against model
+  const policyLinterExtensions = useMemo(() => {
+    return [
+      basicSetup,
+      CasbinPolicySupport(),
+      indentUnit.of('    '),
+      EditorView.lineWrapping,
+      buttonPlugin(openDrawerWithMessage, extractContent, 'policy', t),
+      linter(createPolicyLinter(modelText)),
+      lintGutter(),
+    ];
+  }, [modelText, t, extractContent, openDrawerWithMessage]);
 
   const runTest = () => {
     return handleEnforcerCall({
@@ -372,15 +385,7 @@ export const EditorScreen = () => {
                       <div className="flex flex-col h-full">
                         <CodeMirror
                           height="100%"
-                          extensions={[
-                            basicSetup,
-                            CasbinPolicySupport(),
-                            indentUnit.of('    '),
-                            EditorView.lineWrapping,
-                            buttonPlugin(openDrawerWithMessage, extractContent, 'policy', t),
-                            linter(policyLinter),
-                            lintGutter(),
-                          ]}
+                          extensions={policyLinterExtensions}
                           basicSetup={{
                             lineNumbers: true,
                             highlightActiveLine: true,
@@ -597,15 +602,7 @@ export const EditorScreen = () => {
                   <div className="flex flex-col h-full">
                     <CodeMirror
                       height="100%"
-                      extensions={[
-                        basicSetup,
-                        CasbinPolicySupport(),
-                        indentUnit.of('    '),
-                        EditorView.lineWrapping,
-                        buttonPlugin(openDrawerWithMessage, extractContent, 'policy', t),
-                        linter(policyLinter),
-                        lintGutter(),
-                      ]}
+                      extensions={policyLinterExtensions}
                       basicSetup={{
                         lineNumbers: true,
                         highlightActiveLine: true,
