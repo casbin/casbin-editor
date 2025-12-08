@@ -46,7 +46,7 @@ export default function GalleryPage() {
   return (
     <main
       className={clsx(
-        'min-h-screen',
+        'min-h-screen flex flex-col',
         theme === 'dark' ? 'bg-customDark' : 'bg-gradient-to-br from-slate-50 to-slate-100',
       )}
     >
@@ -82,71 +82,73 @@ export default function GalleryPage() {
         </div>
       </div>
 
-      {/* Category Filter */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex flex-wrap gap-2 mb-8">
-          {categories.map((category) => {
-            return (
-              <button
-                key={category}
-                onClick={() => {
-                  return setSelectedCategory(category);
-                }}
-                className={clsx(
-                  'px-4 py-2 rounded-lg font-medium transition-all duration-200',
-                  selectedCategory === category
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : clsx(
-                        cardBgClass,
-                        textClass,
-                        'border border-border',
-                        hoverClass,
-                      ),
-                )}
-              >
-                {t(category)}
-              </button>
-            );
-          })}
-        </div>
+      {/* Category Filter and Model Grid */}
+      <div className="flex-grow">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex flex-wrap gap-2 mb-8">
+            {categories.map((category) => {
+              return (
+                <button
+                  key={category}
+                  onClick={() => {
+                    return setSelectedCategory(category);
+                  }}
+                  className={clsx(
+                    'px-4 py-2 rounded-lg font-medium transition-all duration-200',
+                    selectedCategory === category
+                      ? 'bg-primary text-primary-foreground shadow-md'
+                      : clsx(
+                          cardBgClass,
+                          textClass,
+                          'border border-border',
+                          hoverClass,
+                        ),
+                  )}
+                >
+                  {t(category)}
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Model Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredModels.map((model) => {
-            return (
-              <div
-                key={model.key}
-                onClick={() => {
-                  return handleModelClick(model.key);
-                }}
-                className={clsx(
-                  'rounded-lg border border-border shadow-sm cursor-pointer transition-all duration-200',
-                  cardBgClass,
-                  hoverClass,
-                  'hover:shadow-lg hover:border-primary/50',
-                )}
-              >
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className={clsx('text-xl font-semibold', textClass)}>
-                      {t(model.name)}
-                    </h3>
-                    <span
-                      className={clsx(
-                        'px-2 py-1 text-xs font-medium rounded',
-                        'bg-primary/10 text-primary',
-                      )}
-                    >
-                      {t(model.category)}
-                    </span>
+          {/* Model Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredModels.map((model) => {
+              return (
+                <div
+                  key={model.key}
+                  onClick={() => {
+                    return handleModelClick(model.key);
+                  }}
+                  className={clsx(
+                    'rounded-lg border border-border shadow-sm cursor-pointer transition-all duration-200',
+                    cardBgClass,
+                    hoverClass,
+                    'hover:shadow-lg hover:border-primary/50',
+                  )}
+                >
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className={clsx('text-xl font-semibold', textClass)}>
+                        {t(model.name)}
+                      </h3>
+                      <span
+                        className={clsx(
+                          'px-2 py-1 text-xs font-medium rounded',
+                          'bg-primary/10 text-primary',
+                        )}
+                      >
+                        {t(model.category)}
+                      </span>
+                    </div>
+                    <p className={clsx('text-sm', textClass, 'opacity-70')}>
+                      {t(model.description)}
+                    </p>
                   </div>
-                  <p className={clsx('text-sm', textClass, 'opacity-70')}>
-                    {t(model.description)}
-                  </p>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
