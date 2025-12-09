@@ -118,41 +118,41 @@ export default function GalleryPage() {
           </div>
 
           {/* Model Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredModels.map((model) => {
-              return (
-                <div
-                  key={model.key}
-                  className={clsx(
-                    'rounded-lg border border-border shadow-sm transition-all duration-200',
-                    cardBgClass,
-                    'hover:shadow-lg',
-                  )}
-                >
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className={clsx('text-xl font-semibold', textClass)}>
-                        {t(model.name)}
-                      </h3>
-                      <span
-                        className={clsx(
-                          'px-2 py-1 text-xs font-medium rounded',
-                          'bg-primary/10 text-primary',
-                        )}
-                      >
-                        {t(model.category)}
-                      </span>
-                    </div>
-                    <p className={clsx('text-sm mb-4', textClass, 'opacity-70')}>
-                      {t(model.description)}
-                    </p>
-                    <div className="flex justify-end">
-                      <TooltipProvider>
+          <TooltipProvider>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredModels.map((model) => {
+                return (
+                  <div
+                    key={model.key}
+                    className={clsx(
+                      'rounded-lg border border-border shadow-sm transition-all duration-200',
+                      cardBgClass,
+                      'hover:shadow-lg',
+                    )}
+                  >
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className={clsx('text-xl font-semibold', textClass)}>
+                          {t(model.name)}
+                        </h3>
+                        <span
+                          className={clsx(
+                            'px-2 py-1 text-xs font-medium rounded',
+                            'bg-primary/10 text-primary',
+                          )}
+                        >
+                          {t(model.category)}
+                        </span>
+                      </div>
+                      <p className={clsx('text-sm mb-4', textClass, 'opacity-70')}>
+                        {t(model.description)}
+                      </p>
+                      <div className="flex justify-end">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <button
                               onClick={() => {
-                                return handleModelClick(model.key);
+                                handleModelClick(model.key);
                               }}
                               className={clsx(
                                 'inline-flex items-center gap-2 px-4 py-2 rounded-lg',
@@ -170,13 +170,13 @@ export default function GalleryPage() {
                             <p>{t('Load in Editor')}</p>
                           </TooltipContent>
                         </Tooltip>
-                      </TooltipProvider>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          </TooltipProvider>
         </div>
       </div>
 
