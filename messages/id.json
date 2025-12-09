@@ -130,5 +130,7 @@
   "p (Policy)": "p (Kebijakan)",
   "g (Role)": "g (Peran)",
   "g2 (Resource)": "g2 (Sumber Daya)",
-  "g3 (Domain)": "g3 (Domain)"
+  "g3 (Domain)": "g3 (Domain)",
+  "Search models": "Cari model...",
+  "Search placeholder": "Cari berdasarkan nama, deskripsi, atau kategori..."
 }

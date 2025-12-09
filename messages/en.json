@@ -129,5 +129,7 @@
   "IP match": "IP match",
   "IP match description": "Access control based on IP address matching and filtering.",
   "Priority": "Priority",
-  "Priority description": "Priority-based access control with rule precedence handling."
+  "Priority description": "Priority-based access control with rule precedence handling.",
+  "Search models": "Search models...",
+  "Search placeholder": "Search by name, description, or category..."
 }
