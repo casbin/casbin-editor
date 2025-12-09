@@ -128,5 +128,7 @@
   "p (Policy)": "p (Chính sách)",
   "g (Role)": "g (Vai trò)",
   "g2 (Resource)": "g2 (Tài nguyên)",
-  "g3 (Domain)": "g3 (Miền)"
+  "g3 (Domain)": "g3 (Miền)",
+  "Search models": "Tìm kiếm mô hình...",
+  "Search placeholder": "Tìm kiếm theo tên, mô tả hoặc danh mục..."
 }

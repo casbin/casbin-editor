@@ -128,5 +128,7 @@
   "p (Policy)": "p (سياسة)",
   "g (Role)": "g (دور)",
   "g2 (Resource)": "g2 (مورد)",
-  "g3 (Domain)": "g3 (نطاق)"
+  "g3 (Domain)": "g3 (نطاق)",
+  "Search models": "البحث عن النماذج...",
+  "Search placeholder": "البحث حسب الاسم أو الوصف أو الفئة..."
 }
