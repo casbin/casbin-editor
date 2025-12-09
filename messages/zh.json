@@ -9,6 +9,8 @@
   "Reset tooltip": "将所有字段重置为默认值。",
   "Policy": "策略",
   "Policy Editor": "策略编辑器",
+  "Model Gallery": "模型库",
+  "Load in Editor": "在编辑器中加载",
   "Request": "请求",
   "Enforcement Result": "执行结果",
   "Why this result": "为何此结果？",

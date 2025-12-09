@@ -16,9 +16,15 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { useLang } from '@/app/context/LangContext';
 import { modelMetadata, categories } from '@/app/config/modelMetadata';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/app/components/ui/tooltip';
 
 export default function GalleryPage() {
   const { theme, t } = useLang();
@@ -117,14 +123,10 @@ export default function GalleryPage() {
               return (
                 <div
                   key={model.key}
-                  onClick={() => {
-                    return handleModelClick(model.key);
-                  }}
                   className={clsx(
-                    'rounded-lg border border-border shadow-sm cursor-pointer transition-all duration-200',
+                    'rounded-lg border border-border shadow-sm transition-all duration-200',
                     cardBgClass,
-                    hoverClass,
-                    'hover:shadow-lg hover:border-primary/50',
+                    'hover:shadow-lg',
                   )}
                 >
                   <div className="p-6">
@@ -141,9 +143,35 @@ export default function GalleryPage() {
                         {t(model.category)}
                       </span>
                     </div>
-                    <p className={clsx('text-sm', textClass, 'opacity-70')}>
+                    <p className={clsx('text-sm mb-4', textClass, 'opacity-70')}>
                       {t(model.description)}
                     </p>
+                    <div className="flex justify-end">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                return handleModelClick(model.key);
+                              }}
+                              className={clsx(
+                                'inline-flex items-center gap-2 px-4 py-2 rounded-lg',
+                                'text-sm font-medium transition-all duration-200',
+                                'bg-primary text-primary-foreground',
+                                'hover:bg-primary/90 hover:shadow-md',
+                                'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                              )}
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                              <span>{t('Load in Editor')}</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('Load in Editor')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
                   </div>
                 </div>
               );
