@@ -118,7 +118,7 @@ export default function GalleryPage() {
           </div>
 
           {/* Model Grid */}
-          <TooltipProvider>
+          <TooltipProvider delayDuration={700} skipDelayDuration={0}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredModels.map((model) => {
                 return (
@@ -155,7 +155,7 @@ export default function GalleryPage() {
                                 handleModelClick(model.key);
                               }}
                               className={clsx(
-                                'inline-flex items-center gap-2 px-4 py-2 rounded-lg',
+                                'inline-flex items-center gap-2 p-2 rounded-lg',
                                 'text-sm font-medium transition-all duration-200',
                                 'bg-primary text-primary-foreground',
                                 'hover:bg-primary/90 hover:shadow-md',
@@ -163,10 +163,13 @@ export default function GalleryPage() {
                               )}
                             >
                               <ExternalLink className="w-4 h-4" />
-                              <span>{t('Load in Editor')}</span>
                             </button>
                           </TooltipTrigger>
-                          <TooltipContent>
+                          <TooltipContent
+                            className={clsx(
+                              'bg-white dark:bg-gray-800 text-primary border border-primary',
+                            )}
+                          >
                             <p>{t('Load in Editor')}</p>
                           </TooltipContent>
                         </Tooltip>
