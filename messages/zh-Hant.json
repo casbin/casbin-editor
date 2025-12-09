@@ -9,6 +9,8 @@
   "Reset tooltip": "將所有欄位重置為預設值。",
   "Policy": "策略",
   "Policy Editor": "策略編輯器",
+  "Model Gallery": "模型庫",
+  "Load in Editor": "在編輯器中載入",
   "Request": "請求",
   "Enforcement Result": "執行結果",
   "Why this result": "為何此結果？",

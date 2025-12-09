@@ -16,9 +16,15 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
-import { ArrowLeft, Search } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Search } from 'lucide-react';
 import { useLang } from '@/app/context/LangContext';
 import { modelMetadata, categories } from '@/app/config/modelMetadata';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/app/components/ui/tooltip';
 
 export default function GalleryPage() {
   const { theme, t } = useLang();
@@ -151,43 +157,68 @@ export default function GalleryPage() {
           </div>
 
           {/* Model Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredModels.map((model) => {
-              return (
-                <div
-                  key={model.key}
-                  onClick={() => {
-                    return handleModelClick(model.key);
-                  }}
-                  className={clsx(
-                    'rounded-lg border border-border shadow-sm cursor-pointer transition-all duration-200',
-                    cardBgClass,
-                    hoverClass,
-                    'hover:shadow-lg hover:border-primary/50',
-                  )}
-                >
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className={clsx('text-xl font-semibold', textClass)}>
-                        {t(model.name)}
-                      </h3>
-                      <span
-                        className={clsx(
-                          'px-2 py-1 text-xs font-medium rounded',
-                          'bg-primary/10 text-primary',
-                        )}
-                      >
-                        {t(model.category)}
-                      </span>
+          <TooltipProvider delayDuration={700} skipDelayDuration={0}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredModels.map((model) => {
+                return (
+                  <div
+                    key={model.key}
+                    className={clsx(
+                      'rounded-lg border border-border shadow-sm transition-all duration-200',
+                      cardBgClass,
+                      'hover:shadow-lg',
+                    )}
+                  >
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className={clsx('text-xl font-semibold', textClass)}>
+                          {t(model.name)}
+                        </h3>
+                        <span
+                          className={clsx(
+                            'px-2 py-1 text-xs font-medium rounded',
+                            'bg-primary/10 text-primary',
+                          )}
+                        >
+                          {t(model.category)}
+                        </span>
+                      </div>
+                      <p className={clsx('text-sm mb-4', textClass, 'opacity-70')}>
+                        {t(model.description)}
+                      </p>
+                      <div className="flex justify-end">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                handleModelClick(model.key);
+                              }}
+                              className={clsx(
+                                'inline-flex items-center gap-2 p-2 rounded-lg',
+                                'text-sm font-medium transition-all duration-200',
+                                'bg-primary text-primary-foreground',
+                                'hover:bg-primary/90 hover:shadow-md',
+                                'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                              )}
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            className={clsx(
+                              'bg-white dark:bg-gray-800 text-primary border border-primary',
+                            )}
+                          >
+                            <p>{t('Load in Editor')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </div>
-                    <p className={clsx('text-sm', textClass, 'opacity-70')}>
-                      {t(model.description)}
-                    </p>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          </TooltipProvider>
         </div>
       </div>
 
