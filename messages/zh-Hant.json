@@ -128,8 +128,7 @@
   "p (Policy)": "p (策略)",
   "g (Role)": "g (角色)",
   "g2 (Resource)": "g2 (資源)",
-  "g3 (Domain)": "g3 (域)"
-,
+  "g3 (Domain)": "g3 (域)",
   "Search models": "Search models...",
   "Search placeholder": "Search by name, description, or category..."
 }

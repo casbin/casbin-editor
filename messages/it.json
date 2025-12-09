@@ -128,8 +128,7 @@
   "p (Policy)": "p (Politica)",
   "g (Role)": "g (Ruolo)",
   "g2 (Resource)": "g2 (Risorsa)",
-  "g3 (Domain)": "g3 (Dominio)"
-,
+  "g3 (Domain)": "g3 (Dominio)",
   "Search models": "Search models...",
   "Search placeholder": "Search by name, description, or category..."
 }
