@@ -129,4 +129,7 @@
   "g (Role)": "g (Rol)",
   "g2 (Resource)": "g2 (Kaynak)",
   "g3 (Domain)": "g3 (Alan)"
+,
+  "Search models": "Search models...",
+  "Search placeholder": "Search by name, description, or category..."
 }

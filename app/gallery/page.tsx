@@ -16,7 +16,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Search } from 'lucide-react';
 import { useLang } from '@/app/context/LangContext';
 import { modelMetadata, categories } from '@/app/config/modelMetadata';
 
@@ -24,18 +24,28 @@ export default function GalleryPage() {
   const { theme, t } = useLang();
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleModelClick = (modelKey: string) => {
     // Navigate to home page with model selection
     router.push(`/?model=${modelKey}`);
   };
 
-  const filteredModels =
-    selectedCategory === 'All'
-      ? modelMetadata
-      : modelMetadata.filter((model) => {
-          return model.category === selectedCategory;
-        });
+  const filteredModels = modelMetadata.filter((model) => {
+    // Filter by category
+    const categoryMatch =
+      selectedCategory === 'All' || model.category === selectedCategory;
+
+    // Filter by search query
+    const searchLower = searchQuery.toLowerCase().trim();
+    const searchMatch =
+      !searchLower ||
+      t(model.name).toLowerCase().includes(searchLower) ||
+      t(model.description).toLowerCase().includes(searchLower) ||
+      t(model.category).toLowerCase().includes(searchLower);
+
+    return categoryMatch && searchMatch;
+  });
 
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
   const cardBgClass = clsx(theme === 'dark' ? 'bg-slate-800' : 'bg-white');
@@ -85,30 +95,59 @@ export default function GalleryPage() {
       {/* Category Filter and Model Grid */}
       <div className="flex-grow">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex flex-wrap gap-2 mb-8">
-            {categories.map((category) => {
-              return (
-                <button
-                  key={category}
-                  onClick={() => {
-                    return setSelectedCategory(category);
-                  }}
-                  className={clsx(
-                    'px-4 py-2 rounded-lg font-medium transition-all duration-200',
-                    selectedCategory === category
-                      ? 'bg-primary text-primary-foreground shadow-md'
-                      : clsx(
-                          cardBgClass,
-                          textClass,
-                          'border border-border',
-                          hoverClass,
-                        ),
-                  )}
-                >
-                  {t(category)}
-                </button>
-              );
-            })}
+          {/* Search and Category Filter Section */}
+          <div className="flex flex-col gap-4 mb-8">
+            {/* Search Bar */}
+            <div className="relative max-w-md">
+              <Search
+                className={clsx(
+                  'absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5',
+                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500',
+                )}
+              />
+              <input
+                type="text"
+                placeholder={t('Search placeholder')}
+                value={searchQuery}
+                onChange={(e) => {
+                  return setSearchQuery(e.target.value);
+                }}
+                className={clsx(
+                  'w-full pl-10 pr-4 py-2 rounded-lg border transition-all duration-200',
+                  'focus:outline-none focus:ring-2 focus:ring-primary/50',
+                  theme === 'dark'
+                    ? 'bg-slate-800 border-border text-gray-200 placeholder-gray-500'
+                    : 'bg-white border-border text-gray-800 placeholder-gray-400',
+                )}
+              />
+            </div>
+
+            {/* Category Filters */}
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => {
+                return (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      return setSelectedCategory(category);
+                    }}
+                    className={clsx(
+                      'px-4 py-2 rounded-lg font-medium transition-all duration-200',
+                      selectedCategory === category
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : clsx(
+                            cardBgClass,
+                            textClass,
+                            'border border-border',
+                            hoverClass,
+                          ),
+                    )}
+                  >
+                    {t(category)}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Model Grid */}

@@ -129,4 +129,7 @@
   "g (Role)": "g (역할)",
   "g2 (Resource)": "g2 (리소스)",
   "g3 (Domain)": "g3 (도메인)"
+,
+  "Search models": "Search models...",
+  "Search placeholder": "Search by name, description, or category..."
 }
