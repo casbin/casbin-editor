@@ -23,7 +23,6 @@ import {
   Sheet,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from '@/app/components/ui/sheet';
@@ -71,7 +70,7 @@ export const ModelPreviewPanel: React.FC<ModelPreviewPanelProps> = ({
         }
       }}
     >
-      <SheetContent side="right" className={clsx('overflow-y-auto', bgClass, textClass)}>
+      <SheetContent side="right" className={clsx('overflow-y-auto pb-24', bgClass, textClass)}>
         <SheetHeader className="mb-6">
           <div className="flex items-center justify-between gap-4">
             <SheetTitle className={clsx('text-2xl', textClass)}>{t(modelName)}</SheetTitle>
@@ -90,7 +89,7 @@ export const ModelPreviewPanel: React.FC<ModelPreviewPanelProps> = ({
         </SheetHeader>
 
         {modelData && (
-          <div className="space-y-6 pb-20">
+          <div className="space-y-6">
             {/* Model Configuration */}
             <section>
               <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
@@ -146,6 +145,20 @@ export const ModelPreviewPanel: React.FC<ModelPreviewPanelProps> = ({
               </section>
             )}
 
+            {/* Enforcement Result Section */}
+            {modelData.policy && modelData.request && (
+              <section>
+                <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
+                  {t('Enforcement Result')}
+                </h3>
+                <div className={clsx('rounded-lg border p-4', borderClass, sectionBgClass)}>
+                  <p className={clsx('text-sm', textClass, 'opacity-70')}>
+                    {t('Open in editor to see enforcement results for the example request')}
+                  </p>
+                </div>
+              </section>
+            )}
+
             {/* Custom Configuration */}
             {modelData.customConfig && (
               <section>
@@ -168,9 +181,9 @@ export const ModelPreviewPanel: React.FC<ModelPreviewPanelProps> = ({
         )}
 
         {/* Footer with Open in Editor button */}
-        <SheetFooter
+        <div
           className={clsx(
-            'fixed bottom-0 right-0 left-0 p-6 border-t',
+            'sticky bottom-0 left-0 right-0 mt-6 p-6 -mx-6 -mb-6 border-t',
             bgClass,
             borderClass,
           )}
@@ -188,7 +201,7 @@ export const ModelPreviewPanel: React.FC<ModelPreviewPanelProps> = ({
             <ExternalLink className="w-5 h-5" />
             {t('Open in Editor')}
           </button>
-        </SheetFooter>
+        </div>
       </SheetContent>
     </Sheet>
   );

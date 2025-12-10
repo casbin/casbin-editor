@@ -137,5 +137,6 @@
   "Model Configuration": "Model Configuration",
   "Example Policies": "Example Policies",
   "Example Request": "Example Request",
-  "Custom Configuration": "Custom Configuration"
+  "Custom Configuration": "Custom Configuration",
+  "Open in editor to see enforcement results for the example request": "Open in editor to see enforcement results for the example request"
 }
