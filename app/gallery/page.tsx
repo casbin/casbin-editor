@@ -16,7 +16,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
-import { ArrowLeft, ExternalLink, Search } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Search, Eye } from 'lucide-react';
 import { useLang } from '@/app/context/LangContext';
 import { modelMetadata, categories } from '@/app/config/modelMetadata';
 import {
@@ -25,16 +25,43 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/app/components/ui/tooltip';
+import { ModelPreviewPanel } from '@/app/components/gallery/ModelPreviewPanel';
 
 export default function GalleryPage() {
   const { theme, t } = useLang();
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [previewModel, setPreviewModel] = useState<{
+    key: string;
+    name: string;
+    description: string;
+    category: string;
+  } | null>(null);
 
   const handleModelClick = (modelKey: string) => {
     // Navigate to home page with model selection
     router.push(`/?model=${modelKey}`);
+  };
+
+  const handlePreviewClick = (
+    modelKey: string,
+    modelName: string,
+    modelDescription: string,
+    modelCategory: string,
+    e: React.MouseEvent,
+  ) => {
+    e.stopPropagation();
+    setPreviewModel({
+      key: modelKey,
+      name: modelName,
+      description: modelDescription,
+      category: modelCategory,
+    });
+  };
+
+  const handleClosePreview = () => {
+    setPreviewModel(null);
   };
 
   const filteredModels = modelMetadata.filter((model) => {
@@ -163,8 +190,16 @@ export default function GalleryPage() {
                 return (
                   <div
                     key={model.key}
+                    onClick={() => {
+                      setPreviewModel({
+                        key: model.key,
+                        name: model.name,
+                        description: model.description,
+                        category: model.category,
+                      });
+                    }}
                     className={clsx(
-                      'rounded-lg border border-border shadow-sm transition-all duration-200',
+                      'rounded-lg border border-border shadow-sm transition-all duration-200 cursor-pointer',
                       cardBgClass,
                       'hover:shadow-lg',
                     )}
@@ -186,11 +221,45 @@ export default function GalleryPage() {
                       <p className={clsx('text-sm mb-4', textClass, 'opacity-70')}>
                         {t(model.description)}
                       </p>
-                      <div className="flex justify-end">
+                      <div className="flex justify-end gap-2">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <button
-                              onClick={() => {
+                              onClick={(e) => {
+                                handlePreviewClick(
+                                  model.key,
+                                  model.name,
+                                  model.description,
+                                  model.category,
+                                  e,
+                                );
+                              }}
+                              className={clsx(
+                                'inline-flex items-center gap-2 p-2 rounded-lg',
+                                'text-sm font-medium transition-all duration-200',
+                                theme === 'dark'
+                                  ? 'bg-slate-700 text-gray-200 hover:bg-slate-600'
+                                  : 'bg-slate-100 text-gray-800 hover:bg-slate-200',
+                                'hover:shadow-md',
+                                'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                              )}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            className={clsx(
+                              'bg-white dark:bg-gray-800 text-primary border border-primary',
+                            )}
+                          >
+                            <p>{t('Preview')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 handleModelClick(model.key);
                               }}
                               className={clsx(
@@ -221,6 +290,16 @@ export default function GalleryPage() {
           </TooltipProvider>
         </div>
       </div>
+
+      {/* Preview Panel */}
+      <ModelPreviewPanel
+        modelKey={previewModel?.key || null}
+        modelName={previewModel?.name || ''}
+        modelDescription={previewModel?.description || ''}
+        modelCategory={previewModel?.category || ''}
+        isOpen={!!previewModel}
+        onClose={handleClosePreview}
+      />
 
       {/* Footer */}
       <div
