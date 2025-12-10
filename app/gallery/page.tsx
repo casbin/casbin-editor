@@ -49,9 +49,9 @@ export default function GalleryPage() {
     modelName: string,
     modelDescription: string,
     modelCategory: string,
-    e: React.MouseEvent,
+    e?: React.MouseEvent,
   ) => {
-    e.stopPropagation();
+    e?.stopPropagation();
     setPreviewModel({
       key: modelKey,
       name: modelName,
@@ -191,12 +191,12 @@ export default function GalleryPage() {
                   <div
                     key={model.key}
                     onClick={() => {
-                      setPreviewModel({
-                        key: model.key,
-                        name: model.name,
-                        description: model.description,
-                        category: model.category,
-                      });
+                      handlePreviewClick(
+                        model.key,
+                        model.name,
+                        model.description,
+                        model.category,
+                      );
                     }}
                     className={clsx(
                       'rounded-lg border border-border shadow-sm transition-all duration-200 cursor-pointer',

@@ -63,11 +63,14 @@ export const ModelPreviewPanel: React.FC<ModelPreviewPanelProps> = ({
   const borderClass = clsx(theme === 'dark' ? 'border-slate-700' : 'border-slate-200');
 
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => {
-      if (!open) {
-        onClose();
-      }
-    }}>
+    <Sheet
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          onClose();
+        }
+      }}
+    >
       <SheetContent side="right" className={clsx('overflow-y-auto', bgClass, textClass)}>
         <SheetHeader className="mb-6">
           <div className="flex items-center justify-between gap-4">
