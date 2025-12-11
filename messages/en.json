@@ -131,5 +131,12 @@
   "Priority": "Priority",
   "Priority description": "Priority-based access control with rule precedence handling.",
   "Search models": "Search models...",
-  "Search placeholder": "Search by name, description, or category..."
+  "Search placeholder": "Search by name, description, or category...",
+  "Preview": "Preview",
+  "Open in Editor": "Open in Editor",
+  "Model Configuration": "Model Configuration",
+  "Example Policies": "Example Policies",
+  "Example Request": "Example Request",
+  "Custom Configuration": "Custom Configuration",
+  "Open in editor to see enforcement results for the example request": "Open in editor to see enforcement results for the example request"
 }

@@ -86,6 +86,7 @@
     "@codemirror/state": "^6.4.1",
     "@codemirror/view": "^6.24.1",
     "@lezer/highlight": "^1.2.0",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.1.7",
