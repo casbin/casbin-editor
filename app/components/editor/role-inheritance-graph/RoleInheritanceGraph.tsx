@@ -18,6 +18,11 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   const [circularDeps, setCircularDeps] = useState<string[][]>([]);
   const [dimensions, setDimensions] = useState({ width: 400, height: 300 });
 
+  // Store simulation and previous data for incremental updates
+  const simulationRef = useRef<d3.Simulation<any, any> | null>(null);
+  const previousNodesRef = useRef<Map<string, any>>(new Map());
+  const previousLinksRef = useRef<any[]>([]);
+
   const isDarkMode = theme === 'dark';
 
   const medicalColorScheme = {
@@ -86,11 +91,21 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
   useEffect(() => {
     if (!svgRef.current) return;
     renderGraph();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treeData, relations, dimensions, isDarkMode]);
+
+  // Cleanup simulation on unmount
+  useEffect(() => {
+    return () => {
+      if (simulationRef.current) {
+        simulationRef.current.stop();
+      }
+    };
+  }, []);
+
   const renderGraph = () => {
     const svg = d3.select(svgRef.current);
-    svg.selectAll('*').remove();
-
+    
     const { width, height } = dimensions;
     const margin = { top: 20, right: 20, bottom: 20, left: 20 };
     const innerWidth = width - margin.left - margin.right;
@@ -101,7 +116,8 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     // Check if there is any strategy data (P strategy or G strategy)
     const hasAnyPolicy = treeData.length > 0 || Object.keys(relations).length > 0;
     if (!hasAnyPolicy) {
-      // Display centered "(empty)" label when no policy exists
+      // Clear everything and show empty message
+      svg.selectAll('*').remove();
       svg
         .append('text')
         .attr('x', width / 2)
@@ -111,11 +127,30 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         .attr('font-size', '16px')
         .attr('fill', '#9ca3af')
         .text(t('(empty)'));
+      
+      if (simulationRef.current) {
+        simulationRef.current.stop();
+        simulationRef.current = null;
+      }
+      previousNodesRef.current.clear();
+      previousLinksRef.current = [];
       return;
     }
 
-    // Add a cropping path to ensure that the content does not exceed the boundary
-    svg.append('defs').append('clipPath').attr('id', 'chart-area').append('rect').attr('width', innerWidth).attr('height', innerHeight);
+    // Initialize SVG structure on first render
+    const isFirstRender = svg.select('g.main-group').empty();
+    if (isFirstRender) {
+      svg.selectAll('*').remove();
+      
+      // Add defs for clipping and markers
+      const defs = svg.append('defs');
+      
+      // Add a cropping path
+      defs.append('clipPath').attr('id', 'chart-area').append('rect').attr('width', innerWidth).attr('height', innerHeight);
+    }
+
+    // Update clip path dimensions
+    svg.select('#chart-area rect').attr('width', innerWidth).attr('height', innerHeight);
 
     const defs = svg.select('defs');
 
@@ -126,7 +161,12 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       { id: 'arrow-g3', color: medicalColorScheme.domainInheritance },
     ];
 
+    // Update or create markers and gradients
     arrowTypes.forEach((arrow) => {
+      // Remove existing marker and gradient to update colors
+      defs.select(`#${arrow.id}`).remove();
+      defs.select(`#gradient-${arrow.id}`).remove();
+
       defs
         .append('marker')
         .attr('id', arrow.id)
@@ -140,26 +180,32 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         .attr('d', 'M0,-3L8,0L0,3L2,0z')
         .attr('fill', `url(#gradient-${arrow.id})`)
         .attr('stroke-width', 0.5);
-    });
-    arrowTypes.forEach((arrow) => {
+
       const gradient = defs.append('linearGradient').attr('id', `gradient-${arrow.id}`).attr('gradientUnits', 'userSpaceOnUse');
-
       gradient.append('stop').attr('offset', '0%').attr('stop-color', arrow.color).attr('stop-opacity', 0.8);
-
       gradient.append('stop').attr('offset', '100%').attr('stop-color', arrow.color).attr('stop-opacity', 1);
     });
 
-    const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`).attr('clip-path', 'url(#chart-area)');
-
-    // Transparent background to capture empty-space clicks
-    g.append('rect')
-      .attr('class', 'graph-background')
+    // Create or select main group
+    let g = svg.select<SVGGElement>('g.main-group');
+    if (g.empty()) {
+      g = svg.append('g').attr('class', 'main-group');
+      
+      // Transparent background to capture empty-space clicks
+      g.append('rect')
+        .attr('class', 'graph-background')
+        .attr('fill', 'transparent')
+        .style('pointer-events', 'all');
+    }
+    
+    g.attr('transform', `translate(${margin.left},${margin.top})`).attr('clip-path', 'url(#chart-area)');
+    
+    // Update background dimensions
+    g.select('.graph-background')
       .attr('width', innerWidth)
-      .attr('height', innerHeight)
-      .attr('fill', 'transparent')
-      .style('pointer-events', 'all');
+      .attr('height', innerHeight);
 
-    // Create a de-duplicated node mapping
+    // ===== Build current nodes and links data =====
     const nodeMap = new Map();
     const allLinks: any[] = [];
 
@@ -253,17 +299,60 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
     const allNodes = Array.from(nodeMap.values());
 
     if (allNodes.length === 0) {
+      if (simulationRef.current) {
+        simulationRef.current.stop();
+      }
       return;
     }
 
-    // Dynamically calculate the node radius
+    // ===== Merge with previous node data to preserve positions =====
+    const newNodeIds = new Set<string>();
+    
+    allNodes.forEach((node: any) => {
+      const prevNode = previousNodesRef.current.get(node.id);
+      if (prevNode) {
+        // Preserve position from previous render - node already exists
+        node.x = prevNode.x;
+        node.y = prevNode.y;
+        node.vx = prevNode.vx || 0;
+        node.vy = prevNode.vy || 0;
+        // Temporarily fix position to prevent jitter
+        node.fx = prevNode.x;
+        node.fy = prevNode.y;
+      } else {
+        // New node: assign initial position based on type
+        newNodeIds.add(node.id);
+        const typeOrder = ['user', 'role', 'action', 'object', 'resource'];
+        const verticalSpacing = innerHeight / (typeOrder.length + 1);
+        const typeIndex = typeOrder.indexOf(node.type || 'user');
+        const yPosition = typeIndex >= 0 ? (typeIndex + 1) * verticalSpacing : innerHeight / 2;
+        
+        const sameTypeNodes = allNodes.filter((n: any) => { return n.type === node.type; });
+        const nodeIndex = sameTypeNodes.indexOf(node);
+        const totalSameType = sameTypeNodes.length;
+        const horizontalSpacing = innerWidth / (totalSameType + 1);
+        const xPosition = (nodeIndex + 1) * horizontalSpacing;
+        
+        node.x = xPosition;
+        node.y = yPosition;
+        node.vx = 0;
+        node.vy = 0;
+      }
+    });
+
+    // Update previous nodes reference
+    previousNodesRef.current.clear();
+    allNodes.forEach((node: any) => {
+      previousNodesRef.current.set(node.id, node);
+    });
+    previousLinksRef.current = allLinks;
+
+    // ===== Helper functions =====
     const calculateNodeRadius = (text: string) => {
       const baseRadius = 25;
       const textLength = text.length;
       const minRadius = 20;
       const maxRadius = 50;
-
-      // Dynamically adjust the radius according to the text length
       const dynamicRadius = Math.max(minRadius, Math.min(maxRadius, baseRadius + textLength * 2));
       return dynamicRadius;
     };
@@ -299,87 +388,111 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       }
     };
 
-    // Group nodes by type for better layout
-    const nodesByType = new Map<string, any[]>();
-    allNodes.forEach((node: any) => {
-      const type = node.type || 'user';
-      if (!nodesByType.has(type)) {
-        nodesByType.set(type, []);
-      }
-      nodesByType.get(type)!.push(node);
-    });
-
-    // Assign initial positions to nodes based on their type to reduce edge crossing
-    // This creates a hierarchical layout with users at top, resources at bottom
+    // ===== Create or update simulation =====
     const typeOrder = ['user', 'role', 'action', 'object', 'resource'];
     const verticalSpacing = innerHeight / (typeOrder.length + 1);
-    
-    allNodes.forEach((node: any) => {
-      const typeIndex = typeOrder.indexOf(node.type || 'user');
-      const yPosition = typeIndex >= 0 ? (typeIndex + 1) * verticalSpacing : innerHeight / 2;
-      
-      // Get nodes of the same type
-      const sameTypeNodes = nodesByType.get(node.type || 'user') || [];
-      const nodeIndex = sameTypeNodes.indexOf(node);
-      const totalSameType = sameTypeNodes.length;
-      
-      // Distribute nodes of the same type horizontally
-      const horizontalSpacing = innerWidth / (totalSameType + 1);
-      const xPosition = (nodeIndex + 1) * horizontalSpacing;
-      
-      // Set initial position
-      node.x = xPosition;
-      node.y = yPosition;
-    });
 
-    // Create a force-oriented diagram simulation with improved parameters
-    const simulation = d3
-      .forceSimulation(allNodes)
-      .force(
-        'link',
-        d3
-          .forceLink(allLinks)
-          .id((d: any) => {
-            return d.id;
-          })
-          .distance(200)
-          .strength(0.5),
-      )
-      .force('charge', d3.forceManyBody().strength(-800))
-      .force('center', d3.forceCenter(innerWidth / 2, innerHeight / 2))
-      .force(
-        'collision',
-        d3.forceCollide().radius((d: any) => {
-          return calculateNodeRadius(d.id) + 30;
-        }),
-      )
-      .force('y', d3.forceY((d: any) => {
-        const typeIndex = typeOrder.indexOf(d.type || 'user');
-        return typeIndex >= 0 ? (typeIndex + 1) * verticalSpacing : innerHeight / 2;
-      }).strength(0.3))
-      .force('x', d3.forceX(innerWidth / 2).strength(0.05));
+    if (!simulationRef.current) {
+      // Create new simulation
+      simulationRef.current = d3
+        .forceSimulation(allNodes)
+        .force(
+          'link',
+          d3
+            .forceLink(allLinks)
+            .id((d: any) => { return d.id; })
+            .distance(200)
+            .strength(0.5),
+        )
+        .force('charge', d3.forceManyBody().strength(-800))
+        .force('center', d3.forceCenter(innerWidth / 2, innerHeight / 2))
+        .force(
+          'collision',
+          d3.forceCollide().radius((d: any) => { return calculateNodeRadius(d.id) + 30; }),
+        )
+        .force('y', d3.forceY((d: any) => {
+          const typeIndex = typeOrder.indexOf(d.type || 'user');
+          return typeIndex >= 0 ? (typeIndex + 1) * verticalSpacing : innerHeight / 2;
+        }).strength(0.3))
+        .force('x', d3.forceX(innerWidth / 2).strength(0.05));
+    } else {
+      // Update existing simulation with new data
+      simulationRef.current.nodes(allNodes);
+      const linkForce = simulationRef.current.force<d3.ForceLink<any, any>>('link');
+      if (linkForce) {
+        linkForce.links(allLinks);
+      }
+      
+      // Update force centers for dimension changes
+      const centerForce = simulationRef.current.force<d3.ForceCenter<any>>('center');
+      if (centerForce) {
+        centerForce.x(innerWidth / 2).y(innerHeight / 2);
+      }
+      
+      const xForce = simulationRef.current.force<d3.ForceX<any>>('x');
+      if (xForce) {
+        xForce.x(innerWidth / 2);
+      }
+      
+      const yForce = simulationRef.current.force<d3.ForceY<any>>('y');
+      if (yForce) {
+        yForce.y((d: any) => {
+          const typeIndex = typeOrder.indexOf(d.type || 'user');
+          return typeIndex >= 0 ? (typeIndex + 1) * verticalSpacing : innerHeight / 2;
+        });
+      }
+      
+      // Only restart if there are new nodes, otherwise just update forces
+      if (newNodeIds.size > 0) {
+        // Restart with low alpha only for new nodes
+        simulationRef.current.alpha(0.3).restart();
+        
+        // After a short time, release the fixed positions to allow minor adjustments
+        setTimeout(() => {
+          allNodes.forEach((node: any) => {
+            if (!newNodeIds.has(node.id)) {
+              node.fx = null;
+              node.fy = null;
+            }
+          });
+        }, 1000);
+      } else {
+        // No new nodes, just release fixed positions for adjustments due to dimension changes
+        allNodes.forEach((node: any) => {
+          node.fx = null;
+          node.fy = null;
+        });
+      }
+    }
 
-    // Draw the connecting lines
-    const links = g
-      .append('g')
-      .attr('class', 'links')
-      .selectAll('line')
-      .data(allLinks)
+    const simulation = simulationRef.current;
+
+    // ===== Render links using data join =====
+    let linksGroup = g.select<SVGGElement>('g.links');
+    if (linksGroup.empty()) {
+      linksGroup = g.append('g').attr('class', 'links');
+    }
+
+    const links = linksGroup
+      .selectAll<SVGLineElement, any>('line')
+      .data(allLinks, (d: any) => { return d.id; });
+
+    // Remove old links
+    links.exit().remove();
+
+    // Add new links
+    const linksEnter = links
       .enter()
       .append('line')
-      .attr('stroke', (d: any) => {
-        return getConnectionStyle(d.type).color;
-      })
-      .attr('stroke-width', (d: any) => {
-        return getConnectionStyle(d.type).strokeWidth;
-      })
-      .attr('stroke-dasharray', (d: any) => {
-        return getConnectionStyle(d.type).dashArray;
-      })
-      .attr('marker-end', (d: any) => {
-        return getArrowMarker(d.type);
-      })
       .attr('opacity', 0.8);
+
+    // Update all links (new + existing)
+    const linksUpdate = linksEnter.merge(links);
+    linksUpdate
+      .attr('stroke', (d: any) => { return getConnectionStyle(d.type).color; })
+      .attr('stroke-width', (d: any) => { return getConnectionStyle(d.type).strokeWidth; })
+      .attr('stroke-dasharray', (d: any) => { return getConnectionStyle(d.type).dashArray; })
+      .attr('marker-end', (d: any) => { return getArrowMarker(d.type); });
 
     // Create drag-and-drop behavior
     const drag = d3
@@ -409,15 +522,20 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         d.fy = null;
       });
 
-    const linkLabels = g
-      .append('g')
-      .attr('class', 'link-labels')
-      .selectAll('text')
-      .data(
-        allLinks.filter((d: any) => {
-          return d.actions && d.actions.length > 0;
-        }),
-      )
+    // ===== Render link labels using data join =====
+    let linkLabelsGroup = g.select<SVGGElement>('g.link-labels');
+    if (linkLabelsGroup.empty()) {
+      linkLabelsGroup = g.append('g').attr('class', 'link-labels');
+    }
+
+    const linkLabelsData = allLinks.filter((d: any) => { return d.actions && d.actions.length > 0; });
+    const linkLabels = linkLabelsGroup
+      .selectAll<SVGTextElement, any>('text')
+      .data(linkLabelsData, (d: any) => { return d.id; });
+
+    linkLabels.exit().remove();
+
+    const linkLabelsEnter = linkLabels
       .enter()
       .append('text')
       .attr('class', 'link-label')
@@ -428,34 +546,37 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       .attr('fill', '#333')
       .attr('stroke', 'white')
       .attr('stroke-width', '2')
-      .attr('paint-order', 'stroke')
-      .text((d: any) => {
-        return d.actions.join(', ');
-      });
+      .attr('paint-order', 'stroke');
 
-    // Add deny effect indicators (red X markers)
-    const denyMarkers = g
-      .append('g')
-      .attr('class', 'deny-markers')
-      .selectAll('g')
-      .data(
-        allLinks.filter((d: any) => {
-          return d.effect === 'deny';
-        }),
-      )
+    linkLabelsEnter.merge(linkLabels).text((d: any) => { return d.actions.join(', '); });
+
+    // ===== Render deny markers using data join =====
+    let denyMarkersGroup = g.select<SVGGElement>('g.deny-markers');
+    if (denyMarkersGroup.empty()) {
+      denyMarkersGroup = g.append('g').attr('class', 'deny-markers');
+    }
+
+    const denyData = allLinks.filter((d: any) => { return d.effect === 'deny'; });
+    const denyMarkers = denyMarkersGroup
+      .selectAll<SVGGElement, any>('g.deny-marker')
+      .data(denyData, (d: any) => { return d.id; });
+
+    denyMarkers.exit().remove();
+
+    const denyMarkersEnter = denyMarkers
       .enter()
       .append('g')
       .attr('class', 'deny-marker');
 
     // Draw red X for deny relationships
-    denyMarkers
+    denyMarkersEnter
       .append('circle')
       .attr('r', 10)
       .attr('fill', 'white')
       .attr('stroke', '#DC2626')
       .attr('stroke-width', 2);
 
-    denyMarkers
+    denyMarkersEnter
       .append('line')
       .attr('x1', -6)
       .attr('y1', -6)
@@ -465,7 +586,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       .attr('stroke-width', 2.5)
       .attr('stroke-linecap', 'round');
 
-    denyMarkers
+    denyMarkersEnter
       .append('line')
       .attr('x1', -6)
       .attr('y1', 6)
@@ -475,39 +596,59 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
       .attr('stroke-width', 2.5)
       .attr('stroke-linecap', 'round');
 
-    // OnCustomDrawItem
-    const nodes = g.append('g').attr('class', 'nodes').selectAll('g').data(allNodes).enter().append('g').call(drag);
+    const denyMarkersUpdate = denyMarkersEnter.merge(denyMarkers);
 
-    // Add a circle
-    nodes
+    // ===== Render nodes using data join =====
+    let nodesGroup = g.select<SVGGElement>('g.nodes');
+    if (nodesGroup.empty()) {
+      nodesGroup = g.append('g').attr('class', 'nodes');
+    }
+
+    const nodes = nodesGroup
+      .selectAll<SVGGElement, any>('g.node')
+      .data(allNodes, (d: any) => { return d.id; });
+
+    // Remove old nodes
+    nodes.exit().remove();
+
+    // Add new nodes
+    const nodesEnter = nodes
+      .enter()
+      .append('g')
+      .attr('class', 'node')
+      .call(drag);
+
+    // Add circles to new nodes
+    nodesEnter
       .append('circle')
-      .attr('r', (d: any) => {
-        return calculateNodeRadius(d.id);
-      })
-      .attr('fill', (d: any) => {
-        return medicalColorScheme[d.type] || medicalColorScheme.user;
-      })
       .attr('stroke', medicalColorScheme.border)
       .attr('stroke-width', 2);
 
-    // Add text labels (inside the circle)
-    nodes
+    // Add text labels to new nodes
+    nodesEnter
       .append('text')
-      .text((d: any) => {
-        return d.id;
-      })
       .attr('text-anchor', 'middle')
       .attr('dy', '0.35em')
-      .attr('font-size', (d: any) => {
-        const radius = calculateNodeRadius(d.id);
-        const textLength = d.id.length;
-        // Dynamically adjust the font size based on the circle size and text length
-        const fontSize = Math.max(10, Math.min(14, (radius / textLength) * 2));
-        return `${fontSize}px`;
-      })
       .attr('font-weight', 'bold')
       .attr('fill', 'white')
       .attr('pointer-events', 'none');
+
+    // Update all nodes (new + existing)
+    const nodesUpdate = nodesEnter.merge(nodes);
+
+    nodesUpdate.select('circle')
+      .attr('r', (d: any) => { return calculateNodeRadius(d.id); })
+      .attr('fill', (d: any) => { return medicalColorScheme[d.type] || medicalColorScheme.user; })
+      .attr('stroke', medicalColorScheme.border);
+
+    nodesUpdate.select('text')
+      .text((d: any) => { return d.id; })
+      .attr('font-size', (d: any) => {
+        const radius = calculateNodeRadius(d.id);
+        const textLength = d.id.length;
+        const fontSize = Math.max(10, Math.min(14, (radius / textLength) * 2));
+        return `${fontSize}px`;
+      });
 
       // --- Interaction helpers and handlers (selection/highlight) ---
       // Compute neighbors and related relation line indices for a node
@@ -614,8 +755,8 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         }
       };
 
-    // Attach interaction handlers for links/nodes and background
-      links
+// Attach interaction handlers for links
+      linksUpdate
       .style('cursor', 'pointer')
       .on('mouseover', function () {
         d3.select(this).attr('stroke-opacity', 1).attr('stroke-width', 5);
@@ -639,7 +780,8 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         applyHighlight(currentSelection);
       });
 
-    g.selectAll('.nodes g')
+    // Attach interaction handlers for nodes
+    nodesUpdate
       .style('cursor', 'pointer')
       .on('mouseover', function (event: any, d: any) {
         d3.select(this).select('circle').attr('stroke-width', 4);
@@ -686,7 +828,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         }
       });
 
-      links
+      linksUpdate
         .attr('x1', (d: any) => {
           return d.source.x;
         })
@@ -710,7 +852,7 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
           return d.target.y - (dy / distance) * (nodeRadius + arrowSpace);
         });
 
-      linkLabels
+      linkLabelsEnter.merge(linkLabels)
         .attr('x', (d: any) => {
           return (d.source.x + d.target.x) / 2;
         })
@@ -719,14 +861,14 @@ export const RoleInheritanceGraph: React.FC<RoleInheritanceGraphProps> = ({ poli
         });
 
       // Position deny markers below action labels to avoid overlap
-      denyMarkers.attr('transform', (d: any) => {
+      denyMarkersUpdate.attr('transform', (d: any) => {
         const midX = (d.source.x + d.target.x) / 2;
         const midY = (d.source.y + d.target.y) / 2;
         // Offset by 20px below the midpoint to avoid overlapping with action text
         return `translate(${midX},${midY + 20})`;
       });
 
-      nodes.attr('transform', (d: any) => {
+      nodesUpdate.attr('transform', (d: any) => {
         return `translate(${d.x},${d.y})`;
       });
     });
