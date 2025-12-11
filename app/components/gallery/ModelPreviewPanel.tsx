@@ -70,48 +70,34 @@ export const ModelPreviewPanel: React.FC<ModelPreviewPanelProps> = ({
         }
       }}
     >
-      <SheetContent side="right" className={clsx('overflow-y-auto pb-24', bgClass, textClass)}>
-        <SheetHeader className="mb-6">
-          <div className="flex items-center justify-between gap-4">
-            <SheetTitle className={clsx('text-2xl', textClass)}>{t(modelName)}</SheetTitle>
+      <SheetContent side="right" className={clsx('flex flex-col h-full', bgClass, textClass)}>
+        <SheetHeader className="mb-6 pr-8">
+          <div className="flex items-start gap-3">
+            <div className="flex-1 min-w-0">
+              <SheetTitle className={clsx('text-2xl mb-2', textClass)}>{t(modelName)}</SheetTitle>
+              <SheetDescription className={clsx('text-base', textClass, 'opacity-70')}>
+                {t(modelDescription)}
+              </SheetDescription>
+            </div>
             <span
               className={clsx(
-                'px-3 py-1 text-sm font-medium rounded-lg',
+                'px-3 py-1 text-sm font-medium rounded-lg flex-shrink-0',
                 'bg-primary/10 text-primary whitespace-nowrap',
               )}
             >
               {t(modelCategory)}
             </span>
           </div>
-          <SheetDescription className={clsx('text-base', textClass, 'opacity-70')}>
-            {t(modelDescription)}
-          </SheetDescription>
         </SheetHeader>
 
-        {modelData && (
-          <div className="space-y-6">
-            {/* Model Configuration */}
-            <section>
-              <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
-                {t('Model Configuration')}
-              </h3>
-              <div className={clsx('rounded-lg border p-4', borderClass, sectionBgClass)}>
-                <pre
-                  className={clsx(
-                    'text-sm whitespace-pre-wrap break-words font-mono',
-                    textClass,
-                  )}
-                >
-                  {modelData.model}
-                </pre>
-              </div>
-            </section>
-
-            {/* Example Policies */}
-            {modelData.policy && (
+        {/* Scrollable content area */}
+        <div className="flex-1 overflow-y-auto pr-2">
+          {modelData && (
+            <div className="space-y-6 pb-6">
+              {/* Model Configuration */}
               <section>
                 <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
-                  {t('Example Policies')}
+                  {t('Model Configuration')}
                 </h3>
                 <div className={clsx('rounded-lg border p-4', borderClass, sectionBgClass)}>
                   <pre
@@ -120,70 +106,89 @@ export const ModelPreviewPanel: React.FC<ModelPreviewPanelProps> = ({
                       textClass,
                     )}
                   >
-                    {modelData.policy}
+                    {modelData.model}
                   </pre>
                 </div>
               </section>
-            )}
 
-            {/* Example Request */}
-            {modelData.request && (
-              <section>
-                <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
-                  {t('Example Request')}
-                </h3>
-                <div className={clsx('rounded-lg border p-4', borderClass, sectionBgClass)}>
-                  <pre
-                    className={clsx(
-                      'text-sm whitespace-pre-wrap break-words font-mono',
-                      textClass,
-                    )}
-                  >
-                    {modelData.request}
-                  </pre>
-                </div>
-              </section>
-            )}
+              {/* Example Policies */}
+              {modelData.policy && (
+                <section>
+                  <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
+                    {t('Example Policies')}
+                  </h3>
+                  <div className={clsx('rounded-lg border p-4', borderClass, sectionBgClass)}>
+                    <pre
+                      className={clsx(
+                        'text-sm whitespace-pre-wrap break-words font-mono',
+                        textClass,
+                      )}
+                    >
+                      {modelData.policy}
+                    </pre>
+                  </div>
+                </section>
+              )}
 
-            {/* Enforcement Result Section */}
-            {modelData.policy && modelData.request && (
-              <section>
-                <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
-                  {t('Enforcement Result')}
-                </h3>
-                <div className={clsx('rounded-lg border p-4', borderClass, sectionBgClass)}>
-                  <p className={clsx('text-sm', textClass, 'opacity-70')}>
-                    {t('Open in editor to see enforcement results for the example request')}
-                  </p>
-                </div>
-              </section>
-            )}
+              {/* Example Request */}
+              {modelData.request && (
+                <section>
+                  <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
+                    {t('Example Request')}
+                  </h3>
+                  <div className={clsx('rounded-lg border p-4', borderClass, sectionBgClass)}>
+                    <pre
+                      className={clsx(
+                        'text-sm whitespace-pre-wrap break-words font-mono',
+                        textClass,
+                      )}
+                    >
+                      {modelData.request}
+                    </pre>
+                  </div>
+                </section>
+              )}
 
-            {/* Custom Configuration */}
-            {modelData.customConfig && (
-              <section>
-                <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
-                  {t('Custom Configuration')}
-                </h3>
-                <div className={clsx('rounded-lg border p-4', borderClass, sectionBgClass)}>
-                  <pre
-                    className={clsx(
-                      'text-sm whitespace-pre-wrap break-words font-mono',
-                      textClass,
-                    )}
-                  >
-                    {modelData.customConfig}
-                  </pre>
-                </div>
-              </section>
-            )}
-          </div>
-        )}
+              {/* Enforcement Result Section */}
+              {modelData.policy && modelData.request && (
+                <section>
+                  <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
+                    {t('Enforcement Result')}
+                  </h3>
+                  <div className={clsx('rounded-lg border p-4', borderClass, sectionBgClass)}>
+                    <p className={clsx('text-sm', textClass, 'opacity-70')}>
+                      {t('Open in editor to see enforcement results for the example request')}
+                    </p>
+                  </div>
+                </section>
+              )}
 
-        {/* Footer with Open in Editor button */}
+              {/* Custom Configuration */}
+              {modelData.customConfig && (
+                <section>
+                  <h3 className={clsx('text-lg font-semibold mb-3', textClass)}>
+                    {t('Custom Configuration')}
+                  </h3>
+                  <div className={clsx('rounded-lg border p-4', borderClass, sectionBgClass)}>
+                    <pre
+                      className={clsx(
+                        'text-sm whitespace-pre-wrap break-words font-mono',
+                        textClass,
+                      )}
+                    >
+                      {modelData.customConfig}
+                    </pre>
+                  </div>
+                </section>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Fixed footer with Open in Editor button */}
         <div
           className={clsx(
-            'sticky bottom-0 left-0 right-0 mt-6 p-6 -mx-6 -mb-6 border-t',
+            'flex-shrink-0 border-t p-6 -mx-6 -mb-6',
             bgClass,
             borderClass,
           )}
