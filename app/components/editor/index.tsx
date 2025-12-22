@@ -31,6 +31,7 @@ import { loadingOverlay } from '@/app/components/editor/plugins/LoadingOverlayEx
 import { extractPageContent } from '@/app/utils/contentExtractor';
 import { formatEngineResults, ResultsMap } from '@/app/utils/resultFormatter';
 import { casbinLinter, createPolicyLinter, requestLinter } from '@/app/utils/casbinLinter';
+import { isInsideIframe } from '@/app/utils/iframeDetector';
 import { useLang } from '@/app/context/LangContext';
 import { useAutoCarousel } from '@/app/context/AutoCarouselContext';
 import type { EngineType } from '@/app/config/engineConfig';
@@ -69,6 +70,11 @@ export const EditorScreen = () => {
   const skipNextEffectRef = useRef(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
   const policyViewRef = useRef<any | null>(null);
+  
+  // Memoize iframe detection since it doesn't change during the session
+  const isIframe = useMemo(() => {
+    return isInsideIframe();
+  }, []);
   const { setupEnforceContextData, setupHandleEnforceContextChange } = useSetupEnforceContext({
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
@@ -256,32 +262,34 @@ export const EditorScreen = () => {
   return (
     <div className="flex flex-col h-full w-full overflow-hidden">
       <Toaster position="top-center" />
-      {/* Header with Casbin logo and Policy Editor text */}
-      <div
-        className={clsx(
-          'flex items-center gap-3 px-4 py-2 border-b border-border',
-          theme === 'dark' ? 'bg-slate-900' : 'bg-white',
-        )}
-      >
-        <img
-          src="https://cdn.casbin.org/img/casbin_logo_1024x256.png"
-          alt="Casbin Logo"
-          className="h-8 w-auto"
-        />
-        <span className={clsx('text-xl font-semibold', textClass)}>{t('Policy Editor')}</span>
-        <a
-          href="/gallery"
+      {/* Header with Casbin logo and Policy Editor text - hidden when inside iframe */}
+      {!isIframe && (
+        <div
           className={clsx(
-            'ml-auto px-4 py-2 rounded-lg font-medium transition-all duration-200',
-            'bg-primary text-primary-foreground',
-            'hover:bg-primary/90 shadow-sm hover:shadow-md',
-            'flex items-center gap-2',
+            'flex items-center gap-3 px-4 py-2 border-b border-border',
+            theme === 'dark' ? 'bg-slate-900' : 'bg-white',
           )}
         >
-          <img src="/modelGallery.svg" alt="Model Gallery" className={clsx('w-5 h-5', iconFilterClass)} />
-          <span>{t('Model Gallery')}</span>
-        </a>
-      </div>
+          <img
+            src="https://cdn.casbin.org/img/casbin_logo_1024x256.png"
+            alt="Casbin Logo"
+            className="h-8 w-auto"
+          />
+          <span className={clsx('text-xl font-semibold', textClass)}>{t('Policy Editor')}</span>
+          <a
+            href="/gallery"
+            className={clsx(
+              'ml-auto px-4 py-2 rounded-lg font-medium transition-all duration-200',
+              'bg-primary text-primary-foreground',
+              'hover:bg-primary/90 shadow-sm hover:shadow-md',
+              'flex items-center gap-2',
+            )}
+          >
+            <img src="/modelGallery.svg" alt="Model Gallery" className={clsx('w-5 h-5', iconFilterClass)} />
+            <span>{t('Model Gallery')}</span>
+          </a>
+        </div>
+      )}
       {/* Main content area */}
       <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
         {/* Mobile sidebar toggle - shown only on mobile when showCustomConfig is true */}
