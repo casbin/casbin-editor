@@ -17,10 +17,16 @@
  * @returns {boolean} true if the window is inside an iframe, false otherwise
  */
 export const isInsideIframe = (): boolean => {
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  
   try {
     return window.self !== window.top;
   } catch (e) {
-    // If we get a cross-origin error, we're definitely in an iframe
+    // If we get a cross-origin error accessing window.top, we're in an iframe
+    // Cross-origin errors occur when iframe is from a different domain
     return true;
   }
 };

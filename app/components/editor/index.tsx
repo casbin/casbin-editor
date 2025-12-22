@@ -67,10 +67,14 @@ export const EditorScreen = () => {
   const [showCustomConfig, setShowCustomConfig] = useState(false);
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [requestResults, setRequestResults] = useState<ResultsMap>({});
-  const [isIframe, setIsIframe] = useState(false);
   const skipNextEffectRef = useRef(false);
   const sidePanelChatRef = useRef<{ openDrawer: (message: string) => void } | null>(null);
   const policyViewRef = useRef<any | null>(null);
+  
+  // Memoize iframe detection since it doesn't change during the session
+  const isIframe = useMemo(() => {
+    return isInsideIframe();
+  }, []);
   const { setupEnforceContextData, setupHandleEnforceContextChange } = useSetupEnforceContext({
     onChange: setEnforceContextDataPersistent,
     data: enforceContextData,
@@ -188,11 +192,6 @@ export const EditorScreen = () => {
 
   const textClass = clsx(theme === 'dark' ? 'text-gray-200' : 'text-gray-800');
   const iconFilterClass = theme === 'dark' ? '' : 'filter invert';
-
-  useEffect(() => {
-    // Detect if we're running inside an iframe
-    setIsIframe(isInsideIframe());
-  }, []);
 
   useEffect(() => {
     // Define a StateEffect and StateField to manage line decorations
